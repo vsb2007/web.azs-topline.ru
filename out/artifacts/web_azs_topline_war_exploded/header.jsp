@@ -10,12 +10,11 @@
 <html>
 <head>
     <title>AZS Topline</title>
-    <meta charset="utf-8">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="css/material.css"/>
+    <link rel="stylesheet" href="demo-files/demo.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Material Framework is an easy to use Material Design Framework for the web.">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon"/>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/main.css" rel="stylesheet">
-
-
+    <meta charset="utf-8"/>
 </head>
 <body>

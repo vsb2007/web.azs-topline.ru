@@ -1,4 +1,4 @@
-<%--
+<%@ page import="com.web.azstopline.models.SiteUser" %><%--
   Created by IntelliJ IDEA.
   User: VSB
   Date: 19.01.2016
@@ -6,26 +6,42 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    SiteUser user = (SiteUser) session.getAttribute("dbUserName");
+    String userName = "";
+    if (user != null) {
+        userName = user.getName();
+    }
 
+%>
 
-<%@ include file="header.jsp"%>
+<%@ include file="header.jsp" %>
+<%@ include file="menu.jsp" %>
 
-<div class="container">
-  <div class="row">
-    <div class="">
-
-      <form class="form-signin" role="form" action="login" method="POST">
-        <h2 class="text-center">Авторизация</h2>
-        <div style="display:none;" class="error"></div>
-        <input type="text" class="form-control" id="username" name="username" placeholder="User name" required autofocus>
-        <input type="password" class="form-control" placeholder="Password" id="password" name="password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
-      </form>
-
-    </div>
-  </div>
+<%
+    if (userName == null || userName.equals("")) {
+%>
+<div class="section">
+    <h2>Авторизация</h2>
+    <form action="login" method="POST">
+        <input type="text" class="text-input" id="username" name="username" placeholder="User name" required autofocus/>
+        <br>
+        <input type="password" class="text-input" id="password" name="password" placeholder="Password" required/><br>
+        <button class="button raised bg-blue-500 color-white">Вход</button>
+    </form>
 </div>
-<!-- /container -->
+<%
+} else {
+%>
+<div class="section">
+    <h2>Здравствуйте <%=userName%>
+    </h2>
+    <form action="logout" method="POST">
+        <button class="button raised bg-blue-500 color-white">Выход</button>
+    </form>
+</div>
+<%
+    }
+%>
 
-
-<%@ include file="footer.jsp"%>
+<%@ include file="footer.jsp" %>
