@@ -14,7 +14,7 @@ public class DbToplineWeb {
     private String userName = "toplinewebuser";
     private String password = "toplinewebpassword";
     private String error;
-    //private Statement statement;
+    private Statement statement;
     //private PreparedStatement preparedStatement;
 
 
@@ -48,5 +48,12 @@ public class DbToplineWeb {
         return connection;
     }
 
-
+    public Statement getStatement() {
+        try {
+            return getConnection().createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

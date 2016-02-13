@@ -20,7 +20,6 @@ import java.sql.Statement;
  */
 @WebServlet(name = "UserAdd", urlPatterns = {"/usersadd"})
 public class UserAdd extends HttpServlet {
-    private enum usersFields {id_users, users_name}
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/index.jsp").forward(request, response);
@@ -32,31 +31,35 @@ public class UserAdd extends HttpServlet {
         if (siteUser == null || !siteUser.getName().equals("admin")) {
             request.getRequestDispatcher("/index.jsp").forward(request, response);
         }
-        String userNameFromFormUserAdd = (String) request.getAttribute("useradd");
+        String userNameFromFormUserAdd = request.getParameter("username");
 
-        DbToplineWeb db = new DbToplineWeb();
-        Connection connection = db.getConnection();
+        Statement statement;
+        statement = new DbToplineWeb().getStatement();
 
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        String sql = "select * from users where user_name='" + userNameFromFormUserAdd + "'";
+        String sql;
+        sql = "select * from users where user_name='" + userNameFromFormUserAdd + "'";
         ResultSet resultSet = null;
         try {
             resultSet = statement.executeQuery(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         try {
             if (resultSet != null && resultSet.next()) {
-                String nameFromDb = resultSet.getString(usersFields.users_name.toString());
-                if (!resultSet.next()) {
-                    //siteUser = new SiteUser(nameFromDb);
-                }
+                request.setAttribute("errorAddUser","Пользователь существует");
+                request.getRequestDispatcher("/users").forward(request, response);
             }
+            if (resultSet != null && !resultSet.next()) {
+                //String nameFromDb = resultSet.getString(usersFields.users_name.toString());
+                sql = "INSERT INTO users (user_name) VALUES ('"+userNameFromFormUserAdd + "')";
+                boolean flag = statement.execute(sql);
+                if (!flag)
+                    request.setAttribute("errorAddUser","Пользователь добавлен");
+                else
+                    request.setAttribute("errorAddUser","Пользователь не добавлен, ошибка!!!");
+                request.getRequestDispatcher("/users").forward(request, response);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

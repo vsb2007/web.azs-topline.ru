@@ -30,7 +30,7 @@
 
 %>
 <div class="section">
-    <h2>Авторизация должны быть</h2>
+    <h2>Авторизация должна быть</h2>
 </div>
 <%
 
@@ -47,19 +47,56 @@
 
     <%
     } else {
+        if (listUsers.size() > 0) {
+    %>
+    <ul class="list">
+        <%
+            for (SiteUser siteUser : listUsers) {
+
+        %>
+
+        <li ripple >
+            <form action="/userred" method="post">
+                <input type="hidden" id="user-find-label" value="1" name="user-find-label">
+                <input value="<%=siteUser.getName()%>" name="buttonuserred" id="buttonuserred" type="hidden">
+            <button class="button raised color-white bg-blue-500" type="submit">
+		<span class="item-text">
+			<%=siteUser.getName()%>
+			<span class="secondary-text">
+				Здесь будет fio
+			</span>
+		</span>
+                </button></form>
+        </li>
+
+        <%
+            }
+        %>
+    </ul>
+    <%
+
+        }
     %>
 
     <%
         }
     %>
-    </div>
-    <div class="section">
+</div>
+<div class="section">
 
-    <form action="useradd" method="post">
-        <input type="text" class="text-input" placeholder="User name" required name="useradd"
-               id="useradd"> <br>
+    <form action="usersadd" method="post">
+        <input type="text" class="text-input" placeholder="User name" required name="username"
+               id="username"> <br>
         <button class="button raised bg-blue-500 color-white">Добавить пользователя</button>
     </form>
+    <%
+        String errorAddUser = (String) request.getAttribute("errorAddUser");
+        if (errorAddUser != null && !errorAddUser.equals("")) {
+    %>
+    <p class="text"><%=errorAddUser%>
+            <%
+        }
+    %>
 </div>
 <%
 

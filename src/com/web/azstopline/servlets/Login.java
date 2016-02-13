@@ -11,14 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
 
 /**
  * Created by VSB on 19.01.2016.
  */
 @WebServlet(name = "Login", urlPatterns = {"/login"})
 public class Login extends HttpServlet {
-    private enum usersFields{ id_admin_users, admin_name}
+    private enum usersAdminFields { id_admin_users, admin_name}
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,15 +31,9 @@ public class Login extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        DbToplineWeb db = new DbToplineWeb();
-        Connection connection = db.getConnection();
+        Statement statement;
+        statement = new DbToplineWeb().getStatement();
 
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         String sql = "";
         if (username.equals("admin")) {
             sql = "select * from admin_users WHERE admin_name = '" + username +
@@ -58,7 +51,7 @@ public class Login extends HttpServlet {
         }
         try {
             if (resultSet != null && resultSet.next()) {
-                String nameFromDb = resultSet.getString(usersFields.admin_name.toString());
+                String nameFromDb = resultSet.getString(usersAdminFields.admin_name.toString());
                 if (!resultSet.next())
                     siteUser = new SiteUser(nameFromDb);
             }

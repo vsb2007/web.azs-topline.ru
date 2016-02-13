@@ -11,8 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  * Created by VSB on 08.02.2016.
@@ -21,32 +23,43 @@ import java.sql.Statement;
 public class UsersPage extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //request.getRequestDispatcher("/index.jsp").forward(request, response);
-        doPost(request,response);
+        doPost(request, response);
     }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         SiteUser siteUser = (SiteUser) session.getAttribute("dbUserName");
-        if (siteUser!=null && !siteUser.getName().equals("admin")){
+        if (siteUser != null && !siteUser.getName().equals("admin")) {
             request.getRequestDispatcher("/index.jsp").forward(request, response);
-        }
-        else {
+        } else {
 
-            DbToplineWeb db = new DbToplineWeb();
-            Connection connection = db.getConnection();
+            Statement statement;
+            statement = new DbToplineWeb().getStatement();
 
-            Statement statement = null;
+            String sql;
+            sql = "select * from users WHERE user_is_delete=0";
+            ResultSet resultSet = null;
             try {
-                statement = connection.createStatement();
+                resultSet = statement.executeQuery(sql);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            String sql = "";
-            request.setAttribute("listusers",null);
 
+            try {
+                if (resultSet != null) {
+                    ArrayList<SiteUser> arrayListUsers = new ArrayList<>();
+                    while (resultSet.next()) {
+                        SiteUser user = new SiteUser(resultSet.getString(SiteUser.usersTableField.user_name.toString()));
+                        //user.setId();
+                        arrayListUsers.add(user);
+
+                    }
+                    request.setAttribute("listusers", arrayListUsers);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             request.getRequestDispatcher("/ssi/users.jsp").forward(request, response);
         }
-
     }
-
-
 }

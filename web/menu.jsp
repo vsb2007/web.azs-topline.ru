@@ -8,8 +8,15 @@
     <ul class="menu">
 
         <li class="divider"></li>
+        <%
 
+            if (user != null && user.getName().equals("admin")) {
+        %>
         <li ripple><a href="/users"><i class="icon-input"></i>Пользователи</a></li>
+
+        <%
+            }
+        %>
         <%
 
             if (user == null) {
