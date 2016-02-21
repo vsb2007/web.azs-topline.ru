@@ -17,7 +17,7 @@ import java.sql.*;
  */
 @WebServlet(name = "Login", urlPatterns = {"/login"})
 public class Login extends HttpServlet {
-    private enum usersAdminFields { id_admin_users, admin_name}
+    private enum usersAdminFields {id_admin_users, admin_name}
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -30,30 +30,24 @@ public class Login extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
         DbToplineWeb db = new DbToplineWeb();
-
         String sql = "";
         if (username.equals("admin")) {
             sql = "select * from admin_users WHERE admin_name = '" + username +
                     "' AND admin_password = MD5('" + password + "')";
-        }
-        else {
+        } else {
             sql = "select * from users WHERE user_name = '" + username +
                     "' AND user_password = MD5('" + password + "') AND user_is_delete=0";
         }
-
         ResultSet resultSet = null;
         SiteUser siteUser = null;
         resultSet = db.getSelectResult(sql);
-
         try {
             if (resultSet != null && resultSet.next()) {
-                String nameFromDb=null;
+                String nameFromDb = null;
                 if (username.equals("admin")) {
                     nameFromDb = resultSet.getString(usersAdminFields.admin_name.toString());
-                }
-                else {
+                } else {
                     nameFromDb = resultSet.getString(SiteUser.usersTableField.user_name.toString());
                 }
                 if (!resultSet.next())
@@ -62,13 +56,11 @@ public class Login extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (siteUser!=null) {
+        if (siteUser != null) {
             request.setAttribute("user", siteUser);
             HttpSession session = request.getSession();
             session.setAttribute("dbUserName", siteUser);
-
-        }
-        else {
+        } else {
             // some code
         }
         request.getRequestDispatcher("/index.jsp").forward(request, response);

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 @WebServlet(name = "UsersPage", urlPatterns = {"/users"})
 public class UsersPage extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //request.getRequestDispatcher("/index.jsp").forward(request, response);
         doPost(request, response);
     }
 
@@ -42,7 +41,6 @@ public class UsersPage extends HttpServlet {
                     ArrayList<SiteUser> arrayListUsers = new ArrayList<>();
                     while (resultSet.next()) {
                         SiteUser user = new SiteUser(resultSet.getString(SiteUser.usersTableField.user_name.toString()));
-                        //user.setId();
                         arrayListUsers.add(user);
                     }
                     request.setAttribute("listusers", arrayListUsers);

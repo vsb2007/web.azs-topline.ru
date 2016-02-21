@@ -43,7 +43,6 @@ public class SiteUser {
                 this.isBlock = resultSet.getString(SiteUser.usersTableField.user_is_block.toString());
                 this.isDelete = resultSet.getString(SiteUser.usersTableField.user_is_delete.toString());
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -102,7 +101,7 @@ public class SiteUser {
         this.isBlock = isBlock;
     }
 
-    public boolean getPermissionsAccess (String page){
+    public boolean getPermissionsAccess(String page) {
         return true;
     }
 }

@@ -33,18 +33,15 @@ public class UserRed extends HttpServlet {
         String userFindValue = request.getParameter("user-find-label");
         String userRedFormValue = request.getParameter("red_form");
         String userDelValue = request.getParameter("user-delete-id-label");
-
         System.out.println();
         if (userFindValue != null && userFindValue.equals("1")) {
             SiteUser redUser = findUser(request);
-
             if (redUser != null) {
                 request.setAttribute("reduser", redUser);
             } else {
                 request.setAttribute("error", "Пользователь не найден");
             }
         } else if (userRedFormValue != null && userRedFormValue.equals("1")) {
-
             SiteUser redUser = findUser(request);
             updateUser(redUser, request);
             redUser = findUser(request);
@@ -62,10 +59,8 @@ public class UserRed extends HttpServlet {
         String userEmailFromForm = request.getParameter("user-email-label");
         String userIdFromForm = request.getParameter("user-red-id-label");
         String userActiveFlagFromForm = request.getParameter("user-active-flag");
-
         DbToplineWeb db = new DbToplineWeb();
         String sql;
-
         if (userNameFromForm != null
                 && !redUser.getName().equals(userNameFromForm)
                 && !userNameFromForm.equals("")) {
@@ -75,9 +70,7 @@ public class UserRed extends HttpServlet {
                 request.setAttribute("error", "Ошибка обновления имени");
                 return;
             }
-
         }
-
         if (userPasswordFromForm != null && !userPasswordFromForm.equals("")) {
             sql = "update users set user_password=md5('" + userPasswordFromForm + "') where id_user=" + userIdFromForm;
             boolean flag = db.getInsertResult(sql);
@@ -86,7 +79,6 @@ public class UserRed extends HttpServlet {
                 return;
             }
         }
-
         if (userFioFromForm != null) {
             sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
             boolean flag = db.getInsertResult(sql);
@@ -95,7 +87,6 @@ public class UserRed extends HttpServlet {
                 return;
             }
         }
-
         if (userPhoneFromForm != null) {
             sql = "update users set user_phone='" + userPhoneFromForm + "' where id_user=" + userIdFromForm;
             boolean flag = db.getInsertResult(sql);
@@ -104,10 +95,7 @@ public class UserRed extends HttpServlet {
                 return;
             }
         }
-
-        if (userEmailFromForm != null)
-
-        {
+        if (userEmailFromForm != null) {
             sql = "update users set user_email='" + userEmailFromForm + "' where id_user=" + userIdFromForm;
             boolean flag = db.getInsertResult(sql);
             if (flag) {
@@ -115,10 +103,7 @@ public class UserRed extends HttpServlet {
                 return;
             }
         }
-
-        if (userActiveFlagFromForm != null)
-
-        {
+        if (userActiveFlagFromForm != null) {
             if (userActiveFlagFromForm.equals("0")) {
                 sql = "update users set user_is_block='" + userActiveFlagFromForm + "' where id_user=" + userIdFromForm;
                 boolean flag = db.getInsertResult(sql);
@@ -128,7 +113,6 @@ public class UserRed extends HttpServlet {
                 }
             }
         }
-
         if (userActiveFlagFromForm == null || !userActiveFlagFromForm.equals("0")) {
             sql = "update users set user_is_block='1' where id_user=" + userIdFromForm;
             boolean flag = db.getInsertResult(sql);
@@ -137,7 +121,6 @@ public class UserRed extends HttpServlet {
                 return;
             }
         }
-
     }
 
     private SiteUser findUser(HttpServletRequest request) {
@@ -156,13 +139,6 @@ public class UserRed extends HttpServlet {
         try {
             if (resultSet != null && resultSet.next()) {
                 redUser = new SiteUser(resultSet.getString(SiteUser.usersTableField.user_name.toString()));
-               /* if (redUser != null) {
-                    redUser.setId(Integer.parseInt(resultSet.getString(SiteUser.usersTableField.id_user.toString())));
-                    redUser.setEmail(resultSet.getString(SiteUser.usersTableField.user_email.toString()));
-                    redUser.setFio(resultSet.getString(SiteUser.usersTableField.user_fio.toString()));
-                    redUser.setPhone(resultSet.getString(SiteUser.usersTableField.user_phone.toString()));
-                    redUser.setIsBlock(resultSet.getString(SiteUser.usersTableField.user_is_block.toString()));
-                }*/
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -36,7 +36,6 @@ public class PermissionsAccessLinks extends HttpServlet {
         if (addLinkUrlForm != null && addLinkUrlForm.equals("1")) {
             funcAddLinkUrl(request);
         }
-
         ArrayList<LinkUrl> linkUrls = LinkUrl.getUrlList(siteUser);
         request.setAttribute("linkUrlList", linkUrls);
         request.getRequestDispatcher("/ssi/links.jsp").forward(request, response);
@@ -49,7 +48,6 @@ public class PermissionsAccessLinks extends HttpServlet {
             request.setAttribute("errorAddUrl", "Ошибка 000 добавления URL");
             return;
         }
-
         DbToplineWeb db = new DbToplineWeb();
         String sql;
         sql = "insert into permissions_links (link_url, link_descriptions,link_is_block)" +

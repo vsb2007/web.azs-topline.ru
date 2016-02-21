@@ -60,7 +60,7 @@ public class LinkUrl {
         if (siteUser.getName().equals("admin")) {
             sql = "select * from permissions_links";
         }
-        ArrayList<LinkUrl> linkUrls=null;
+        ArrayList<LinkUrl> linkUrls = null;
         try {
             resultSet = db.getSelectResult(sql);
             linkUrls = new ArrayList<>(resultSet.getFetchSize());

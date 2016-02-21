@@ -15,8 +15,6 @@ public class DbToplineWeb {
     private String password = "toplinewebpassword";
     private String error;
     private Statement statement;
-    //private PreparedStatement preparedStatement;
-
 
     public DbToplineWeb() {
         try {
@@ -47,7 +45,8 @@ public class DbToplineWeb {
         }
         return resultSet;
     }
-    public boolean getInsertResult(String sql){
+
+    public boolean getInsertResult(String sql) {
         try {
             return statement.execute(sql);
         } catch (SQLException e) {
@@ -55,6 +54,4 @@ public class DbToplineWeb {
         }
         return true;
     }
-
-
 }

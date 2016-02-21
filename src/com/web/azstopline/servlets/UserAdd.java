@@ -32,30 +32,26 @@ public class UserAdd extends HttpServlet {
             request.getRequestDispatcher("/index.jsp").forward(request, response);
         }
         String userNameFromFormUserAdd = request.getParameter("username");
-
         DbToplineWeb db = new DbToplineWeb();
-
         String sql;
         sql = "select * from users where user_name='" + userNameFromFormUserAdd + "'";
         ResultSet resultSet = null;
         resultSet = db.getSelectResult(sql);
-
         try {
             if (resultSet != null && resultSet.next()) {
-                request.setAttribute("errorAddUser","Пользователь существует");
+                request.setAttribute("errorAddUser", "Пользователь существует");
                 request.getRequestDispatcher("/users").forward(request, response);
             }
             if (resultSet != null && !resultSet.next()) {
                 //String nameFromDb = resultSet.getString(usersFields.users_name.toString());
-                sql = "INSERT INTO users (user_name) VALUES ('"+userNameFromFormUserAdd + "')";
+                sql = "INSERT INTO users (user_name) VALUES ('" + userNameFromFormUserAdd + "')";
                 boolean flag = db.getInsertResult(sql);
                 if (!flag)
-                    request.setAttribute("errorAddUser","Пользователь добавлен");
+                    request.setAttribute("errorAddUser", "Пользователь добавлен");
                 else
-                    request.setAttribute("errorAddUser","Пользователь не добавлен, ошибка!!!");
+                    request.setAttribute("errorAddUser", "Пользователь не добавлен, ошибка!!!");
                 request.getRequestDispatcher("/users").forward(request, response);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
