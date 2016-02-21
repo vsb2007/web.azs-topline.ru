@@ -1,6 +1,11 @@
 package com.web.azstopline.models;
 
+import com.web.azstopline.dbconnection.DbToplineWeb;
+
 import javax.servlet.http.HttpServletRequest;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -11,22 +16,42 @@ public class SiteUser {
     private String fio = "";
     private String phone = "";
     private String email = "";
+    private String isBlock = "";
+    private String isDelete = "";
     private int id;
-    private ArrayList<String> operationList;
 
     public enum usersTableField {
-        id_user
-        , user_name
-        , user_password
-        , user_fio
-        , user_phone
-        , user_email
-        , user_is_block
-        , user_is_delete
+        id_user, user_name, user_password, user_fio, user_phone, user_email, user_is_block, user_is_delete
     }
 
     public SiteUser(String name) {
         this.name = name;
+        Statement statement;
+        statement = new DbToplineWeb().getStatement();
+        String sql;
+        ResultSet resultSet = null;
+        if (this.name != null) {
+            sql = "select * from users where user_name='" + this.name + "'";
+            try {
+                resultSet = statement.executeQuery(sql);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        SiteUser redUser = null;
+        try {
+            if (resultSet != null && resultSet.next()) {
+                this.id = Integer.parseInt(resultSet.getString(SiteUser.usersTableField.id_user.toString()));
+                this.email = resultSet.getString(SiteUser.usersTableField.user_email.toString());
+                this.fio = resultSet.getString(SiteUser.usersTableField.user_fio.toString());
+                this.phone = resultSet.getString(SiteUser.usersTableField.user_phone.toString());
+                this.isBlock = resultSet.getString(SiteUser.usersTableField.user_is_block.toString());
+                this.isDelete = resultSet.getString(SiteUser.usersTableField.user_is_delete.toString());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getName() {
@@ -47,6 +72,10 @@ public class SiteUser {
 
     public int getId() {
         return id;
+    }
+
+    public String getIsBlock() {
+        return isBlock;
     }
 
     public void setFio(String fio) {
@@ -72,5 +101,13 @@ public class SiteUser {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setIsBlock(String isBlock) {
+        this.isBlock = isBlock;
+    }
+
+    public boolean getPermissionsAccess (String page){
+        return true;
     }
 }

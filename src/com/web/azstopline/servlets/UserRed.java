@@ -49,6 +49,7 @@ public class UserRed extends HttpServlet {
             updateUser(redUser, request);
             redUser = findUser(request);
             request.setAttribute("reduser", redUser);
+            request.setAttribute("updateMessage", "Изменения сохранены");
         }
         request.getRequestDispatcher("/ssi/userred.jsp").forward(request, response);
     }
@@ -58,8 +59,9 @@ public class UserRed extends HttpServlet {
         String userPasswordFromForm = request.getParameter("user-password-label");
         String userFioFromForm = request.getParameter("user-fio-label");
         String userPhoneFromForm = request.getParameter("user-phone-label");
-        String userEmailFromForm = request.getParameter("user-Email-label");
+        String userEmailFromForm = request.getParameter("user-email-label");
         String userIdFromForm = request.getParameter("user-red-id-label");
+        String userActiveFlagFromForm = request.getParameter("user-active-flag");
 
         Statement statement;
         statement = new DbToplineWeb().getStatement();
@@ -114,6 +116,27 @@ public class UserRed extends HttpServlet {
                 return;
             }
         }
+        if (userActiveFlagFromForm != null) {
+            if (userActiveFlagFromForm.equals("0")) {
+                sql = "update users set user_is_block='" + userActiveFlagFromForm + "' where id_user=" + userIdFromForm;
+
+                try {
+                    statement.execute(sql);
+                } catch (SQLException e) {
+                    request.setAttribute("error", "Ошибка обновления блокировки");
+                    return;
+                }
+            }
+        }
+        if (userActiveFlagFromForm == null || !userActiveFlagFromForm.equals("0")) {
+            sql = "update users set user_is_block='1' where id_user=" + userIdFromForm;
+            try {
+                statement.execute(sql);
+            } catch (SQLException e) {
+                request.setAttribute("error", "Ошибка обновления блокировки");
+                return;
+            }
+        }
     }
 
     private SiteUser findUser(HttpServletRequest request) {
@@ -137,12 +160,13 @@ public class UserRed extends HttpServlet {
         try {
             if (resultSet != null && resultSet.next()) {
                 redUser = new SiteUser(resultSet.getString(SiteUser.usersTableField.user_name.toString()));
-                if (redUser != null) {
+               /* if (redUser != null) {
                     redUser.setId(Integer.parseInt(resultSet.getString(SiteUser.usersTableField.id_user.toString())));
                     redUser.setEmail(resultSet.getString(SiteUser.usersTableField.user_email.toString()));
                     redUser.setFio(resultSet.getString(SiteUser.usersTableField.user_fio.toString()));
                     redUser.setPhone(resultSet.getString(SiteUser.usersTableField.user_phone.toString()));
-                }
+                    redUser.setIsBlock(resultSet.getString(SiteUser.usersTableField.user_is_block.toString()));
+                }*/
             }
         } catch (SQLException e) {
             e.printStackTrace();

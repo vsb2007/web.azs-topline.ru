@@ -39,6 +39,10 @@ public class Login extends HttpServlet {
             sql = "select * from admin_users WHERE admin_name = '" + username +
                     "' AND admin_password = MD5('" + password + "')";
         }
+        else {
+            sql = "select * from users WHERE user_name = '" + username +
+                    "' AND user_password = MD5('" + password + "') AND user_is_delete=0";
+        }
 
         ResultSet resultSet = null;
         SiteUser siteUser = null;
@@ -51,7 +55,13 @@ public class Login extends HttpServlet {
         }
         try {
             if (resultSet != null && resultSet.next()) {
-                String nameFromDb = resultSet.getString(usersAdminFields.admin_name.toString());
+                String nameFromDb=null;
+                if (username.equals("admin")) {
+                    nameFromDb = resultSet.getString(usersAdminFields.admin_name.toString());
+                }
+                else {
+                    nameFromDb = resultSet.getString(SiteUser.usersTableField.user_name.toString());
+                }
                 if (!resultSet.next())
                     siteUser = new SiteUser(nameFromDb);
             }

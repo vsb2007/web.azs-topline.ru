@@ -13,12 +13,11 @@
             if (user != null && user.getName().equals("admin")) {
         %>
         <li ripple><a href="/users"><i class="icon-input"></i>Пользователи</a></li>
-
+        <li ripple><a href="/permissions"><i class="icon-input"></i>Доступные линки</a></li>
         <%
             }
         %>
         <%
-
             if (user == null) {
         %>
         <li ripple><a href="/login"><i class="icon-menu"></i>Вход</a></li>

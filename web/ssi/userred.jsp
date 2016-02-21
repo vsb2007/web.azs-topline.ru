@@ -122,7 +122,18 @@
             <li ripple>
                 <span class="item-text">
                 <div class="switch">
+                    <%
+                        if (redUser.getIsBlock().equals("0")) {
+                    %>
+                    <input type="checkbox" id="user-active-flag" name="user-active-flag" value="0" checked/>
+                    <%
+                    } else {
+                    %>
                     <input type="checkbox" id="user-active-flag" name="user-active-flag" value="0"/>
+                    <%
+                        }
+
+                    %>
                     <label for="user-active-flag"></label>
                 </div>
                 <span class="secondary-text">
@@ -136,8 +147,24 @@
         </ul>
         <input type="hidden" id="red_form" value="1" name="red_form">
         <input type="hidden" id="user-red-id-label" name="user-red-id-label" value="<%=redUser.getId()%>">
-        <button class="button raised color-white bg-blue-500" type="submit">Сохранить</button>
+        <button class="button raised color-white bg-blue-500" type="submit" id="updateButton" name="updateButton">
+            Сохранить
+        </button>
     </form>
+    <%
+        if (error == null) {
+            String updateMessage = (String) request.getAttribute("updateMessage");
+            if (updateMessage != null) {
+    %>
+                <span class="secondary-text">
+				    <label for="updateButton" class="label color-green-500"><%=updateMessage%>
+                    </label>
+			</span>
+    <%
+            }
+        }
+
+    %>
 </div>
 <div class="section">
     <form action="/userred" method="post">

@@ -55,18 +55,36 @@
 
         %>
 
-        <li ripple >
+        <li ripple>
             <form action="/userred" method="post">
                 <input type="hidden" id="user-find-label" value="1" name="user-find-label">
                 <input value="<%=siteUser.getName()%>" name="buttonuserred" id="buttonuserred" type="hidden">
-            <button class="button raised color-white bg-blue-500" type="submit">
+                <%
+                    if (siteUser.getIsBlock().equals("0")) {
+                %>
+                <button class="button raised color-white bg-blue-500" type="submit" style="width: 15em;">
+                        <%
+                    }
+                    else {
+                %>
+                    <button class="button raised color-white bg-grey-500" type="submit" style="width: 15em;">
+                        <%
+                    }
+                        %>
 		<span class="item-text">
 			<%=siteUser.getName()%>
 			<span class="secondary-text">
-				Здесь будет fio
+				<%
+                    if (siteUser.getFio() != null) {
+                %>
+                    <%=siteUser.getFio()%>
+                <%
+                    }
+                %>
 			</span>
 		</span>
-                </button></form>
+                    </button>
+            </form>
         </li>
 
         <%
@@ -85,7 +103,7 @@
 <div class="section">
 
     <form action="usersadd" method="post">
-        <input type="text" class="text-input" placeholder="User name" required name="username"
+        <input type="text" class="text-input border-green-500" placeholder="User name" required name="username"
                id="username"> <br>
         <button class="button raised bg-blue-500 color-white">Добавить пользователя</button>
     </form>
