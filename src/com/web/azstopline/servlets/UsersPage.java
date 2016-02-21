@@ -32,19 +32,11 @@ public class UsersPage extends HttpServlet {
         if (siteUser != null && !siteUser.getName().equals("admin")) {
             request.getRequestDispatcher("/index.jsp").forward(request, response);
         } else {
-
-            Statement statement;
-            statement = new DbToplineWeb().getStatement();
-
+            DbToplineWeb db = new DbToplineWeb();
             String sql;
             sql = "select * from users WHERE user_is_delete=0";
             ResultSet resultSet = null;
-            try {
-                resultSet = statement.executeQuery(sql);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
+            resultSet = db.getSelectResult(sql);
             try {
                 if (resultSet != null) {
                     ArrayList<SiteUser> arrayListUsers = new ArrayList<>();
@@ -52,7 +44,6 @@ public class UsersPage extends HttpServlet {
                         SiteUser user = new SiteUser(resultSet.getString(SiteUser.usersTableField.user_name.toString()));
                         //user.setId();
                         arrayListUsers.add(user);
-
                     }
                     request.setAttribute("listusers", arrayListUsers);
                 }

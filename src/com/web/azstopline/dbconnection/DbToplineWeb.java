@@ -19,41 +19,42 @@ public class DbToplineWeb {
 
 
     public DbToplineWeb() {
-
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public Connection getConnection() {
-        connection = null;
-
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             connection = DriverManager.getConnection(url, userName, password);
-            //statement = connection.createStatement();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            statement = connection.createStatement();
+        } catch (Exception e) {
+            //e.printStackTrace();
         }
-
-
-        return connection;
     }
 
-    public Statement getStatement() {
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public ResultSet getSelectResult(String sql) {
+        ResultSet resultSet = null;
         try {
-            return getConnection().createStatement();
+            resultSet = statement.executeQuery(sql);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            setError("Ошибка: " + e);
+            return null;
+        }
+        return resultSet;
+    }
+    public boolean getInsertResult(String sql){
+        try {
+            return statement.execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return true;
     }
+
+
 }

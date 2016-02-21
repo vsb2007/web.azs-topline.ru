@@ -31,8 +31,7 @@ public class Login extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        Statement statement;
-        statement = new DbToplineWeb().getStatement();
+        DbToplineWeb db = new DbToplineWeb();
 
         String sql = "";
         if (username.equals("admin")) {
@@ -46,13 +45,8 @@ public class Login extends HttpServlet {
 
         ResultSet resultSet = null;
         SiteUser siteUser = null;
-        try {
-            if (!sql.equals("")) {
-                resultSet = statement.executeQuery(sql);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        resultSet = db.getSelectResult(sql);
+
         try {
             if (resultSet != null && resultSet.next()) {
                 String nameFromDb=null;

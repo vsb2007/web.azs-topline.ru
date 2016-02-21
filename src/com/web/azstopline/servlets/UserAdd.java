@@ -33,17 +33,13 @@ public class UserAdd extends HttpServlet {
         }
         String userNameFromFormUserAdd = request.getParameter("username");
 
-        Statement statement;
-        statement = new DbToplineWeb().getStatement();
+        DbToplineWeb db = new DbToplineWeb();
 
         String sql;
         sql = "select * from users where user_name='" + userNameFromFormUserAdd + "'";
         ResultSet resultSet = null;
-        try {
-            resultSet = statement.executeQuery(sql);
-        } catch (SQLException e) {
-            //e.printStackTrace();
-        }
+        resultSet = db.getSelectResult(sql);
+
         try {
             if (resultSet != null && resultSet.next()) {
                 request.setAttribute("errorAddUser","Пользователь существует");
@@ -52,7 +48,7 @@ public class UserAdd extends HttpServlet {
             if (resultSet != null && !resultSet.next()) {
                 //String nameFromDb = resultSet.getString(usersFields.users_name.toString());
                 sql = "INSERT INTO users (user_name) VALUES ('"+userNameFromFormUserAdd + "')";
-                boolean flag = statement.execute(sql);
+                boolean flag = db.getInsertResult(sql);
                 if (!flag)
                     request.setAttribute("errorAddUser","Пользователь добавлен");
                 else

@@ -63,86 +63,86 @@ public class UserRed extends HttpServlet {
         String userIdFromForm = request.getParameter("user-red-id-label");
         String userActiveFlagFromForm = request.getParameter("user-active-flag");
 
-        Statement statement;
-        statement = new DbToplineWeb().getStatement();
+        DbToplineWeb db = new DbToplineWeb();
         String sql;
 
         if (userNameFromForm != null
                 && !redUser.getName().equals(userNameFromForm)
                 && !userNameFromForm.equals("")) {
             sql = "update users set user_name='" + userNameFromForm + "' where id_user=" + userIdFromForm;
-            try {
-                statement.execute(sql);
-            } catch (SQLException e) {
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
                 request.setAttribute("error", "Ошибка обновления имени");
                 return;
             }
+
         }
+
         if (userPasswordFromForm != null && !userPasswordFromForm.equals("")) {
             sql = "update users set user_password=md5('" + userPasswordFromForm + "') where id_user=" + userIdFromForm;
-            try {
-                statement.execute(sql);
-            } catch (SQLException e) {
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
                 request.setAttribute("error", "Ошибка обновления пароля");
                 return;
             }
         }
-        System.out.println(userFioFromForm);
-        System.out.println(userIdFromForm);
+
         if (userFioFromForm != null) {
             sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
-            try {
-                statement.execute(sql);
-            } catch (SQLException e) {
-                request.setAttribute("error", "Ошибка обновления ФИО:" + e);
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
+                request.setAttribute("error", "Ошибка обновления ФИО");
                 return;
             }
         }
+
         if (userPhoneFromForm != null) {
             sql = "update users set user_phone='" + userPhoneFromForm + "' where id_user=" + userIdFromForm;
-            try {
-                statement.execute(sql);
-            } catch (SQLException e) {
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
                 request.setAttribute("error", "Ошибка обновления телефона");
                 return;
             }
         }
-        if (userEmailFromForm != null) {
+
+        if (userEmailFromForm != null)
+
+        {
             sql = "update users set user_email='" + userEmailFromForm + "' where id_user=" + userIdFromForm;
-            try {
-                statement.execute(sql);
-            } catch (SQLException e) {
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
                 request.setAttribute("error", "Ошибка обновления email");
                 return;
             }
         }
-        if (userActiveFlagFromForm != null) {
+
+        if (userActiveFlagFromForm != null)
+
+        {
             if (userActiveFlagFromForm.equals("0")) {
                 sql = "update users set user_is_block='" + userActiveFlagFromForm + "' where id_user=" + userIdFromForm;
-
-                try {
-                    statement.execute(sql);
-                } catch (SQLException e) {
+                boolean flag = db.getInsertResult(sql);
+                if (flag) {
                     request.setAttribute("error", "Ошибка обновления блокировки");
                     return;
                 }
             }
         }
+
         if (userActiveFlagFromForm == null || !userActiveFlagFromForm.equals("0")) {
             sql = "update users set user_is_block='1' where id_user=" + userIdFromForm;
-            try {
-                statement.execute(sql);
-            } catch (SQLException e) {
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
                 request.setAttribute("error", "Ошибка обновления блокировки");
                 return;
             }
         }
+
     }
 
     private SiteUser findUser(HttpServletRequest request) {
         String userNameFromButtonValue = request.getParameter("buttonuserred");
-        Statement statement;
-        statement = new DbToplineWeb().getStatement();
+        DbToplineWeb db = new DbToplineWeb();
         String sql;
         if (userNameFromButtonValue != null && !userNameFromButtonValue.equals("")) {
             sql = "select * from users where user_name='" + userNameFromButtonValue + "'";
@@ -151,11 +151,7 @@ public class UserRed extends HttpServlet {
             sql = "select * from users where id_user='" + userIdFromForm + "'";
         }
         ResultSet resultSet = null;
-        try {
-            resultSet = statement.executeQuery(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        resultSet = db.getSelectResult(sql);
         SiteUser redUser = null;
         try {
             if (resultSet != null && resultSet.next()) {

@@ -35,7 +35,6 @@ public class PermissionsAccessLinks extends HttpServlet {
         String addLinkUrlForm = request.getParameter("addLinkUrlForm");
         if (addLinkUrlForm != null && addLinkUrlForm.equals("1")) {
             funcAddLinkUrl(request);
-
         }
 
         ArrayList<LinkUrl> linkUrls = LinkUrl.getUrlList(siteUser);
@@ -50,19 +49,18 @@ public class PermissionsAccessLinks extends HttpServlet {
             request.setAttribute("errorAddUrl", "Ошибка 000 добавления URL");
             return;
         }
-        Statement statement;
-        statement = new DbToplineWeb().getStatement();
+
+        DbToplineWeb db = new DbToplineWeb();
         String sql;
-        ResultSet resultSet = null;
         sql = "insert into permissions_links (link_url, link_descriptions,link_is_block)" +
                 "values ('" + linkUrl + "','" + linkDescription + "',0)";
-        try {
-            statement.execute(sql);
-        } catch (SQLException e) {
-            request.setAttribute("errorAddUrl", "Ошибка 001 добавления URL: " + e);
+        boolean flag = db.getInsertResult(sql);
+        if (flag) {
+            request.setAttribute("error", "Ошибка обновления блокировки");
+            request.setAttribute("errorAddUrl", "Ошибка 001 добавления URL:");
             return;
         }
-        request.setAttribute("addLinkUrlMessage","URL добавлен");
+        request.setAttribute("addLinkUrlMessage", "URL добавлен");
     }
 }
 

@@ -53,8 +53,7 @@ public class LinkUrl {
     }
 
     public static ArrayList<LinkUrl> getUrlList(SiteUser siteUser) {
-        Statement statement;
-        statement = new DbToplineWeb().getStatement();
+        DbToplineWeb db = new DbToplineWeb();
         String sql = null;
         ResultSet resultSet = null;
 
@@ -63,7 +62,7 @@ public class LinkUrl {
         }
         ArrayList<LinkUrl> linkUrls=null;
         try {
-            resultSet = statement.executeQuery(sql);
+            resultSet = db.getSelectResult(sql);
             linkUrls = new ArrayList<>(resultSet.getFetchSize());
             if (resultSet != null) {
                 while (resultSet.next()) {

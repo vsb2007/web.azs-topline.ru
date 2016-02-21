@@ -26,17 +26,12 @@ public class SiteUser {
 
     public SiteUser(String name) {
         this.name = name;
-        Statement statement;
-        statement = new DbToplineWeb().getStatement();
+        DbToplineWeb db = new DbToplineWeb();
         String sql;
         ResultSet resultSet = null;
         if (this.name != null) {
             sql = "select * from users where user_name='" + this.name + "'";
-            try {
-                resultSet = statement.executeQuery(sql);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            resultSet = db.getSelectResult(sql);
         }
         SiteUser redUser = null;
         try {
