@@ -1,0 +1,54 @@
+package io.bgroup.topline.model;
+
+import java.sql.*;
+
+public class DbToplineWeb {
+    private Connection connection;
+    private String host = "192.168.19.43";
+    private String portNumber = "3306";
+    private String databaseName = "toplineweb";
+    private String url = "jdbc:mysql://" + host + ":" + portNumber + "/" + databaseName;
+    private String userName = "toplinewebuser";
+    private String password = "toplinewebpassword";
+    private String error;
+    private Statement statement;
+
+    public DbToplineWeb() {
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            connection = DriverManager.getConnection(url, userName, password);
+            statement = connection.createStatement();
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public ResultSet getSelectResult(String sql) {
+        ResultSet resultSet = null;
+        try {
+            resultSet = statement.executeQuery(sql);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            setError("Ошибка: " + e);
+            return null;
+        }
+        return resultSet;
+    }
+
+    public boolean getInsertResult(String sql) {
+        try {
+            return statement.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+}
