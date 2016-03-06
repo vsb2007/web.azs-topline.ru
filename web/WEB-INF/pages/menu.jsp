@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <div class="sidemenu sidebar responsive" id="navigation-sidemenu" hidden>
@@ -8,26 +9,14 @@
     <ul class="menu">
 
         <li class="divider"></li>
-        <%
-
-            if (user != null && user.getName().equals("admin")) {
-        %>
-        <li ripple><a href="/users"><i class="icon-input"></i>Пользователи</a></li>
-        <li ripple><a href="/permissions"><i class="icon-input"></i>Доступные линки</a></li>
-        <%
-            }
-        %>
-        <%
-            if (user == null) {
-        %>
-        <li ripple><a href="/login"><i class="icon-menu"></i>Вход</a></li>
-        <%
-        } else {
-        %>
-        <li ripple><a href="/logout"><i class="icon-menu"></i>Выход</a></li>
-        <%
-            }
-        %>
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <li ripple><a href="/users"><i class="icon-input"></i>Пользователи</a></li>
+            <li ripple><a href="/permissions"><i class="icon-input"></i>Доступные линки</a></li>
+            <li ripple><a href="/logout"><i class="icon-menu"></i>Выход</a></li>
+        </sec:authorize>
+        <sec:authorize access="!hasRole('ROLE_ADMIN')">
+            <li ripple><a href="/index"><i class="icon-menu"></i>Вход</a></li>
+        </sec:authorize>
     </ul>
 </div>
 <div class="main-content">

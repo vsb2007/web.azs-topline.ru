@@ -1,5 +1,6 @@
 package io.bgroup.topline.config;
 
+import io.bgroup.topline.model.SiteUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
@@ -25,6 +27,8 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     DataSource mDataSource;
 
@@ -36,10 +40,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authoritiesByUsernameQuery("SELECT username,role FROM user_roles WHERE username=?");
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 /*
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -48,42 +48,70 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication().withUser("superadmin").password("superadmin").roles("SUPERADMIN");
     }
     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+    return bCryptPasswordEncoder;
+}
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/protected/**").access("hasRole('ROLE_ADMIN')")
+        http
+                .authorizeRequests()
+                .antMatchers("/index").permitAll()
+                .antMatchers("/").permitAll()
+                .and().formLogin().defaultSuccessUrl("/",true)
+                .and().logout().logoutUrl("/index")
+                .and().logout().logoutSuccessUrl("/index")
+
+        ;
+
+        /*http
+                .authorizeRequests()
+               .antMatchers("/protected/**").access("hasRole('ROLE_ADMIN')")
                 .antMatchers("/confidential/**").access("hasRole('ROLE_SUPERADMIN')")
                 //.and().formLogin().defaultSuccessUrl("/", false);
                 .and().formLogin().defaultSuccessUrl("/",true);
-        /*
+*/
+/*
           .antMatchers("/protected/**").access("hasRole('ROLE_ADMIN')")
                 .antMatchers("/confidential/**").access("hasRole('ROLE_SUPERADMIN')")
+                .antMatchers("/links/**").access("hasRole('ROLE_LOGIN')")
                 //.and().formLogin().defaultSuccessUrl("/", false);
                 .and().formLogin()
                 .loginPage("/index")
-                .loginProcessingUrl("/login.do")
+                //.loginProcessingUrl("/login.do")
                 .defaultSuccessUrl("/")
                 .failureUrl("/index?err=1")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                /*
+
                 .and()
                 .logout()
                 .logoutRequestMatcher( new AntPathRequestMatcher( "/logout" ) )
-                .logoutSuccessUrl( "/login?out=1" )
+                .logoutSuccessUrl( "/index" )
                 .deleteCookies( "JSESSIONID" )
                 .invalidateHttpSession( true )
                 .and()
                 .sessionManagement()
-                .invalidSessionUrl( "/login?time=1" )
+                .invalidSessionUrl( "/index" )
                 .maximumSessions( 1 )
-                .and()
-                .csrf().disable();
-                *-/
+                //.and()
+                //.csrf().disable();
         ;
+        */
+/*        http
+                .authorizeRequests()
+                .antMatchers("/index").anonymous()
+                .anyRequest().fullyAuthenticated()
+                .and()
+                .formLogin()
+                .loginPage("/index")
+                .defaultSuccessUrl("/")
+                .and()
+                .logout();
+*/
 
-         */
+
     }
 
 }

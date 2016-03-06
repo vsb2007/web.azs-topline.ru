@@ -1,6 +1,6 @@
-<%@ page import="io.bgroup.toplineweb.model.SiteUser" %>
+<%@ page import="io.bgroup.topline.model.SiteUser" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="io.bgroup.toplineweb.model.LinkUrl" %><%--
+<%@ page import="io.bgroup.topline.model.LinkUrl" %><%--
   Created by IntelliJ IDEA.
   User: VSB
   Date: 13.02.2016
