@@ -12,9 +12,11 @@
         <sec:authorize access="hasRole('ROLE_ADMIN')">
             <li ripple><a href="/users"><i class="icon-input"></i>Пользователи</a></li>
             <li ripple><a href="/permissions"><i class="icon-input"></i>Доступные линки</a></li>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_LOGIN')">
             <li ripple><a href="/logout"><i class="icon-menu"></i>Выход</a></li>
         </sec:authorize>
-        <sec:authorize access="!hasRole('ROLE_ADMIN')">
+        <sec:authorize access="!hasRole('ROLE_LOGIN')">
             <li ripple><a href="/index"><i class="icon-menu"></i>Вход</a></li>
         </sec:authorize>
     </ul>

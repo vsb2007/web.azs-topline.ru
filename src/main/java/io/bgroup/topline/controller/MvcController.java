@@ -1,27 +1,36 @@
 package io.bgroup.topline.controller;
 
+import io.bgroup.topline.model.DbToplineWeb;
 import io.bgroup.topline.model.SiteUser;
-import io.bgroup.topline.servlets.Login;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 
 @Controller
 @EnableWebMvc
 public class MvcController {
+
+    @Autowired
+    private DriverManagerDataSource dataSource;
+
+    @Autowired
+    private SiteUser siteUser;
+
+    @Autowired
+    private DbToplineWeb dbToplineWeb;
 
     @RequestMapping(value = {"/", "/index**","/index"})
     public String welcomePage(Model model,UsernamePasswordAuthenticationToken principal) {
@@ -38,19 +47,8 @@ public class MvcController {
         }
         return "index";
     }
-/*
-    @RequestMapping("/index")
-    public String index(Model model) {
-        //public ModelAndView welcomePage() {
-        // ModelAndView model = new ModelAndView();
-        //SiteUser dbUserName = new SiteUser().findSiteUser(principal.getName());
-        //model.addObject("dbUserName", dbUserName);
-        //model.setViewName("index");
-        //model.addAttribute("dbUserName", dbUserName);
-        return "index";
-    }
-*/
-    @RequestMapping(value = "/protected**", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/users**", method = RequestMethod.GET)
     public ModelAndView protectedPage() {
         ModelAndView model = new ModelAndView();
         model.addObject("title", "Welcome to secure page!");
@@ -68,15 +66,22 @@ public class MvcController {
         return model;
     }
 
-
     @RequestMapping(value="/logout")
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        System.out.println("Exit auth!!!");
         return "redirect:/index?logout";
+    }
+
+    @RequestMapping(value="/users")
+    public ModelAndView UsersPage (UsernamePasswordAuthenticationToken principal) {
+        ModelAndView model = new ModelAndView();
+        ArrayList<SiteUser> list = siteUser.getListSiteUsers(principal);
+        model.addObject("listUsers",list);
+        model.setViewName("users");
+        return model;
     }
 
 }

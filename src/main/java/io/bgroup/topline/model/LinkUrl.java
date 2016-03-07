@@ -1,6 +1,7 @@
 package io.bgroup.topline.model;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
@@ -18,12 +19,13 @@ public class LinkUrl {
     private String description;
     private String isBlock;
 
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+    /*public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+*/
 
     public String getUrl() {
         return url;

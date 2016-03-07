@@ -1,26 +1,27 @@
 package io.bgroup.topline.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 import java.sql.*;
+import java.util.List;
+import java.util.Map;
+
 
 public class DbToplineWeb {
-    private Connection connection;
-    private String host = "192.168.19.43";
-    private String portNumber = "3306";
-    private String databaseName = "toplineweb";
-    private String url = "jdbc:mysql://" + host + ":" + portNumber + "/" + databaseName;
-    private String userName = "toplinewebuser";
-    private String password = "toplinewebpassword";
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     private String error;
-    private Statement statement;
 
     public DbToplineWeb() {
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            connection = DriverManager.getConnection(url, userName, password);
-            statement = connection.createStatement();
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
     }
 
     public String getError() {
@@ -31,18 +32,19 @@ public class DbToplineWeb {
         this.error = error;
     }
 
-    public ResultSet getSelectResult(String sql) {
-        ResultSet resultSet = null;
+    public List<Map<String, Object>> getSelectResult(String sql) {
+        List<Map<String, Object>> list;
+        System.out.println("select start");
         try {
-            resultSet = statement.executeQuery(sql);
+            list = jdbcTemplate.queryForList(sql);
         } catch (Exception e) {
-            //e.printStackTrace();
             setError("Ошибка: " + e);
             return null;
         }
-        return resultSet;
+        return list;
     }
 
+    /*
     public boolean getInsertResult(String sql) {
         try {
             return statement.execute(sql);
@@ -50,5 +52,5 @@ public class DbToplineWeb {
             e.printStackTrace();
         }
         return true;
-    }
+    }*/
 }

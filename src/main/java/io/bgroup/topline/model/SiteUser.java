@@ -1,11 +1,8 @@
 package io.bgroup.topline.model;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import javax.servlet.http.HttpServletRequest;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,57 +12,41 @@ public class SiteUser {
     private String fio = "";
     private String phone = "";
     private String email = "";
-    private String isBlock = "";
+    private String isEnable = "";
     private String isDelete = "";
-    private int id;
+    private String id;
 
-    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private DbToplineWeb db;
 
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public void setDb(DbToplineWeb db) {
+        this.db = db;
     }
 
-    public SiteUser(JdbcTemplate jdbcTemplate) {
+    private String error;
+
+
+    /*public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+*/
     public SiteUser() {
     }
-    public enum usersTableField {
-        id_user, user_name, user_password, user_fio, user_phone, user_email, user_is_block, user_is_delete
+
+    public String getError() {
+        return error;
     }
-    private enum usersAdminFields {id_admin_users, admin_name}
 
-    public SiteUser findSiteUser(String name) {
+    public void setError(String error) {
+        this.error = error;
+    }
 
+    public enum usersTableField {
+        id_user, username, password, user_fio, user_phone, user_email, enabled, user_is_delete
+    }
+
+    public void setName(String name) {
         this.name = name;
-        //DbToplineWeb db = new DbToplineWeb();
-        String sql;
-        ResultSet resultSet = null;
-        if (this.name != null) {
-            sql = "select * from users where user_name='" + this.name + "'";
-            if (jdbcTemplate != null) {
-                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-            }
-            else{
-                System.out.println("111111111");
-            }
-        }
-        SiteUser redUser = null;
-
-        try {
-            if (resultSet != null && resultSet.next()) {
-                this.id = Integer.parseInt(resultSet.getString(SiteUser.usersTableField.id_user.toString()));
-                this.email = resultSet.getString(SiteUser.usersTableField.user_email.toString());
-                this.fio = resultSet.getString(SiteUser.usersTableField.user_fio.toString());
-                this.phone = resultSet.getString(SiteUser.usersTableField.user_phone.toString());
-                this.isBlock = resultSet.getString(SiteUser.usersTableField.user_is_block.toString());
-                this.isDelete = resultSet.getString(SiteUser.usersTableField.user_is_delete.toString());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return this;
     }
 
     public String getName() {
@@ -84,12 +65,12 @@ public class SiteUser {
         return email;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public String getIsBlock() {
-        return isBlock;
+    public String getIsEnable() {
+        return isEnable;
     }
 
     public void setFio(String fio) {
@@ -113,15 +94,66 @@ public class SiteUser {
             this.email = email;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public void setIsBlock(String isBlock) {
-        this.isBlock = isBlock;
+    public void setIsEnable(String isEnable) {
+        this.isEnable = isEnable;
     }
 
     public boolean getPermissionsAccess(String page) {
         return true;
+    }
+
+    public SiteUser findSiteUser(String name) {
+        SiteUser redUser = null;
+        String sql;
+        List<Map<String, Object>> findUser = null;
+        if (name != null) {
+            sql = "select * from users where username='" + name + "'";
+            findUser = db.getSelectResult(sql);
+        }
+        if (findUser != null && findUser.size() == 1) {
+            try {
+                Map row = findUser.get(0);
+                redUser = new SiteUser();
+                setSiteUserFromMapRow(redUser, row);
+            } catch (Exception e) {
+                this.error = "Ошибка: " + e;
+            }
+        }
+        return redUser;
+    }
+
+    public ArrayList<SiteUser> getListSiteUsers(UsernamePasswordAuthenticationToken principal) {
+        String sql;
+        if (!principal.getName().equals("admin")) {
+            return null;
+        }
+
+        sql = "select * from users where username!='admin'";
+        List<Map<String, Object>> listDbUser = db.getSelectResult(sql);
+        if (listDbUser == null) {
+            return null;
+        }
+        ArrayList<SiteUser> siteUserArrayList = new ArrayList<SiteUser>(listDbUser.size());
+        int i = 0;
+        for (Map row : listDbUser) {
+            SiteUser tmpSiteUser = new SiteUser();
+            setSiteUserFromMapRow(tmpSiteUser, row);
+            System.out.println(i++);
+            siteUserArrayList.add(tmpSiteUser);
+        }
+        return siteUserArrayList;
+    }
+
+    private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
+        redUser.setName((String) row.get("username"));
+        redUser.setEmail((String) row.get("user_email"));
+        redUser.setFio((String) row.get("user_fio"));
+        redUser.setPhone((String) row.get("user_phone"));
+        redUser.setIsEnable((String) row.get("enabled").toString());
+        redUser.setId((String) row.get("id_user").toString());
     }
 }
