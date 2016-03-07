@@ -34,7 +34,6 @@ public class DbToplineWeb {
 
     public List<Map<String, Object>> getSelectResult(String sql) {
         List<Map<String, Object>> list;
-        System.out.println("select start");
         try {
             list = jdbcTemplate.queryForList(sql);
         } catch (Exception e) {

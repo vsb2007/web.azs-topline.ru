@@ -51,6 +51,7 @@
                     if (siteUser.getFio() != null) {
                 %>
                     <%=siteUser.getFio()%>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <%
                     }
                 %>
@@ -78,6 +79,7 @@
         <form action="usersadd" method="post">
             <input type="text" class="text-input border-green-500" placeholder="User name" required name="username"
                    id="username"> <br>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <button class="button raised bg-blue-500 color-white">Добавить пользователя</button>
         </form>
         <%

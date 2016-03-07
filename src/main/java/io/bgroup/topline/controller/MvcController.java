@@ -84,4 +84,20 @@ public class MvcController {
         return model;
     }
 
+    @RequestMapping(value="/usersadd")
+    public ModelAndView UsersAdd (UsernamePasswordAuthenticationToken principal,HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+
+
+        model.setViewName("users");
+        return model;
+    }
+
+    @RequestMapping("/profile")
+    public String profile(Model model, UsernamePasswordAuthenticationToken principal) {
+        model.addAttribute("principal", principal.getPrincipal());
+        return "profile";
+    }
+
+
 }
