@@ -24,7 +24,8 @@ public class SiteUser {
     @Autowired
     private DbToplineWeb db;
 
-    @Autowired PasswordEncoder passwordEncoder;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public void setDb(DbToplineWeb db) {
         this.db = db;
@@ -116,6 +117,11 @@ public class SiteUser {
         }
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
+    }
+
+    public SiteUser findSiteUser(UsernamePasswordAuthenticationToken principal) {
+
+        return findSiteUser(principal.getName());
     }
 
     private SiteUser findSiteUser(int id_user) {

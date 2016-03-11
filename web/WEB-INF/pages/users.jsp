@@ -26,7 +26,7 @@
             %>
             <li ripple>
                 <sec:authorize access="hasRole('ROLE_USERSRED')">
-                <form action="/userred" method="post">
+                <form action="/usersred" method="post">
                     </sec:authorize>
                     <input type="hidden" id="user-find-label" value="1" name="user-find-label">
                     <input value="<%=siteUser.getName()%>" name="buttonuserred" id="buttonuserred" type="hidden">

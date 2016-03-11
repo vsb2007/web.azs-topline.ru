@@ -8,17 +8,17 @@
 
 <sec:authorize access="hasRole('ROLE_USERSRED')">
     <%
-        SiteUser redUser = (SiteUser) request.getAttribute("reduser");
+        SiteUser userRed = (SiteUser) request.getAttribute("userRed");
         String error = null;
-        if (redUser!=null){
-             error = redUser.getError();
+        if (userRed!=null){
+             error = userRed.getError();
         }
 
-        if (redUser == null) {
+        if (userRed == null) {
     %>
     <div class="section">
             <%
-                if (redUser == null) {
+                if (userRed == null) {
             %>
             Пользователь не найден
             <%
@@ -27,18 +27,18 @@
         </h2></div>
     <%
     } else {
-        if (redUser != null) {
+        if (userRed != null) {
     %>
     <div class="section">
-        <h2>Пользователь <%=redUser.getName()%>
+        <h2>Пользователь <%=userRed.getName()%>
         </h2>
-        <form action="/userred" method="post">
+        <form action="/usersred" method="post">
             <ul class="list">
                 <li ripple>
     <span class="item-text">
 
     <input type="text" class="text-input border-green-500" placeholder="Имя пользователя"
-           value="<%=redUser.getName()%>"
+           value="<%=userRed.getName()%>"
            id="user-name-label" name="user-name-label"
     >
     <span class="secondary-text">
@@ -60,7 +60,7 @@
                 <li ripple>
     <span class="item-text">
     <input type="text" class="text-input border-green-500" placeholder="Ф.И.О."
-           value="<%=redUser.getFio()%>"
+           value="<%=userRed.getFio()%>"
            id="user-fio-label" name="user-fio-label"
     >
     <span class="secondary-text">
@@ -71,7 +71,7 @@
                 <li ripple>
     <span class="item-text">
     <input type="tel" class="text-input border-green-500" placeholder="Телефон"
-           value="<%=redUser.getPhone()%>"
+           value="<%=userRed.getPhone()%>"
            id="user-phone-label" name="user-phone-label"
     >
     <span class="secondary-text">
@@ -82,7 +82,7 @@
                 <li ripple>
     <span class="item-text">
     <input type="email" class="text-input border-green-500" placeholder="E-mail"
-           value="<%=redUser.getEmail()%>"
+           value="<%=userRed.getEmail()%>"
            id="user-email-label" name="user-email-label"
     >
     <span class="secondary-text">
@@ -94,7 +94,7 @@
     <span class="item-text">
     <div class="switch">
         <%
-            if (redUser.getIsEnable().equals("true")) {
+            if (userRed.getIsEnable().equals("true")) {
         %>
         <input type="checkbox" id="user-active-flag" name="user-active-flag" value="0" checked/>
         <%
@@ -113,7 +113,7 @@
                 </li>
             </ul>
             <input type="hidden" id="red_form" value="1" name="red_form">
-            <input type="hidden" id="user-red-id-label" name="user-red-id-label" value="<%=redUser.getId()%>">
+            <input type="hidden" id="user-red-id-label" name="user-red-id-label" value="<%=userRed.getId()%>">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <button class="button raised color-white bg-blue-500" type="submit" id="updateButton" name="updateButton">
                 Сохранить
@@ -131,9 +131,9 @@
         %>
     </div>
     <div class="section">
-        <form action="/userred" method="post">
+        <form action="/usersred" method="post">
             <input type="hidden" id="delete_form" value="1" name="delete_form">
-            <input type="hidden" id="user-delete-id-label" name="user-delete-id-label" value="<%=redUser.getId()%>">
+            <input type="hidden" id="user-delete-id-label" name="user-delete-id-label" value="<%=userRed.getId()%>">
             <button class="button raised color-white bg-red-500" type="submit">Удалить</button>
         </form>
     </div>

@@ -1,7 +1,6 @@
 package io.bgroup.topline.config;
 
-import io.bgroup.topline.model.DbToplineWeb;
-import io.bgroup.topline.model.SiteUser;
+import io.bgroup.topline.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -97,5 +96,29 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         SiteUser siteUser = new SiteUser();
         return siteUser;
     }
+
+    @Bean(name = "car")
+    public Car car() {
+        Car car = new Car();
+        return car;
+    }
+    @Bean(name = "driver")
+    public Driver driver() {
+        Driver driver = new Driver();
+        return driver;
+    }
+
+    @Bean(name = "oilFarm")
+    public OilFarm oilFarm() {
+        OilFarm oilFarm = new OilFarm();
+        return oilFarm;
+    }
+
+    @Bean(name = "oilType")
+    public OilType oilType() {
+        OilType oilType = new OilType();
+        return oilType;
+    }
+
 
 }

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 @Controller
 @EnableWebMvc
-public class MvcController {
+public class MvcUserController {
 
     @Autowired
     private DriverManagerDataSource dataSource;
@@ -40,24 +40,6 @@ public class MvcController {
             //some actions
         }
         return "index";
-    }
-
-    @RequestMapping(value = "/users**", method = RequestMethod.GET)
-    public ModelAndView protectedPage() {
-        ModelAndView model = new ModelAndView();
-        model.addObject("title", "Welcome to secure page!");
-        model.addObject("message", "This is protected page - only for admin users!");
-        model.setViewName("protected");
-        return model;
-    }
-
-    @RequestMapping(value = "/confidential**", method = RequestMethod.GET)
-    public ModelAndView adminPage() {
-        ModelAndView model = new ModelAndView();
-        model.addObject("title", "Welcome to super puper secure page");
-        model.addObject("message", "This is confidential page - need super admin role!");
-        model.setViewName("protected");
-        return model;
     }
 
     @RequestMapping(value = "/logout")
@@ -91,12 +73,12 @@ public class MvcController {
         return model;
     }
 
-    @RequestMapping(value = "/userred")
+    @RequestMapping(value = "/usersred")
     public ModelAndView UsersRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         SiteUser userRed = siteUser.findRedSiteUser(principal,request);
-        model.addObject("reduser", userRed);
-        model.setViewName("userred");
+        model.addObject("userRed", userRed);
+        model.setViewName("usersred");
         return model;
     }
 
@@ -113,6 +95,4 @@ public class MvcController {
         model.addAttribute("principal", principal.getPrincipal());
         return "profile";
     }
-
-
 }
