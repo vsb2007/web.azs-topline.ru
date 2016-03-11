@@ -9,10 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class LinkUrl {
-    public enum permissionsLinksTableField {
-        id_link, link_url, link_descriptions, link_is_block
-    }
+public class RolesUrl {
 
     private String id;
     private String url;
@@ -20,12 +17,7 @@ public class LinkUrl {
     private String isBlock;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    /*public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-*/
+    private DbToplineWeb db;
 
     public String getUrl() {
         return url;
@@ -59,7 +51,7 @@ public class LinkUrl {
         this.id = id;
     }
 
-    public static ArrayList<LinkUrl> getUrlList(SiteUser siteUser) {
+    public static ArrayList<RolesUrl> getUrlList(SiteUser siteUser) {
         //DbToplineWeb db = new DbToplineWeb();
         String sql = null;
         ResultSet resultSet = null;
@@ -67,24 +59,21 @@ public class LinkUrl {
         if (siteUser.getName().equals("admin")) {
             sql = "select * from permissions_links";
         }
-        ArrayList<LinkUrl> linkUrls = null;
+        ArrayList<RolesUrl> rolesUrlsList = null;
         try {
           //  resultSet = db.getSelectResult(sql);
             //linkUrls = new ArrayList<>(resultSet.getFetchSize());
             if (resultSet != null) {
                 while (resultSet.next()) {
-                    LinkUrl linkUrl = new LinkUrl();
-                    linkUrl.setUrl(resultSet.getString(permissionsLinksTableField.link_url.toString()));
-                    linkUrl.setDescription(resultSet.getString(permissionsLinksTableField.link_descriptions.toString()));
-                    linkUrl.setId(resultSet.getString(permissionsLinksTableField.id_link.toString()));
-                    linkUrl.setIsBlock(resultSet.getString(permissionsLinksTableField.link_is_block.toString()));
-                    linkUrls.add(linkUrl);
+                    RolesUrl rolesUrl = new RolesUrl();
+
+                    rolesUrlsList.add(rolesUrl);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             //return null;
         }
-        return linkUrls;
+        return rolesUrlsList;
     }
 }

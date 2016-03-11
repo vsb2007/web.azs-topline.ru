@@ -32,18 +32,12 @@ public class MvcController {
     @Autowired
     private DbToplineWeb dbToplineWeb;
 
-    @RequestMapping(value = {"/", "/index**","/index"})
-    public String welcomePage(Model model,UsernamePasswordAuthenticationToken principal) {
-    //public ModelAndView welcomePage() {
-       // ModelAndView model = new ModelAndView();
-        //SiteUser dbUserName = new SiteUser().findSiteUser(principal.getName());
-        //model.addObject("dbUserName", dbUserName);
-        //model.setViewName("index");
+    @RequestMapping(value = {"/", "/index**", "/index"})
+    public String welcomePage(Model model, UsernamePasswordAuthenticationToken principal) {
         try {
             model.addAttribute("dbUserName", principal.getName());
-        }
-        catch (Exception e){
-
+        } catch (Exception e) {
+            //some actions
         }
         return "index";
     }
@@ -66,33 +60,54 @@ public class MvcController {
         return model;
     }
 
-    @RequestMapping(value="/logout")
-    public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/logout")
+    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
+        if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
         return "redirect:/index?logout";
     }
 
-    @RequestMapping(value="/users")
-    public ModelAndView UsersPage (UsernamePasswordAuthenticationToken principal) {
+    @RequestMapping(value = "/users")
+    public ModelAndView UsersPage(UsernamePasswordAuthenticationToken principal) {
         ModelAndView model = new ModelAndView();
         ArrayList<SiteUser> list = siteUser.getListSiteUsers(principal);
-        model.addObject("listUsers",list);
+        model.addObject("listUsers", list);
         model.setViewName("users");
         return model;
     }
 
-    @RequestMapping(value="/usersadd")
-    public ModelAndView UsersAdd (UsernamePasswordAuthenticationToken principal,HttpServletRequest request) {
+    @RequestMapping(value = "/usersadd")
+    public ModelAndView UsersAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
 
+        siteUser.userAdd(principal, request);
+        model.addObject("errorAddUser", siteUser.getError());
+        ArrayList<SiteUser> list = siteUser.getListSiteUsers(principal);
+        model.addObject("listUsers", list);
 
         model.setViewName("users");
         return model;
     }
 
+    @RequestMapping(value = "/userred")
+    public ModelAndView UsersRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        SiteUser userRed = siteUser.findRedSiteUser(principal,request);
+        model.addObject("reduser", userRed);
+        model.setViewName("userred");
+        return model;
+    }
+
+    @RequestMapping(value = "/roles")
+    public ModelAndView Roles(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("roles");
+        return model;
+    }
+
+    //test
     @RequestMapping("/profile")
     public String profile(Model model, UsernamePasswordAuthenticationToken principal) {
         model.addAttribute("principal", principal.getPrincipal());

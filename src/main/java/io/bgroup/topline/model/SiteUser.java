@@ -1,8 +1,10 @@
 package io.bgroup.topline.model;
 
+import io.bgroup.topline.config.WebSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -17,21 +19,17 @@ public class SiteUser {
     private String isEnable = "";
     private String isDelete = "";
     private String id;
+    private String error;
 
     @Autowired
     private DbToplineWeb db;
+
+    @Autowired PasswordEncoder passwordEncoder;
 
     public void setDb(DbToplineWeb db) {
         this.db = db;
     }
 
-    private String error;
-
-
-    /*public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-*/
     public SiteUser() {
     }
 
@@ -108,38 +106,158 @@ public class SiteUser {
         return true;
     }
 
-    public SiteUser findSiteUser(String name) {
-        SiteUser redUser = null;
+    private SiteUser findSiteUser(String name) {
+        SiteUser findUser = null;
         String sql;
-        List<Map<String, Object>> findUser = null;
+        List<Map<String, Object>> findUsersList = null;
         if (name != null) {
             sql = "select * from users where username='" + name + "'";
-            findUser = db.getSelectResult(sql);
+            findUsersList = db.getSelectResult(sql);
         }
-        if (findUser != null && findUser.size() == 1) {
+        findUser = getSiteUserFromDbSelect(findUsersList);
+        return findUser;
+    }
+
+    private SiteUser findSiteUser(int id_user) {
+        SiteUser findUser = null;
+        String sql;
+        List<Map<String, Object>> findUsersList = null;
+        if (name != null) {
+            sql = "select * from users where id_user='" + id_user + "'";
+            findUsersList = db.getSelectResult(sql);
+        }
+        findUser = getSiteUserFromDbSelect(findUsersList);
+        return findUser;
+    }
+
+    private SiteUser getSiteUserFromDbSelect(List<Map<String, Object>> findUsers) {
+        SiteUser findUser = null;
+        if (findUsers != null && findUsers.size() == 1) {
             try {
-                Map row = findUser.get(0);
-                redUser = new SiteUser();
-                setSiteUserFromMapRow(redUser, row);
+                Map row = findUsers.get(0);
+                findUser = new SiteUser();
+                setSiteUserFromMapRow(findUser, row);
             } catch (Exception e) {
                 this.error = "Ошибка: " + e;
             }
         }
+        return findUser;
+    }
+
+    private SiteUser findUser(HttpServletRequest request) {
+        String userNameFromButtonValue = request.getParameter("buttonuserred");
+        String sql;
+        SiteUser redUser = null;
+
+        if (userNameFromButtonValue != null && !userNameFromButtonValue.equals("")) {
+            redUser = findSiteUser(userNameFromButtonValue);
+            return redUser;
+        }
+
+        String userIdFromForm = request.getParameter("user-red-id-label");
+        sql = "select * from users where id_user='" + userIdFromForm + "'";
+
+        List<Map<String, Object>> findUsersList = db.getSelectResult(sql);
+
+        redUser = getSiteUserFromDbSelect(findUsersList);
         return redUser;
     }
 
-    public ArrayList<SiteUser> getListSiteUsers(UsernamePasswordAuthenticationToken principal) {
-        boolean returnNullFlag = true;
-        for (GrantedAuthority grantedAuthority : principal.getAuthorities()){
-                if (grantedAuthority.getAuthority().equals("ROLE_USERS")){
-                    returnNullFlag = false;
-                    break;
-                }
+    public SiteUser findRedSiteUser(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        if (!isUserHasRole(principal, "ROLE_USERSRED")) return null;
+
+        String userFindValue = request.getParameter("user-find-label");
+        String userRedFormValue = request.getParameter("red_form");
+        String userDelValue = request.getParameter("user-delete-id-label");
+
+        SiteUser redUser = null;
+
+        if (userFindValue != null && userFindValue.equals("1")) {
+            redUser = findUser(request);
+        } else if (userRedFormValue != null && userRedFormValue.equals("1")) {
+            redUser = findUser(request);
+            String tmpError = updateUserMessage(redUser, request);
+            redUser = findSiteUser(Integer.parseInt(redUser.getId()));
+            redUser.setError(tmpError);
         }
-        if (returnNullFlag) return null;
+        //return findSiteUser(request.getParameter("buttonuserred"));
+        return redUser;
+    }
+
+    private String updateUserMessage(SiteUser redUser, HttpServletRequest request) {
+        String userNameFromForm = request.getParameter("user-name-label");
+        String userPasswordFromForm = request.getParameter("user-password-label");
+        String userFioFromForm = request.getParameter("user-fio-label");
+        String userPhoneFromForm = request.getParameter("user-phone-label");
+        String userEmailFromForm = request.getParameter("user-email-label");
+        String userIdFromForm = request.getParameter("user-red-id-label");
+        String userActiveFlagFromForm = request.getParameter("user-active-flag");
 
         String sql;
-        sql = "select * from users where username!='admin'";
+        if (userNameFromForm != null
+                && !redUser.getName().equals(userNameFromForm)
+                && !userNameFromForm.equals("")) {
+            sql = "update users set username='" + userNameFromForm + "' where id_user=" + userIdFromForm;
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
+                return "Ошибка обновления имени";
+            }
+        }
+        if (userPasswordFromForm != null && !userPasswordFromForm.equals("")) {
+            String password = passwordEncoder.encode(userPasswordFromForm);
+            sql = "update users set password='" + password + "' where id_user=" + userIdFromForm;
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
+                return "Ошибка обновления пароля";
+            }
+        }
+        if (userFioFromForm != null) {
+            sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
+                return "Ошибка обновления ФИО";
+
+            }
+        }
+        if (userPhoneFromForm != null) {
+            sql = "update users set user_phone='" + userPhoneFromForm + "' where id_user=" + userIdFromForm;
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
+                return "Ошибка обновления телефона";
+            }
+        }
+        if (userEmailFromForm != null) {
+            sql = "update users set user_email='" + userEmailFromForm + "' where id_user=" + userIdFromForm;
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
+                return "Ошибка обновления email";
+            }
+        }
+        if (userActiveFlagFromForm != null) {
+            if (userActiveFlagFromForm.equals("0")) {
+                sql = "update users set enabled=true where id_user=" + userIdFromForm;
+
+                boolean flag = db.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления блокировки";
+                }
+            }
+        }
+        if (userActiveFlagFromForm == null || !userActiveFlagFromForm.equals("0")) {
+            sql = "update users set enabled=false where id_user=" + userIdFromForm;
+            boolean flag = db.getInsertResult(sql);
+            if (flag) {
+                return "Ошибка обновления блокировки";
+            }
+        }
+
+        return "Изменения сохранены";
+    }
+
+    public ArrayList<SiteUser> getListSiteUsers(UsernamePasswordAuthenticationToken principal) {
+        if (!isUserHasRole(principal, "ROLE_USERS")) return null;
+        String sql;
+        sql = "select * from users where username!='admin' and user_is_delete=0";
         List<Map<String, Object>> listDbUser = db.getSelectResult(sql);
         if (listDbUser == null) {
             return null;
@@ -162,50 +280,33 @@ public class SiteUser {
         redUser.setId((String) row.get("id_user").toString());
     }
 
-    public SiteUser userAdd(UsernamePasswordAuthenticationToken principal,HttpServletRequest request){
-        boolean returnNullFlag = true;
-        for (GrantedAuthority grantedAuthority : principal.getAuthorities()){
-            if (grantedAuthority.getAuthority().equals("ROLE_USERSADD")){
-                returnNullFlag = false;
-                break;
-            }
-        }
-        if (returnNullFlag) return null;
-
-        SiteUser siteUser = null;
-        //if (principal.) return null;
-        /*
-                HttpSession session = request.getSession();
-        SiteUser siteUser = (SiteUser) session.getAttribute("dbUserName");
-        if (siteUser == null || !siteUser.getName().equals("admin")) {
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
-        }
+    public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        if (!isUserHasRole(principal, "ROLE_USERSADD")) return false;
         String userNameFromFormUserAdd = request.getParameter("username");
-        DbToplineWeb db = new DbToplineWeb();
         String sql;
         sql = "select * from users where user_name='" + userNameFromFormUserAdd + "'";
-        ResultSet resultSet = null;
-        resultSet = db.getSelectResult(sql);
-        try {
-            if (resultSet != null && resultSet.next()) {
-                request.setAttribute("errorAddUser", "Пользователь существует");
-                request.getRequestDispatcher("/users").forward(request, response);
-            }
-            if (resultSet != null && !resultSet.next()) {
-                //String nameFromDb = resultSet.getString(usersFields.users_name.toString());
-                sql = "INSERT INTO users (user_name) VALUES ('" + userNameFromFormUserAdd + "')";
-                boolean flag = db.getInsertResult(sql);
-                if (!flag)
-                    request.setAttribute("errorAddUser", "Пользователь добавлен");
-                else
-                    request.setAttribute("errorAddUser", "Пользователь не добавлен, ошибка!!!");
-                request.getRequestDispatcher("/users").forward(request, response);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        List<Map<String, Object>> dbSelectResult = db.getSelectResult(sql);
+        if (dbSelectResult != null && dbSelectResult.size() > 0) {
+            this.error = "Пользователь существует";
+            return false;
+        } else {
+            sql = "INSERT INTO users (username) VALUES ('" + userNameFromFormUserAdd + "')";
+            boolean flag = db.getInsertResult(sql);
+            if (!flag)
+                this.error = "Пользователь добавлен";
+            else
+                this.error = "Пользователь не добавлен, ошибка!!!";
         }
+        return true;
     }
-         */
-        return siteUser;
+
+    private boolean isUserHasRole(UsernamePasswordAuthenticationToken principal, String role) {
+        boolean returnNullFlag = true;
+        for (GrantedAuthority grantedAuthority : principal.getAuthorities()) {
+            if (grantedAuthority.getAuthority().equals(role)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

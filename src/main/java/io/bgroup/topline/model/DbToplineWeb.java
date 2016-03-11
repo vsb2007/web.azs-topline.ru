@@ -43,13 +43,14 @@ public class DbToplineWeb {
         return list;
     }
 
-    /*
+
     public boolean getInsertResult(String sql) {
         try {
-            return statement.execute(sql);
+            //потом переделать на хибернейт !!!
+            return jdbcTemplate.getDataSource().getConnection().createStatement().execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return true;
-    }*/
+    }
 }
