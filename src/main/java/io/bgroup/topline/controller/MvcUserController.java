@@ -1,6 +1,5 @@
 package io.bgroup.topline.controller;
 
-import io.bgroup.topline.model.DbToplineWeb;
 import io.bgroup.topline.model.SiteUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -11,7 +10,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -28,9 +26,6 @@ public class MvcUserController {
 
     @Autowired
     private SiteUser siteUser;
-
-    @Autowired
-    private DbToplineWeb dbToplineWeb;
 
     @RequestMapping(value = {"/", "/index**", "/index"})
     public String welcomePage(Model model, UsernamePasswordAuthenticationToken principal) {

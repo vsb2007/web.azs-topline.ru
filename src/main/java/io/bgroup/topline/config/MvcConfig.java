@@ -7,17 +7,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -51,17 +44,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/demo-files/**").addResourceLocations("/WEB-INF/pages/demo-files/").setCachePeriod(31556926);
         registry.addResourceHandler("/fonts/**").addResourceLocations("/WEB-INF/pages/fonts/").setCachePeriod(31556926);
     }
-/*
-    @Bean(name = "dataSource")
-	public DriverManagerDataSource dataSource() {
-	    DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-	    driverManagerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
-	    driverManagerDataSource.setUrl("jdbc:mysql://192.168.19.43:3306/toplineweb");
-	    driverManagerDataSource.setUsername("toplinewebuser");
-	    driverManagerDataSource.setPassword("toplinewebpassword");
-	    return driverManagerDataSource;
-	}
-*/
 
     @Bean(name = "jdbcTemplate")
     public JdbcTemplate jdbcTemplate() {
@@ -69,8 +51,8 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean(name = "dbToplineWeb")
-    public DbToplineWeb dbToplineWeb() {
-        return new DbToplineWeb();
+    public DbModel dbToplineWeb() {
+        return new DbModel();
     }
 
 
@@ -120,5 +102,10 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return oilType;
     }
 
+    @Bean(name = "bid")
+    public Bid bid() {
+        Bid bid = new Bid();
+        return bid;
+    }
 
 }

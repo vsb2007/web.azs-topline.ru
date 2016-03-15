@@ -1,10 +1,10 @@
 package io.bgroup.topline.model;
 
-/**
- * Created by VSB on 11.03.2016.
- * ToplineWeb.2.5
- */
-public class Application {
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+import javax.servlet.http.HttpServletRequest;
+
+public class Bid {
     private SiteUser siteUser;
     private OilFarm oilFarm;
     private Driver driver;
@@ -45,7 +45,7 @@ public class Application {
         this.dateOfClose = dateOfClose;
     }
 
-    public Application() {
+    public Bid() {
     }
 
     public SiteUser getSiteUser() {
@@ -70,5 +70,10 @@ public class Application {
 
     public String getDateOfClose() {
         return dateOfClose;
+    }
+
+    public boolean createBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+
+        return false;
     }
 }

@@ -13,14 +13,14 @@
             <li ripple><a href="/users"><i class="icon-input"></i>Пользователи</a></li>
             <li ripple><a href="/roles"><i class="icon-input"></i>Роли</a></li>
         </sec:authorize>
-        <sec:authorize access="hasRole('ROLE_APP_CREATE')">
-            <li ripple><a href="/appcreate"><i class="icon-input"></i>Создать заявку</a></li>
+        <sec:authorize access="hasRole('ROLE_BID_CREATE')">
+            <li ripple><a href="/bidcreate"><i class="icon-input"></i>Создать заявку</a></li>
         </sec:authorize>
-        <sec:authorize access="hasRole('ROLE_APP_LIST')">
-            <li ripple><a href="/appcreate"><i class="icon-input"></i>Открытые заявки</a></li>
+        <sec:authorize access="hasRole('ROLE_BID_LIST')">
+            <li ripple><a href="/bidcreate"><i class="icon-input"></i>Открытые заявки</a></li>
         </sec:authorize>
-        <sec:authorize access="hasRole('ROLE_APP_LIST')">
-            <li ripple><a href="/appcreate"><i class="icon-input"></i>Закрытые заявки</a></li>
+        <sec:authorize access="hasRole('ROLE_BID_LIST_CLOSED')">
+            <li ripple><a href="/bidcreate"><i class="icon-input"></i>Закрытые заявки</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_LOGIN')">
             <li ripple><a href="/logout"><i class="icon-menu"></i>Выход</a></li>

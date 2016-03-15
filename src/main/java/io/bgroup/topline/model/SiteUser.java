@@ -1,6 +1,5 @@
 package io.bgroup.topline.model;
 
-import io.bgroup.topline.config.WebSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,12 +21,12 @@ public class SiteUser {
     private String error;
 
     @Autowired
-    private DbToplineWeb db;
+    private DbModel db;
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public void setDb(DbToplineWeb db) {
+    public void setDb(DbModel db) {
         this.db = db;
     }
 
@@ -128,10 +127,8 @@ public class SiteUser {
         SiteUser findUser = null;
         String sql;
         List<Map<String, Object>> findUsersList = null;
-        if (name != null) {
-            sql = "select * from users where id_user='" + id_user + "'";
-            findUsersList = db.getSelectResult(sql);
-        }
+        sql = "select * from users where id_user='" + id_user + "'";
+        findUsersList = db.getSelectResult(sql);
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
     }

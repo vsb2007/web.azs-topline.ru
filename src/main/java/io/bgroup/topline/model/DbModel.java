@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class DbToplineWeb {
+public class DbModel {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -21,7 +21,7 @@ public class DbToplineWeb {
 
     private String error;
 
-    public DbToplineWeb() {
+    public DbModel() {
     }
 
     public String getError() {

@@ -2,11 +2,9 @@ package io.bgroup.topline.model;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 public class RolesUrl {
@@ -17,7 +15,7 @@ public class RolesUrl {
     private String isBlock;
 
     @Autowired
-    private DbToplineWeb db;
+    private DbModel db;
 
     public String getUrl() {
         return url;
@@ -52,7 +50,6 @@ public class RolesUrl {
     }
 
     public static ArrayList<RolesUrl> getUrlList(SiteUser siteUser) {
-        //DbToplineWeb db = new DbToplineWeb();
         String sql = null;
         ResultSet resultSet = null;
 
@@ -61,8 +58,6 @@ public class RolesUrl {
         }
         ArrayList<RolesUrl> rolesUrlsList = null;
         try {
-          //  resultSet = db.getSelectResult(sql);
-            //linkUrls = new ArrayList<>(resultSet.getFetchSize());
             if (resultSet != null) {
                 while (resultSet.next()) {
                     RolesUrl rolesUrl = new RolesUrl();
