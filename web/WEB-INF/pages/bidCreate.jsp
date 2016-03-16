@@ -20,7 +20,17 @@
                     <div id="divCarSectionId_${car.getId_cars()}">
                         <ul>
                             <c:forEach items="${car.getCarSections()}" var="carSection">
-                                <li>${carSection.getId_section()} ${carSection.getVol()} литров</li>
+                                <li>
+                                        ${carSection.getId_section()} ${carSection.getVol()} литров
+                                    <select class="dropdown-menu"
+                                            id="oilType_${car.getId_cars()}_${carSection.getId_section()}"
+                                            name="oilType_${car.getId_cars()}_${carSection.getId_section()}">
+                                        <option value="-1">Пустая секция</option>
+                                        <c:forEach items="${oilTypesList}" var="oilType">
+                                            <option value="${oilType.getId_oilType()}">${oilType.getOilTypeName()}</option>
+                                        </c:forEach>
+                                    </select>
+                                </li>
                             </c:forEach>
                         </ul>
                     </div>

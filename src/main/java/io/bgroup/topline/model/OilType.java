@@ -21,7 +21,7 @@ public class OilType {
     public ArrayList<OilType> getOilTypesList() {
         List<Map<String, Object>> oilTypesListFromDb = null;
         ArrayList<OilType> oilTypesList = null;
-        String sql = "select * from cars where cars_block='0'";
+        String sql = "select * from nomenclature where block='0'";
         oilTypesListFromDb = db.getSelectResult(sql);
         if (oilTypesListFromDb == null) return null;
         oilTypesList = getOilTypesFromDbSelect(oilTypesListFromDb);
