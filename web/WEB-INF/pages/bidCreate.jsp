@@ -11,7 +11,8 @@
                 <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
                        name="bidname"
                        id="bidname"> <br>
-                <select class="dropdown-menu" id="car" name="car">
+                <select class="dropdown-menu" id="car" name="car" onchange="onCarSelect(${car.getId_cars()})">
+                    <option value="-1">Выбрать машину</option>
                     <c:forEach items="${carsList}" var="car">
                         <option value="${car.getId_cars()}">${car.getCars_name()}</option>
                     </c:forEach>
@@ -21,8 +22,9 @@
                         <ul>
                             <c:forEach items="${car.getCarSections()}" var="carSection">
                                 <li>
-                                        ${carSection.getId_section()} ${carSection.getVol()} литров
+                                    Секция ${carSection.getCarSectionName()} (${carSection.getVol()} л.) &nbsp;
                                     <select class="dropdown-menu"
+
                                             id="oilType_${car.getId_cars()}_${carSection.getId_section()}"
                                             name="oilType_${car.getId_cars()}_${carSection.getId_section()}">
                                         <option value="-1">Пустая секция</option>
@@ -41,5 +43,8 @@
             </form>
         </sec:authorize>
     </div>
+
+    <script src="js/bidCreate.js"></script>
+
 </sec:authorize>
 <%@ include file="footer.jsp" %>
