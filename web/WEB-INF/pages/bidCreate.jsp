@@ -16,6 +16,15 @@
                         <option value="${car.getId_cars()}">${car.getCars_name()}</option>
                     </c:forEach>
                 </select><br>
+                <c:forEach items="${carsList}" var="car">
+                    <div id="divCarSectionId_${car.getId_cars()}">
+                        <ul>
+                            <c:forEach items="${car.getCarSections()}" var="carSection">
+                                <li>${carSection.getId_section()} ${carSection.getVol()} литров</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </c:forEach>
 
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button class="button raised bg-blue-500 color-white">Добавить заявку</button>

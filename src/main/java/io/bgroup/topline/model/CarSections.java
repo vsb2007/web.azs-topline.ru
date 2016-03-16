@@ -4,6 +4,9 @@ public class CarSections {
     private String id_section;
     private String vol;
 
+    public CarSections() {
+    }
+
     public CarSections(String id_section, String vol) {
         this.id_section = id_section;
         this.vol = vol;
@@ -16,4 +19,9 @@ public class CarSections {
     private void setVol(String vol) {
         this.vol = vol;
     }
+
+    public String getId_section() {
+        return id_section;
+    }
 }
+

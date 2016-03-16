@@ -84,6 +84,13 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         Car car = new Car();
         return car;
     }
+
+    @Bean(name = "carSections")
+    public CarSections carSections() {
+        CarSections carSections = new CarSections();
+        return carSections;
+    }
+
     @Bean(name = "driver")
     public Driver driver() {
         Driver driver = new Driver();

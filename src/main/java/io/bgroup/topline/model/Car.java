@@ -7,15 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Car {
+    private final int countCarSection = 6;
     private String id_cars;
     private String cars_number;
     private String cars_name;
-    private String cars_sec1;
-    private String cars_sec2;
-    private String cars_sec3;
-    private String cars_sec4;
-    private String cars_sec5;
-    private String cars_sec6;
     private String cars_block;
     private ArrayList<CarSections> carSections;
 
@@ -34,26 +29,24 @@ public class Car {
 
     private ArrayList<Car> getCarsFromDbSelect(List<Map<String, Object>> carsListFromDb) {
         ArrayList<Car> carsList = null;
+
         for (Map row : carsListFromDb) {
             Car car = new Car();
+            ArrayList<CarSections> carSections = car.getCarSections();
             car.setCars_block((String) row.get("cars_block").toString());
             car.setId_cars((String) row.get("id_cars").toString());
             car.setCars_number((String) row.get("cars_number").toString());
             car.setCars_name((String) row.get("cars_name").toString());
-            String cars_sec1;
-            String cars_sec2;
-            String cars_sec3;
-            String cars_sec4;
-            String cars_sec5;
-            String cars_sec6;
-
-
-            car.setCars_sec1((String) row.get("cars_sections_1").toString());
-            car.setCars_sec2((String) row.get("cars_sections_2").toString());
-            car.setCars_sec3((String) row.get("cars_sections_3").toString());
-            car.setCars_sec4((String) row.get("cars_sections_4").toString());
-            car.setCars_sec5((String) row.get("cars_sections_5").toString());
-            car.setCars_sec6((String) row.get("cars_sections_6").toString());
+            for (int i = 1; i <= countCarSection; i++) {
+                String cars_sec = row.get("cars_sections_" + i).toString();
+                if (!cars_sec.equals("0")) {
+                    if (carSections == null) {
+                        carSections = new ArrayList<CarSections>();
+                    }
+                    car.setCarSections(carSections);
+                    carSections.add(new CarSections("cars_sections_" + i, cars_sec));
+                }
+            }
             if (carsList == null) carsList = new ArrayList<Car>();
             carsList.add(car);
         }
@@ -90,54 +83,6 @@ public class Car {
 
     private void setCars_number(String cars_number) {
         this.cars_number = cars_number;
-    }
-
-    public String getCars_sec1() {
-        return cars_sec1;
-    }
-
-    private void setCars_sec1(String cars_sec1) {
-        this.cars_sec1 = cars_sec1;
-    }
-
-    public String getCars_sec2() {
-        return cars_sec2;
-    }
-
-    private void setCars_sec2(String cars_sec2) {
-        this.cars_sec2 = cars_sec2;
-    }
-
-    public String getCars_sec3() {
-        return cars_sec3;
-    }
-
-    private void setCars_sec3(String cars_sec3) {
-        this.cars_sec3 = cars_sec3;
-    }
-
-    public String getCars_sec4() {
-        return cars_sec4;
-    }
-
-    private void setCars_sec4(String cars_sec4) {
-        this.cars_sec4 = cars_sec4;
-    }
-
-    public String getCars_sec5() {
-        return cars_sec5;
-    }
-
-    private void setCars_sec5(String cars_sec5) {
-        this.cars_sec5 = cars_sec5;
-    }
-
-    public String getCars_sec6() {
-        return cars_sec6;
-    }
-
-    private void setCars_sec6(String cars_sec6) {
-        this.cars_sec6 = cars_sec6;
     }
 
     public String getCars_block() {
