@@ -16,20 +16,35 @@ public class Car {
 
     @Autowired
     private DbModel db;
+    @Autowired
+    private OilType oilType;
 
     public ArrayList<Car> getCarsList() {
-        List<Map<String, Object>> carsListFromDb = null;
         ArrayList<Car> carsList = null;
         String sql = "select * from cars where cars_block='0'";
-        carsListFromDb = db.getSelectResult(sql);
-        if (carsListFromDb == null) return null;
-        carsList = getCarsFromDbSelect(carsListFromDb);
+        carsList = getCarsFromDbSelect(sql);
         return carsList;
     }
 
-    private ArrayList<Car> getCarsFromDbSelect(List<Map<String, Object>> carsListFromDb) {
-        ArrayList<Car> carsList = null;
+    public Car getCar(String id_car) {
 
+        Car car = null;
+        String sql = "select * from cars where id_cars=" + id_car;
+        car = getCarFromDbSelect(sql);
+        return car;
+    }
+
+    private Car getCarFromDbSelect(String sql) {
+        ArrayList<Car> carsList = getCarsFromDbSelect(sql);
+        if (carsList == null) return null;
+        return carsList.get(0);
+    }
+
+    private ArrayList<Car> getCarsFromDbSelect(String sql) {
+        List<Map<String, Object>> carsListFromDb = null;
+        carsListFromDb = db.getSelectResult(sql);
+        if (carsListFromDb == null) return null;
+        ArrayList<Car> carsList = null;
         for (Map row : carsListFromDb) {
             Car car = new Car();
             ArrayList<CarSections> carSections = car.getCarSections();
@@ -91,5 +106,52 @@ public class Car {
 
     private void setCars_block(String cars_block) {
         this.cars_block = cars_block;
+    }
+
+    public String getCarSectionsForAjax(String idCar) {
+        Car car = getCar(idCar);
+        if (car == null) return "Error: нет данных по секциям";
+        String response = "";
+        response += "<ul>";
+        ArrayList<OilType> oilTypesList = oilType.getOilTypesList();
+        for (CarSections carSection : car.getCarSections()) {
+            response += "<li>" +
+                    "Секция " + carSection.getCarSectionName() + " (" + carSection.getVol() + "л.)"
+                    + "&nbsp;"
+                    + "<select class=\"dropdown-menu\""
+                    + "id=\"oilType_" + car.getId_cars() + "_" + carSection.getId_section() + "\">"
+                    + "<option value=\"-1\">Пустая секция</option>"
+            ;
+            for (OilType oilTypeTmp : oilTypesList) {
+                response += "<option value=\"" + oilTypeTmp.getId_oilType() + "\">" +
+                        oilTypeTmp.getOilTypeName() + "</option>";
+            }
+            response += "</select>" +
+                    "</li>";
+        }
+        response += "</ul>";
+/*
+        <c:forEach items="${carsList}" var="car">
+        <div id="divCarSectionId_${car.getId_cars()}">
+        <ul>
+        <c:forEach items="${car.getCarSections()}" var="carSection">
+        <li>
+                Секция ${carSection.getCarSectionName()} (${carSection.getVol()} л.) &nbsp;
+        <select class="dropdown-menu"
+
+        id="oilType_${car.getId_cars()}_${carSection.getId_section()}"
+        name="oilType_${car.getId_cars()}_${carSection.getId_section()}">
+        <option value="-1">Пустая секция</option>
+        <c:forEach items="${oilTypesList}" var="oilType">
+        <option value="${oilType.getId_oilType()}">${oilType.getOilTypeName()}</option>
+        </c:forEach>
+        </select>
+        </li>
+        </c:forEach>
+        </ul>
+        </div>
+        </c:forEach>
+  */
+        return response;
     }
 }
