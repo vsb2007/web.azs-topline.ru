@@ -23,7 +23,6 @@ public class MvcBidAjaxController {
         if (request != null) {
             responseBody = car.getCarSectionsForAjax(request.getParameter("idCar"));
         }
-        System.out.println(responseBody);
         return responseBody;
     }
 }
