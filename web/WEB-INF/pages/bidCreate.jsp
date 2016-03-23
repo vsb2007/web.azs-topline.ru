@@ -12,9 +12,15 @@
                        name="bidname"
                        id="bidname"> <br>
                 <select class="dropdown-menu" id="oilStorage" name="oilStorage" onchange="">
-                    <option value="-1">Пункт отгрузки</option>
+                    <option value="-1">Пункт загрузки</option>
                     <c:forEach items="${oilStorageList}" var="oilStorage">
                         <option value="${oilStorage.getIdOilStorage()}">${oilStorage.getOilStorageName()}</option>
+                    </c:forEach>
+                </select><br>
+                <select class="dropdown-menu" id="driver" name="driver" onchange="">
+                    <option value="-1">Водитель</option>
+                    <c:forEach items="${driversList}" var="driver">
+                        <option value="${driver.getIdDriver()}">${driver.getDriverFio()}</option>
                     </c:forEach>
                 </select><br>
                 <select class="dropdown-menu" id="car" name="car" onchange="onCarSelect(this)">
