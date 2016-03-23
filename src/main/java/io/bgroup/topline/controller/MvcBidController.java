@@ -44,7 +44,7 @@ public class MvcBidController {
 
         SiteUser bidUser = siteUser.findSiteUser(principal);
         ArrayList<Car> carsList = car.getCarsList();
-        ArrayList<Driver> driversList = driver.getDriversList();
+        ArrayList<Driver> driversList = driver.getDriverList();
         ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
 
         model.addObject("appUser", bidUser);

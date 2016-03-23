@@ -9,7 +9,7 @@ import java.util.Map;
 public class Driver {
     @Autowired
     private DbModel db;
-    
+
 
     public ArrayList<Driver> getDriverList() {
         ArrayList<Driver> driverList = null;
