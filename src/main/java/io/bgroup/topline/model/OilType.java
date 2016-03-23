@@ -17,18 +17,18 @@ public class OilType {
     public OilType() {
     }
 
-
     public ArrayList<OilType> getOilTypesList() {
-        List<Map<String, Object>> oilTypesListFromDb = null;
         ArrayList<OilType> oilTypesList = null;
         String sql = "select * from nomenclature where block='0'";
-        oilTypesListFromDb = db.getSelectResult(sql);
-        if (oilTypesListFromDb == null) return null;
-        oilTypesList = getOilTypesFromDbSelect(oilTypesListFromDb);
+        oilTypesList = getOilTypesFromDbSelect(sql);
         return oilTypesList;
     }
 
-    private ArrayList<OilType> getOilTypesFromDbSelect(List<Map<String, Object>> oilTypesListFromDb) {
+    private ArrayList<OilType> getOilTypesFromDbSelect(String sql) {
+        List<Map<String, Object>> oilTypesListFromDb = null;
+        oilTypesListFromDb = db.getSelectResult(sql);
+        if (oilTypesListFromDb == null) return null;
+
         ArrayList<OilType> oilTypeArrayList = null;
         for (Map row : oilTypesListFromDb) {
             OilType oilType = new OilType();

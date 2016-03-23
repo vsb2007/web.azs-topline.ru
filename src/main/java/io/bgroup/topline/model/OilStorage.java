@@ -48,16 +48,17 @@ public class OilStorage {
     }
 
     public ArrayList<OilStorage> getOilStorageList() {
-        List<Map<String, Object>> oilStorageListFromDb = null;
         ArrayList<OilStorage> oilStorageList = null;
         String sql = "select * from storages where Block='0'";
-        oilStorageListFromDb = db.getSelectResult(sql);
-        if (oilStorageListFromDb == null) return null;
-        oilStorageList = getOilStorageFromDbSelect(oilStorageListFromDb);
+        oilStorageList = getOilStorageFromDbSelect(sql);
         return oilStorageList;
     }
 
-    private ArrayList<OilStorage> getOilStorageFromDbSelect(List<Map<String, Object>> oilStorageListFromDb) {
+    private ArrayList<OilStorage> getOilStorageFromDbSelect(String sql) {
+        List<Map<String, Object>> oilStorageListFromDb = null;
+        oilStorageListFromDb = db.getSelectResult(sql);
+        if (oilStorageListFromDb == null) return null;
+
         ArrayList<OilStorage> oilStorageArrayList = null;
         for (Map row : oilStorageListFromDb) {
             OilStorage oilStorage = new OilStorage();
