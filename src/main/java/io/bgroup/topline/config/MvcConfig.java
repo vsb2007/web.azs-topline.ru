@@ -97,10 +97,10 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return driver;
     }
 
-    @Bean(name = "oilFarm")
-    public OilFarm oilFarm() {
-        OilFarm oilFarm = new OilFarm();
-        return oilFarm;
+    @Bean(name = "oilStorage")
+    public OilStorage oilStorage() {
+        OilStorage oilStorage = new OilStorage();
+        return oilStorage;
     }
 
     @Bean(name = "oilType")

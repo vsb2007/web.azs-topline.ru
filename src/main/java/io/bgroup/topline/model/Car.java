@@ -18,6 +18,8 @@ public class Car {
     private DbModel db;
     @Autowired
     private OilType oilType;
+    @Autowired
+    private OilStorage oilStorage;
 
     public ArrayList<Car> getCarsList() {
         ArrayList<Car> carsList = null;
@@ -114,6 +116,7 @@ public class Car {
         String response = "";
         response += "<ul>";
         ArrayList<OilType> oilTypesList = oilType.getOilTypesList();
+        ArrayList<OilStorage> oilStoragesList = oilStorage.getOilStorageList();
         for (CarSections carSection : car.getCarSections()) {
             response += "<li>" +
                     "Секция " + carSection.getCarSectionName() + " (" + carSection.getVol() + "л.)"
@@ -126,32 +129,20 @@ public class Car {
                 response += "<option value=\"" + oilTypeTmp.getId_oilType() + "\">" +
                         oilTypeTmp.getOilTypeName() + "</option>";
             }
-            response += "</select>" +
-                    "</li>";
+            response += "</select>"
+                    + "&nbsp;"
+                    + "<select class=\"dropdown-menu\""
+                    + "id=\"oilStorage_" + car.getId_cars() + "_" + carSection.getId_section() + "\">"
+                    + "<option value=\"-1\">Пункт отгрузки</option>";
+            for (OilStorage oilStorageTmp : oilStoragesList) {
+                response += "<option value=\"" + oilStorageTmp.getIdOilStorage() + "\">" +
+                        oilStorageTmp.getOilStorageName() + "</option>";
+            }
+            response += "</select>"
+                    + "&nbsp;";
+            response += "</li>";
         }
         response += "</ul>";
-/*
-        <c:forEach items="${carsList}" var="car">
-        <div id="divCarSectionId_${car.getId_cars()}">
-        <ul>
-        <c:forEach items="${car.getCarSections()}" var="carSection">
-        <li>
-                Секция ${carSection.getCarSectionName()} (${carSection.getVol()} л.) &nbsp;
-        <select class="dropdown-menu"
-
-        id="oilType_${car.getId_cars()}_${carSection.getId_section()}"
-        name="oilType_${car.getId_cars()}_${carSection.getId_section()}">
-        <option value="-1">Пустая секция</option>
-        <c:forEach items="${oilTypesList}" var="oilType">
-        <option value="${oilType.getId_oilType()}">${oilType.getOilTypeName()}</option>
-        </c:forEach>
-        </select>
-        </li>
-        </c:forEach>
-        </ul>
-        </div>
-        </c:forEach>
-  */
         return response;
     }
 }

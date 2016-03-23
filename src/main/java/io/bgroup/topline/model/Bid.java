@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Bid {
     private SiteUser siteUser;
-    private OilFarm oilFarm;
+    private OilStorage oilStorage;
     private Driver driver;
     private Car car;
     private String dateOfCreation;
@@ -25,8 +25,8 @@ public class Bid {
         this.siteUser = siteUser;
     }
 
-    public void setOilFarm(OilFarm oilFarm) {
-        this.oilFarm = oilFarm;
+    public void setOilStorage(OilStorage oilStorage) {
+        this.oilStorage = oilStorage;
     }
 
     public void setDriver(Driver driver) {
@@ -52,8 +52,8 @@ public class Bid {
         return siteUser;
     }
 
-    public OilFarm getOilFarm() {
-        return oilFarm;
+    public OilStorage getOilStorages() {
+        return oilStorage;
     }
 
     public Driver getDriver() {

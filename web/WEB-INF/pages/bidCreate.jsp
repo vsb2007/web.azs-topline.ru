@@ -11,6 +11,12 @@
                 <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
                        name="bidname"
                        id="bidname"> <br>
+                <select class="dropdown-menu" id="oilStorage" name="oilStorage" onchange="">
+                    <option value="-1">Пункт отгрузки</option>
+                    <c:forEach items="${oilStorageList}" var="oilStorage">
+                        <option value="${oilStorage.getIdOilStorage()}">${oilStorage.getOilStorageName()}</option>
+                    </c:forEach>
+                </select><br>
                 <select class="dropdown-menu" id="car" name="car" onchange="onCarSelect(this)">
                     <option value="-1">Выбрать машину</option>
                     <c:forEach items="${carsList}" var="car">

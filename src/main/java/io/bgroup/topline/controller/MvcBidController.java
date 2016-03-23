@@ -29,7 +29,7 @@ public class MvcBidController {
     private Driver driver;
 
     @Autowired
-    private OilFarm oilFarm;
+    private OilStorage oilStorage;
 
     @Autowired
     private OilType oilType;
@@ -45,14 +45,12 @@ public class MvcBidController {
         SiteUser bidUser = siteUser.findSiteUser(principal);
         ArrayList<Car> carsList = car.getCarsList();
         ArrayList<Driver> driversList = driver.getDriversList();
-        ArrayList<OilFarm> oilFarmsList = oilFarm.getOilFarmsList();
-        ArrayList<OilType> oilTypesList = oilType.getOilTypesList();
+        ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
 
         model.addObject("appUser", bidUser);
         model.addObject("carsList", carsList);
         model.addObject("driversList", driversList);
-        model.addObject("oilFarmsList", oilFarmsList);
-        model.addObject("oilTypesList", oilTypesList);
+        model.addObject("oilStorageList", oilStorageList);
         model.setViewName("bidCreate");
         return model;
     }
