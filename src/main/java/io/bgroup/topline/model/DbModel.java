@@ -9,6 +9,9 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
+/*
+потом переделать на хибернейт !!!
+ */
 
 public class DbModel {
 
@@ -43,10 +46,8 @@ public class DbModel {
         return list;
     }
 
-
     public boolean getInsertResult(String sql) {
         try {
-            //потом переделать на хибернейт !!!
             return jdbcTemplate.getDataSource().getConnection().createStatement().execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
