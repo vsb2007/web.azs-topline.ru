@@ -48,6 +48,7 @@ public class DbModel {
 
     public boolean getInsertResult(String sql) {
         try {
+            //sorry for next line :-)
             return jdbcTemplate.getDataSource().getConnection().createStatement().execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
