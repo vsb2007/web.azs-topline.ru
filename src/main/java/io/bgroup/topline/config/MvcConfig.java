@@ -85,10 +85,16 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return car;
     }
 
-    @Bean(name = "carSections")
-    public CarSections carSections() {
-        CarSections carSections = new CarSections();
-        return carSections;
+    @Bean(name = "trailer")
+    public Trailer trailer() {
+        Trailer trailer = new Trailer();
+        return trailer;
+    }
+
+    @Bean(name = "oilSections")
+    public OilSections carSections() {
+        OilSections oilSections = new OilSections();
+        return oilSections;
     }
 
     @Bean(name = "driver")

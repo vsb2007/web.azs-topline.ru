@@ -7,7 +7,7 @@
 <sec:authorize access="hasRole('ROLE_BID_LIST')">
     <div class="section">
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
-            <form action="appcreate" method="post">
+            <form action="bidcreatedo" method="post">
                 <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
                        name="bidname"
                        id="bidname"> <br>
@@ -30,6 +30,10 @@
                     </c:forEach>
                 </select><br>
                 <div id="divCarSectionId">
+                </div>
+                <div id="divTrailerId">
+                </div>
+                <div id="divTrailerSectionId">
                 </div>
                 <button class="button raised bg-blue-500 color-white">Добавить заявку</button>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>

@@ -1,17 +1,17 @@
 package io.bgroup.topline.model;
 
-public class CarSections {
+public class OilSections {
     private String id_section;
-    private String carSectionName;
+    private String oilSectionName;
     private String vol;
 
-    public CarSections() {
+    public OilSections() {
     }
 
-    public CarSections(String id_section, String vol) {
+    public OilSections(String id_section, String vol) {
         this.id_section = id_section;
         this.vol = vol;
-        this.carSectionName = id_section.replace("cars_sections_","");
+        this.oilSectionName = id_section.replace("cars_sections_","");
     }
 
     public String getVol() {
@@ -30,12 +30,12 @@ public class CarSections {
         this.id_section = id_section;
     }
 
-    public String getCarSectionName() {
-        return carSectionName;
+    public String getOilSectionName() {
+        return oilSectionName;
     }
 
-    private void setCarSectionName(String carSectionName) {
-        this.carSectionName = carSectionName;
+    private void setOilSectionName(String oilSectionName) {
+        this.oilSectionName = oilSectionName;
     }
 }
 

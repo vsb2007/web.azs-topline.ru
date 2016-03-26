@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Car {
-    private final int countCarSection = 6;
+    private final int countOilSection = 2;
     private String id_cars;
     private String cars_number;
     private String cars_name;
     private String cars_block;
-    private ArrayList<CarSections> carSections;
+    private ArrayList<OilSections> oilSections;
 
     @Autowired
     private DbModel db;
@@ -20,6 +20,8 @@ public class Car {
     private OilType oilType;
     @Autowired
     private OilStorage oilStorage;
+    @Autowired
+    private Trailer trailer;
 
     public ArrayList<Car> getCarsList() {
         ArrayList<Car> carsList = null;
@@ -49,19 +51,19 @@ public class Car {
         ArrayList<Car> carsList = null;
         for (Map row : carsListFromDb) {
             Car car = new Car();
-            ArrayList<CarSections> carSections = car.getCarSections();
+            ArrayList<OilSections> oilSections = null;
             car.setCars_block((String) row.get("cars_block").toString());
             car.setId_cars((String) row.get("id_cars").toString());
             car.setCars_number((String) row.get("cars_number").toString());
             car.setCars_name((String) row.get("cars_name").toString());
-            for (int i = 1; i <= countCarSection; i++) {
+            for (int i = 1; i <= countOilSection; i++) {
                 String cars_sec = row.get("cars_sections_" + i).toString();
                 if (!cars_sec.equals("0")) {
-                    if (carSections == null) {
-                        carSections = new ArrayList<CarSections>();
+                    if (oilSections == null) {
+                        oilSections = new ArrayList<OilSections>();
+                        car.setOilSections(oilSections);
                     }
-                    car.setCarSections(carSections);
-                    carSections.add(new CarSections("cars_sections_" + i, cars_sec));
+                    oilSections.add(new OilSections("cars_sections_" + i, cars_sec));
                 }
             }
             if (carsList == null) carsList = new ArrayList<Car>();
@@ -70,12 +72,12 @@ public class Car {
         return carsList;
     }
 
-    public ArrayList<CarSections> getCarSections() {
-        return carSections;
+    public ArrayList<OilSections> getOilSections() {
+        return oilSections;
     }
 
-    private void setCarSections(ArrayList<CarSections> carSections) {
-        this.carSections = carSections;
+    private void setOilSections(ArrayList<OilSections> oilSections) {
+        this.oilSections = oilSections;
     }
 
     public String getCars_name() {
@@ -116,10 +118,10 @@ public class Car {
         String response = "";
         response += "<ul>";
         ArrayList<OilType> oilTypesList = oilType.getOilTypesList();
-        ArrayList<OilStorage> oilStoragesList = oilStorage.getOilStorageList();
-        for (CarSections carSection : car.getCarSections()) {
+        ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
+        for (OilSections carSection : car.getOilSections()) {
             response += "<li>" +
-                    "Секция " + carSection.getCarSectionName() + " (" + carSection.getVol() + "л.)"
+                    "Секция " + carSection.getOilSectionName() + " (" + carSection.getVol() + "л.)"
                     + "&nbsp;"
                     + "<select class=\"dropdown-menu\""
                     + "id=\"oilType_" + car.getId_cars() + "_" + carSection.getId_section() + "\">"
@@ -134,7 +136,7 @@ public class Car {
                     + "<select class=\"dropdown-menu\""
                     + "id=\"oilStorage_" + car.getId_cars() + "_" + carSection.getId_section() + "\">"
                     + "<option value=\"-1\">Пункт отгрузки</option>";
-            for (OilStorage oilStorageTmp : oilStoragesList) {
+            for (OilStorage oilStorageTmp : oilStorageList) {
                 response += "<option value=\"" + oilStorageTmp.getIdOilStorage() + "\">" +
                         oilStorageTmp.getOilStorageName() + "</option>";
             }
