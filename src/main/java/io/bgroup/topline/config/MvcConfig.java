@@ -24,7 +24,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private Environment environment;
 
-
     @Bean
     public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
@@ -54,7 +53,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public DbModel dbToplineWeb() {
         return new DbModel();
     }
-
 
     @Bean(name = "dataSource")
     public DriverManagerDataSource dataSource() {

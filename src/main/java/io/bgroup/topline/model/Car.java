@@ -115,11 +115,14 @@ public class Car {
     public String getCarSectionsForAjax(String idCar) {
         Car car = getCar(idCar);
         if (car == null) return "Error: нет данных по секциям";
+        ArrayList<OilSections> carSections = car.getOilSections();
+        if (carSections == null) return ""; // если на машине нет секций
         String response = "";
         response += "<ul>";
         ArrayList<OilType> oilTypesList = oilType.getOilTypesList();
         ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
-        for (OilSections carSection : car.getOilSections()) {
+        if (oilStorageList == null || oilTypesList == null) return "Error: не возможно загрузить данные";
+        for (OilSections carSection : carSections) {
             response += "<li>" +
                     "Секция " + carSection.getOilSectionName() + " (" + carSection.getVol() + "л.)"
                     + "&nbsp;"
