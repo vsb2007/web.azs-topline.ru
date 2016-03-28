@@ -12,6 +12,7 @@ public class OilSections {
         this.id_section = id_section;
         this.vol = vol;
         this.oilSectionName = id_section.replace("cars_sections_","");
+        this.oilSectionName = this.oilSectionName.replace("trailer_sec_","");
     }
 
     public String getVol() {

@@ -34,7 +34,7 @@ public class MvcBidAjaxController {
     public String getTrailerSections(HttpServletRequest request) {
         String responseBody = "Error";
         if (request != null) {
-            responseBody = trailer.getTrailerSectionsForAjax(request.getParameter("idCar"));
+            responseBody = trailer.getTrailerSectionsForAjax(request.getParameter("idTrailer"));
         }
         return responseBody;
     }

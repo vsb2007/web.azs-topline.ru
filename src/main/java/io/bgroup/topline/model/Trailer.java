@@ -102,7 +102,7 @@ public class Trailer {
             trailer.setTrailer_block((String) row.get("trailer_block").toString());
             trailer.setId_trailer((String) row.get("id_trailer").toString());
             trailer.setTrailer_number((String) row.get("trailer_number").toString());
-            //trailer.setTrailer_name((String) row.get("trailer_name").toString());
+            trailer.setTrailer_car_id((String) row.get("trailer_car_id").toString());
             for (int i = 1; i <= countOilSection; i++) {
                 String trailer_sec = row.get("trailer_sec_" + i).toString();
                 if (!trailer_sec.equals("0")) {
@@ -110,7 +110,7 @@ public class Trailer {
                         oilSections = new ArrayList<OilSections>();
                         trailer.setOilSections(oilSections);
                     }
-                    oilSections.add(new OilSections("cars_sec_" + i, trailer_sec));
+                    oilSections.add(new OilSections("trailer_sec_" + i, trailer_sec));
                 }
             }
             if (trailerList == null) trailerList = new ArrayList<Trailer>();
@@ -122,11 +122,14 @@ public class Trailer {
     public String getTrailerSectionsForAjax(String idTrailer) {
         Trailer trailer = getTrailer(idTrailer);
         if (trailer == null) return "Error: нет данных по секциям";
+        ArrayList<OilSections> oilSections = trailer.getOilSections();
+        if (oilSections == null) return "Error: нет данных по секциям";
         String response = "";
         response += "<ul>";
         ArrayList<OilType> oilTypesList = oilType.getOilTypesList();
         ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
-        for (OilSections oilSection : trailer.getOilSections()) {
+        if (oilStorageList == null || oilTypesList == null) return "Error: не возможно загрузить данные";
+        for (OilSections oilSection : oilSections) {
             response += "<li>" +
                     "Секция " + oilSection.getOilSectionName() + " (" + oilSection.getVol() + "л.)"
                     + "&nbsp;"
@@ -156,18 +159,30 @@ public class Trailer {
     }
 
     public String getTrailerForAjax(String idCar) {
+
         ArrayList<Trailer> trailersList = getTrailersList();
+
         if (trailersList == null) return "Error: нет данных по прицепам";
         String response = "";
         response += "<select class=\"dropdown-menu\""
                 + "id=\"trailerId\" " +
-                "onchange=\"\"" +
+                "onchange=\"onTrailerSelect(this)\"" +
                 "> "
                 + "<option value=\"-1\">Выбрать прицеп</option>";
+        String optionSelected = "";
+        boolean optionSelectedFlag = false;
         for (Trailer trailer : trailersList) {
-            response += "<option value=\"" + trailer.getId_trailer() + "\">"
+            if (trailer.getTrailer_car_id().equals(idCar)) {
+                optionSelected = "selected";
+                optionSelectedFlag = true;
+            }
+            response += "<option value=\"" + trailer.getId_trailer() + "\" " + optionSelected + ">"
                     + "Прицеп: " + trailer.getTrailer_number()
                     + "</option>";
+            if (optionSelectedFlag) {
+                optionSelected = "";
+                optionSelectedFlag = false;
+            }
         }
         response += "</select>";
         return response;
