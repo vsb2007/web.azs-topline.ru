@@ -38,7 +38,7 @@ public class MvcBidController {
     private Bid bid;
 
     @RequestMapping(value = "/bidcreate")
-    public ModelAndView AppList(UsernamePasswordAuthenticationToken principal,HttpServletRequest request) {
+    public ModelAndView bidcreate(UsernamePasswordAuthenticationToken principal,HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         if (request!=null) bid.createBid(principal,request);
 
@@ -53,6 +53,26 @@ public class MvcBidController {
         model.addObject("oilStorageList", oilStorageList);
         model.setViewName("bidCreate");
         return model;
+    }
+
+    @RequestMapping(value = "/bidcreateform")
+    public ModelAndView bidcreatedo(UsernamePasswordAuthenticationToken principal,HttpServletRequest request) {
+      ModelAndView model = new ModelAndView();
+    /*      if (request!=null) bid.createBid(principal,request);
+
+        SiteUser bidUser = siteUser.findSiteUser(principal);
+        ArrayList<Car> carsList = car.getCarsList();
+        ArrayList<Driver> driversList = driver.getDriverList();
+        ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
+
+        model.addObject("appUser", bidUser);
+        model.addObject("carsList", carsList);
+        model.addObject("driversList", driversList);
+        model.addObject("oilStorageList", oilStorageList);
+        */
+        model.setViewName("bidListOpen");
+        return model;
+
     }
 
 }
