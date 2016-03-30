@@ -21,16 +21,13 @@ public class SiteUser {
     private String error;
 
     @Autowired
-    private DbModel db;
+    private DbModel dbMvc;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
-
-    public void setDb(DbModel db) {
-        this.db = db;
-    }
+    PasswordEncoder passwordEncoderMvc;
 
     public SiteUser() {
+
     }
 
     public String getError() {
@@ -112,14 +109,13 @@ public class SiteUser {
         List<Map<String, Object>> findUsersList = null;
         if (name != null) {
             sql = "select * from users where username='" + name + "'";
-            findUsersList = db.getSelectResult(sql);
+            findUsersList = dbMvc.getSelectResult(sql);
         }
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
     }
 
     public SiteUser findSiteUser(UsernamePasswordAuthenticationToken principal) {
-
         return findSiteUser(principal.getName());
     }
 
@@ -128,7 +124,7 @@ public class SiteUser {
         String sql;
         List<Map<String, Object>> findUsersList = null;
         sql = "select * from users where id_user='" + id_user + "'";
-        findUsersList = db.getSelectResult(sql);
+        findUsersList = dbMvc.getSelectResult(sql);
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
     }
@@ -160,14 +156,14 @@ public class SiteUser {
         String userIdFromForm = request.getParameter("user-red-id-label");
         sql = "select * from users where id_user='" + userIdFromForm + "'";
 
-        List<Map<String, Object>> findUsersList = db.getSelectResult(sql);
+        List<Map<String, Object>> findUsersList = dbMvc.getSelectResult(sql);
 
         redUser = getSiteUserFromDbSelect(findUsersList);
         return redUser;
     }
 
     public SiteUser findRedSiteUser(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
-        if (!isUserHasRole(principal, "ROLE_USERSRED")) return null;
+        if (!isUserHasRole(principal, "ROLE_USERS_RED")) return null;
 
         String userFindValue = request.getParameter("user-find-label");
         String userRedFormValue = request.getParameter("red_form");
@@ -183,7 +179,6 @@ public class SiteUser {
             redUser = findSiteUser(Integer.parseInt(redUser.getId()));
             redUser.setError(tmpError);
         }
-        //return findSiteUser(request.getParameter("buttonuserred"));
         return redUser;
     }
 
@@ -195,43 +190,41 @@ public class SiteUser {
         String userEmailFromForm = request.getParameter("user-email-label");
         String userIdFromForm = request.getParameter("user-red-id-label");
         String userActiveFlagFromForm = request.getParameter("user-active-flag");
-
         String sql;
         if (userNameFromForm != null
                 && !redUser.getName().equals(userNameFromForm)
                 && !userNameFromForm.equals("")) {
             sql = "update users set username='" + userNameFromForm + "' where id_user=" + userIdFromForm;
-            boolean flag = db.getInsertResult(sql);
+            boolean flag = dbMvc.getInsertResult(sql);
             if (flag) {
                 return "Ошибка обновления имени";
             }
         }
         if (userPasswordFromForm != null && !userPasswordFromForm.equals("")) {
-            String password = passwordEncoder.encode(userPasswordFromForm);
+            String password = passwordEncoderMvc.encode(userPasswordFromForm);
             sql = "update users set password='" + password + "' where id_user=" + userIdFromForm;
-            boolean flag = db.getInsertResult(sql);
+            boolean flag = dbMvc.getInsertResult(sql);
             if (flag) {
                 return "Ошибка обновления пароля";
             }
         }
         if (userFioFromForm != null) {
             sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
-            boolean flag = db.getInsertResult(sql);
+            boolean flag = dbMvc.getInsertResult(sql);
             if (flag) {
                 return "Ошибка обновления ФИО";
-
             }
         }
         if (userPhoneFromForm != null) {
             sql = "update users set user_phone='" + userPhoneFromForm + "' where id_user=" + userIdFromForm;
-            boolean flag = db.getInsertResult(sql);
+            boolean flag = dbMvc.getInsertResult(sql);
             if (flag) {
                 return "Ошибка обновления телефона";
             }
         }
         if (userEmailFromForm != null) {
             sql = "update users set user_email='" + userEmailFromForm + "' where id_user=" + userIdFromForm;
-            boolean flag = db.getInsertResult(sql);
+            boolean flag = dbMvc.getInsertResult(sql);
             if (flag) {
                 return "Ошибка обновления email";
             }
@@ -239,8 +232,7 @@ public class SiteUser {
         if (userActiveFlagFromForm != null) {
             if (userActiveFlagFromForm.equals("0")) {
                 sql = "update users set enabled=true where id_user=" + userIdFromForm;
-
-                boolean flag = db.getInsertResult(sql);
+                boolean flag = dbMvc.getInsertResult(sql);
                 if (flag) {
                     return "Ошибка обновления блокировки";
                 }
@@ -248,12 +240,11 @@ public class SiteUser {
         }
         if (userActiveFlagFromForm == null || !userActiveFlagFromForm.equals("0")) {
             sql = "update users set enabled=false where id_user=" + userIdFromForm;
-            boolean flag = db.getInsertResult(sql);
+            boolean flag = dbMvc.getInsertResult(sql);
             if (flag) {
                 return "Ошибка обновления блокировки";
             }
         }
-
         return "Изменения сохранены";
     }
 
@@ -261,7 +252,7 @@ public class SiteUser {
         if (!isUserHasRole(principal, "ROLE_USERS")) return null;
         String sql;
         sql = "select * from users where username!='admin' and user_is_delete=0";
-        List<Map<String, Object>> listDbUser = db.getSelectResult(sql);
+        List<Map<String, Object>> listDbUser = dbMvc.getSelectResult(sql);
         if (listDbUser == null) {
             return null;
         }
@@ -275,26 +266,26 @@ public class SiteUser {
     }
 
     private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
-        redUser.setName((String) row.get("username"));
-        redUser.setEmail((String) row.get("user_email"));
-        redUser.setFio((String) row.get("user_fio"));
-        redUser.setPhone((String) row.get("user_phone"));
-        redUser.setIsEnable((String) row.get("enabled").toString());
-        redUser.setId((String) row.get("id_user").toString());
+        redUser.setName(row.get("username").toString());
+        redUser.setEmail(row.get("user_email").toString());
+        redUser.setFio(row.get("user_fio").toString());
+        redUser.setPhone(row.get("user_phone").toString());
+        redUser.setIsEnable(row.get("enabled").toString());
+        redUser.setId(row.get("id_user").toString());
     }
 
     public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
-        if (!isUserHasRole(principal, "ROLE_USERSADD")) return false;
+        if (!isUserHasRole(principal, "ROLE_USERS_ADD")) return false;
         String userNameFromFormUserAdd = request.getParameter("username");
         String sql;
         sql = "select * from users where user_name='" + userNameFromFormUserAdd + "'";
-        List<Map<String, Object>> dbSelectResult = db.getSelectResult(sql);
+        List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql);
         if (dbSelectResult != null && dbSelectResult.size() > 0) {
             this.error = "Пользователь существует";
             return false;
         } else {
             sql = "INSERT INTO users (username) VALUES ('" + userNameFromFormUserAdd + "')";
-            boolean flag = db.getInsertResult(sql);
+            boolean flag = dbMvc.getInsertResult(sql);
             if (!flag)
                 this.error = "Пользователь добавлен";
             else
@@ -303,8 +294,7 @@ public class SiteUser {
         return true;
     }
 
-    private boolean isUserHasRole(UsernamePasswordAuthenticationToken principal, String role) {
-        boolean returnNullFlag = true;
+    public boolean isUserHasRole(UsernamePasswordAuthenticationToken principal, String role) {
         for (GrantedAuthority grantedAuthority : principal.getAuthorities()) {
             if (grantedAuthority.getAuthority().equals(role)) {
                 return true;

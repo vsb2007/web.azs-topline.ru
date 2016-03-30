@@ -38,9 +38,9 @@ public class MvcBidController {
     private Bid bid;
 
     @RequestMapping(value = "/bidcreate")
-    public ModelAndView bidcreate(UsernamePasswordAuthenticationToken principal,HttpServletRequest request) {
+    public ModelAndView bidcreate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        if (request!=null) bid.createBid(principal,request);
+        //if (request!=null) bid.createBid(principal,request);
 
         SiteUser bidUser = siteUser.findSiteUser(principal);
         ArrayList<Car> carsList = car.getCarsList();
@@ -56,10 +56,14 @@ public class MvcBidController {
     }
 
     @RequestMapping(value = "/bidcreateform")
-    public ModelAndView bidcreatedo(UsernamePasswordAuthenticationToken principal,HttpServletRequest request) {
-      ModelAndView model = new ModelAndView();
-    /*      if (request!=null) bid.createBid(principal,request);
+    public ModelAndView bidcreatedo(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        String message = bid.createBid(principal, request);
+        if (request != null) {
+            model.addObject("message", message);
+        }
 
+/*
         SiteUser bidUser = siteUser.findSiteUser(principal);
         ArrayList<Car> carsList = car.getCarsList();
         ArrayList<Driver> driversList = driver.getDriverList();

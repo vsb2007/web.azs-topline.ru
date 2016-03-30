@@ -1,6 +1,5 @@
 package io.bgroup.topline.model;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -17,11 +16,13 @@ public class Trailer {
     private ArrayList<OilSections> oilSections;
 
     @Autowired
-    private DbModel db;
+    private DbModel dbMvc;
     @Autowired
-    private OilType oilType;
+    private OilType oilTypeMvc;
     @Autowired
-    private OilStorage oilStorage;
+    private OilStorage oilStorageMvc;
+    @Autowired
+    private OilSections oilSectionsMvc;
 
     public String getId_trailer() {
         return id_trailer;
@@ -93,7 +94,7 @@ public class Trailer {
 
     private ArrayList<Trailer> getTrailersFromDbSelect(String sql) {
         List<Map<String, Object>> trailersListFromDb = null;
-        trailersListFromDb = db.getSelectResult(sql);
+        trailersListFromDb = dbMvc.getSelectResult(sql);
         if (trailersListFromDb == null) return null;
         ArrayList<Trailer> trailerList = null;
         for (Map row : trailersListFromDb) {
@@ -126,47 +127,22 @@ public class Trailer {
         if (oilSections == null) return "Error: нет данных по секциям";
         String response = "";
         response += "<ul>";
-        ArrayList<OilType> oilTypesList = oilType.getOilTypesList();
-        ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
+        ArrayList<OilType> oilTypesList = oilTypeMvc.getOilTypesList();
+        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
         if (oilStorageList == null || oilTypesList == null) return "Error: не возможно загрузить данные";
-        for (OilSections oilSection : oilSections) {
-            response += "<li>" +
-                    "Секция " + oilSection.getOilSectionName() + " (" + oilSection.getVol() + "л.)"
-                    + "&nbsp;"
-                    + "<select class=\"dropdown-menu\""
-                    + "id=\"trailerOilType_" + trailer.getId_trailer() + "_" + oilSection.getId_section() + "\">"
-                    + "<option value=\"-1\">Пустая секция</option>"
-            ;
-            for (OilType oilTypeTmp : oilTypesList) {
-                response += "<option value=\"" + oilTypeTmp.getId_oilType() + "\">" +
-                        oilTypeTmp.getOilTypeName() + "</option>";
-            }
-            response += "</select>"
-                    + "&nbsp;"
-                    + "<select class=\"dropdown-menu\""
-                    + "id=\"trailerOilStorage_" + trailer.getId_trailer() + "_" + oilSection.getId_section() + "\">"
-                    + "<option value=\"-1\">Пункт отгрузки</option>";
-            for (OilStorage oilStorageTmp : oilStorageList) {
-                response += "<option value=\"" + oilStorageTmp.getIdOilStorage() + "\">" +
-                        oilStorageTmp.getOilStorageName() + "</option>";
-            }
-            response += "</select>"
-                    + "&nbsp;";
-            response += "</li>";
-        }
+        response += oilSectionsMvc.getOilSectionsForAjaxSelect(oilSections, oilTypesList, oilStorageList);
         response += "</ul>";
         return response;
     }
 
     public String getTrailerForAjax(String idCar) {
-
         ArrayList<Trailer> trailersList = getTrailersList();
-
         if (trailersList == null) return "Error: нет данных по прицепам";
         String response = "";
         response += "<select class=\"dropdown-menu\""
-                + "id=\"trailerId\" " +
-                "onchange=\"onTrailerSelect(this)\"" +
+                + "id=\"trailerId\" "
+                + "name=\"trailerId\" "
+                + "onchange=\"onTrailerSelect(this)\"" +
                 "> "
                 + "<option value=\"-1\">Выбрать прицеп</option>";
         String optionSelected = "";

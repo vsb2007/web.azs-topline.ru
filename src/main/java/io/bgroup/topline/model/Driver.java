@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Driver {
     @Autowired
-    private DbModel db;
+    private DbModel dbMvc;
 
     private String idDriver;
     private String driverFio;
@@ -63,9 +63,17 @@ public class Driver {
         return driverList;
     }
 
+    public Driver getDriver(String idDriver) {
+        ArrayList<Driver> driverList = null;
+        String sql = "select * from drivers where id_drivers='" + idDriver + "'";
+        driverList = getDriverFromDbSelect(sql);
+        if (driverList == null || driverList.size() == 0) return null;
+        return driverList.get(0);
+    }
+
     private ArrayList<Driver> getDriverFromDbSelect(String sql) {
         List<Map<String, Object>> driverListFromDb = null;
-        driverListFromDb = db.getSelectResult(sql);
+        driverListFromDb = dbMvc.getSelectResult(sql);
         if (driverListFromDb == null) return null;
         ArrayList<Driver> driverList = null;
         for (Map row : driverListFromDb) {

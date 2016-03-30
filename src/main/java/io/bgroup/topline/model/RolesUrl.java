@@ -15,7 +15,7 @@ public class RolesUrl {
     private String isBlock;
 
     @Autowired
-    private DbModel db;
+    private DbModel dbMvc;
 
     public String getUrl() {
         return url;

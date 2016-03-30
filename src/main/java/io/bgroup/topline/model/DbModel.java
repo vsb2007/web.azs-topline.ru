@@ -1,10 +1,8 @@
 package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +14,10 @@ import java.util.Map;
 public class DbModel {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplateMvc;
 
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public void setJdbcTemplateMvc(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplateMvc = jdbcTemplate;
     }
 
     private String error;
@@ -36,11 +34,11 @@ public class DbModel {
     }
 
     public List<Map<String, Object>> getSelectResult(String sql) {
-        List<Map<String, Object>> list;
+        List<Map<String, Object>> list = null;
         try {
-            list = jdbcTemplate.queryForList(sql);
+            list = jdbcTemplateMvc.queryForList(sql);
         } catch (Exception e) {
-            setError("Ошибка: " + e);
+            e.printStackTrace();
             return null;
         }
         return list;
@@ -49,7 +47,7 @@ public class DbModel {
     public boolean getInsertResult(String sql) {
         try {
             //sorry for next line :-)
-            return jdbcTemplate.getDataSource().getConnection().createStatement().execute(sql);
+            return jdbcTemplateMvc.getDataSource().getConnection().createStatement().execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }

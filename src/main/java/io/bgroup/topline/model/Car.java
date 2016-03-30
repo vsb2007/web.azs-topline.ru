@@ -15,13 +15,13 @@ public class Car {
     private ArrayList<OilSections> oilSections;
 
     @Autowired
-    private DbModel db;
+    private DbModel dbMvc;
     @Autowired
-    private OilType oilType;
+    private OilType oilTypeMvc;
     @Autowired
-    private OilStorage oilStorage;
+    private OilStorage oilStorageMvc;
     @Autowired
-    private Trailer trailer;
+    private OilSections oilSectionsMvc;
 
     public ArrayList<Car> getCarsList() {
         ArrayList<Car> carsList = null;
@@ -46,7 +46,7 @@ public class Car {
 
     private ArrayList<Car> getCarsFromDbSelect(String sql) {
         List<Map<String, Object>> carsListFromDb = null;
-        carsListFromDb = db.getSelectResult(sql);
+        carsListFromDb = dbMvc.getSelectResult(sql);
         if (carsListFromDb == null) return null;
         ArrayList<Car> carsList = null;
         for (Map row : carsListFromDb) {
@@ -119,34 +119,10 @@ public class Car {
         if (carSections == null) return ""; // если на машине нет секций
         String response = "";
         response += "<ul>";
-        ArrayList<OilType> oilTypesList = oilType.getOilTypesList();
-        ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
+        ArrayList<OilType> oilTypesList = oilTypeMvc.getOilTypesList();
+        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
         if (oilStorageList == null || oilTypesList == null) return "Error: не возможно загрузить данные";
-        for (OilSections carSection : carSections) {
-            response += "<li>" +
-                    "Секция " + carSection.getOilSectionName() + " (" + carSection.getVol() + "л.)"
-                    + "&nbsp;"
-                    + "<select class=\"dropdown-menu\""
-                    + "id=\"oilType_" + car.getId_cars() + "_" + carSection.getId_section() + "\">"
-                    + "<option value=\"-1\">Пустая секция</option>"
-            ;
-            for (OilType oilTypeTmp : oilTypesList) {
-                response += "<option value=\"" + oilTypeTmp.getId_oilType() + "\">" +
-                        oilTypeTmp.getOilTypeName() + "</option>";
-            }
-            response += "</select>"
-                    + "&nbsp;"
-                    + "<select class=\"dropdown-menu\""
-                    + "id=\"oilStorage_" + car.getId_cars() + "_" + carSection.getId_section() + "\">"
-                    + "<option value=\"-1\">Пункт отгрузки</option>";
-            for (OilStorage oilStorageTmp : oilStorageList) {
-                response += "<option value=\"" + oilStorageTmp.getIdOilStorage() + "\">" +
-                        oilStorageTmp.getOilStorageName() + "</option>";
-            }
-            response += "</select>"
-                    + "&nbsp;";
-            response += "</li>";
-        }
+        response += oilSectionsMvc.getOilSectionsForAjaxSelect(carSections, oilTypesList, oilStorageList);
         response += "</ul>";
         return response;
     }

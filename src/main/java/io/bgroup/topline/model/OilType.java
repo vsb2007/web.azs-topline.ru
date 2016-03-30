@@ -12,7 +12,7 @@ public class OilType {
     private String oilTypeBlock;
 
     @Autowired
-    private DbModel db;
+    private DbModel dbMvc;
 
     public OilType() {
     }
@@ -26,7 +26,7 @@ public class OilType {
 
     private ArrayList<OilType> getOilTypesFromDbSelect(String sql) {
         List<Map<String, Object>> oilTypesListFromDb = null;
-        oilTypesListFromDb = db.getSelectResult(sql);
+        oilTypesListFromDb = dbMvc.getSelectResult(sql);
         if (oilTypesListFromDb == null) return null;
 
         ArrayList<OilType> oilTypeArrayList = null;

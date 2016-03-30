@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class OilStorage {
     @Autowired
-    private DbModel db;
+    private DbModel dbMvc;
 
     private String idOilStorage;
     private String oilStorageName;
@@ -54,9 +54,17 @@ public class OilStorage {
         return oilStorageList;
     }
 
+    public OilStorage getOilStorage(String idOilStorage) {
+        ArrayList<OilStorage> oilStorageList = null;
+        String sql = "select * from storages where id_sklad = '" + idOilStorage + "'";
+        oilStorageList = getOilStorageFromDbSelect(sql);
+        if (oilStorageList == null || oilStorageList.size() == 0) return null;
+        return oilStorageList.get(0);
+    }
+
     private ArrayList<OilStorage> getOilStorageFromDbSelect(String sql) {
         List<Map<String, Object>> oilStorageListFromDb = null;
-        oilStorageListFromDb = db.getSelectResult(sql);
+        oilStorageListFromDb = dbMvc.getSelectResult(sql);
         if (oilStorageListFromDb == null) return null;
 
         ArrayList<OilStorage> oilStorageArrayList = null;

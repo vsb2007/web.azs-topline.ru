@@ -6,7 +6,7 @@
 
 <sec:authorize access="hasRole('ROLE_BID_LIST')">
     <div class="section">
-        test
+        ${message}
     </div>
 
     <script src="js/bidCreate.js"></script>
