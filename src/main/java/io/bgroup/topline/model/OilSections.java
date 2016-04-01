@@ -13,7 +13,7 @@ public class OilSections {
     public OilSections(String id_section, String vol) {
         this.id_section = id_section;
         this.vol = vol;
-        this.oilSectionName = id_section.replace("cars_sections_", "");
+        this.oilSectionName = id_section.replace("car_sec_", "");
         this.oilSectionName = this.oilSectionName.replace("trailer_sec_", "");
     }
 
@@ -48,8 +48,8 @@ public class OilSections {
                     "Секция " + carSection.getOilSectionName() + " (" + carSection.getVol() + "л.)"
                     + "&nbsp;"
                     + "<select class=\"dropdown-menu\""
-                    + "id=\"" + carSection.getId_section() + "_oilType\" "
-                    + "name=\"" + carSection.getId_section() + "_oilType\">"
+                    + "id=\"" + carSection.getId_section() + "_oilTypeId\" "
+                    + "name=\"" + carSection.getId_section() + "_oilTypeId\">"
                     + "<option value=\"-1\">Пустая секция</option>"
             ;
             for (OilType oilTypeTmp : oilTypesList) {
@@ -59,8 +59,8 @@ public class OilSections {
             response += "</select>"
                     + "&nbsp;"
                     + "<select class=\"dropdown-menu\""
-                    + "id=\"" + carSection.getId_section() + "\" "
-                    + "name=\"" + carSection.getId_section() + "\">"
+                    + "id=\"" + carSection.getId_section() + "_storageOutId\" "
+                    + "name=\"" + carSection.getId_section() + "_storageOutId\">"
                     + "<option value=\"-1\">Пункт отгрузки</option>";
             for (OilStorage oilStorageTmp : oilStorageList) {
                 response += "<option value=\"" + oilStorageTmp.getIdOilStorage() + "\">" +

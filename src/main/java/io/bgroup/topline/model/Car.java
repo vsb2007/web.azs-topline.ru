@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class Car {
     private final int countOilSection = 2;
-    private String id_cars;
-    private String cars_number;
-    private String cars_name;
-    private String cars_block;
+    private String id_car;
+    private String car_number;
+    private String car_name;
+    private String car_block;
     private ArrayList<OilSections> oilSections;
 
     @Autowired
@@ -25,7 +25,7 @@ public class Car {
 
     public ArrayList<Car> getCarsList() {
         ArrayList<Car> carsList = null;
-        String sql = "select * from cars where cars_block='0'";
+        String sql = "select * from cars where car_block='0'";
         carsList = getCarsFromDbSelect(sql);
         return carsList;
     }
@@ -33,7 +33,7 @@ public class Car {
     public Car getCar(String id_car) {
 
         Car car = null;
-        String sql = "select * from cars where id_cars=" + id_car;
+        String sql = "select * from cars where id_car=" + id_car;
         car = getCarFromDbSelect(sql);
         return car;
     }
@@ -52,18 +52,18 @@ public class Car {
         for (Map row : carsListFromDb) {
             Car car = new Car();
             ArrayList<OilSections> oilSections = null;
-            car.setCars_block((String) row.get("cars_block").toString());
-            car.setId_cars((String) row.get("id_cars").toString());
-            car.setCars_number((String) row.get("cars_number").toString());
-            car.setCars_name((String) row.get("cars_name").toString());
+            car.setCar_block((String) row.get("car_block").toString());
+            car.setId_car((String) row.get("id_car").toString());
+            car.setCar_number((String) row.get("car_number").toString());
+            car.setCar_name((String) row.get("car_name").toString());
             for (int i = 1; i <= countOilSection; i++) {
-                String cars_sec = row.get("cars_sections_" + i).toString();
-                if (!cars_sec.equals("0")) {
+                String car_sec = row.get("car_sec_" + i).toString();
+                if (!car_sec.equals("0")) {
                     if (oilSections == null) {
                         oilSections = new ArrayList<OilSections>();
                         car.setOilSections(oilSections);
                     }
-                    oilSections.add(new OilSections("cars_sections_" + i, cars_sec));
+                    oilSections.add(new OilSections("car_sec_" + i, car_sec));
                 }
             }
             if (carsList == null) carsList = new ArrayList<Car>();
@@ -80,36 +80,36 @@ public class Car {
         this.oilSections = oilSections;
     }
 
-    public String getCars_name() {
-        return cars_name;
+    public String getCar_name() {
+        return car_name;
     }
 
-    private void setCars_name(String cars_name) {
-        this.cars_name = cars_name;
+    private void setCar_name(String car_name) {
+        this.car_name = car_name;
     }
 
-    public String getId_cars() {
-        return id_cars;
+    public String getId_car() {
+        return id_car;
     }
 
-    private void setId_cars(String id_cars) {
-        this.id_cars = id_cars;
+    private void setId_car(String id_car) {
+        this.id_car = id_car;
     }
 
-    public String getCars_number() {
-        return cars_number;
+    public String getCar_number() {
+        return car_number;
     }
 
-    private void setCars_number(String cars_number) {
-        this.cars_number = cars_number;
+    private void setCar_number(String car_number) {
+        this.car_number = car_number;
     }
 
-    public String getCars_block() {
-        return cars_block;
+    public String getCar_block() {
+        return car_block;
     }
 
-    private void setCars_block(String cars_block) {
-        this.cars_block = cars_block;
+    private void setCar_block(String car_block) {
+        this.car_block = car_block;
     }
 
     public String getCarSectionsForAjax(String idCar) {

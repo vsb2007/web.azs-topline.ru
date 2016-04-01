@@ -138,6 +138,7 @@ public class SiteUser {
                 setSiteUserFromMapRow(findUser, row);
             } catch (Exception e) {
                 this.error = "Ошибка: " + e;
+                //System.out.println(error);
             }
         }
         return findUser;
@@ -266,12 +267,19 @@ public class SiteUser {
     }
 
     private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
-        redUser.setName(row.get("username").toString());
-        redUser.setEmail(row.get("user_email").toString());
-        redUser.setFio(row.get("user_fio").toString());
-        redUser.setPhone(row.get("user_phone").toString());
-        redUser.setIsEnable(row.get("enabled").toString());
         redUser.setId(row.get("id_user").toString());
+        redUser.setName(row.get("username").toString());
+        //System.out.println("User: name");
+        redUser.setEmail(row.get("user_email").toString());
+        //System.out.println("User: email");
+        redUser.setFio(row.get("user_fio").toString());
+        //System.out.println("User: fio");
+        redUser.setPhone(row.get("user_phone").toString());
+        //System.out.println("User: phone");
+        redUser.setIsEnable(row.get("enabled").toString());
+        //System.out.println("User: enable");
+
+        //System.out.println("User: " + row.get("id_user"));
     }
 
     public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {

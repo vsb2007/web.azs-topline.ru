@@ -26,7 +26,7 @@
                 <select class="dropdown-menu" id="car" name="car" onchange="onCarSelect(this)">
                     <option value="-1">Выбрать машину</option>
                     <c:forEach items="${carsList}" var="car">
-                        <option value="${car.getId_cars()}">${car.getCars_name()}</option>
+                        <option value="${car.getId_car()}">${car.getCar_name()}</option>
                     </c:forEach>
                 </select><br>
                 <div id="divCarSectionId">

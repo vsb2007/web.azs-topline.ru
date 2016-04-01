@@ -11,6 +11,7 @@ public class Bid {
     private String dateOfCreation;
     private String dateOfClose;
     private String error;
+    private boolean emptySectionFlag = true;
     /*
       private SiteUser siteUser;
       private OilStorage oilStorage;
@@ -28,6 +29,8 @@ public class Bid {
     private Car carMvc;
     @Autowired
     private Trailer trailerMvc;
+    @Autowired
+    private DbModel dbMvc;
 
 
     public void setError(String error) {
@@ -86,55 +89,72 @@ public class Bid {
                 trailerOilSections = trailer.getOilSections();
             }
         }
-        String sql = "insert into bids";
+        String sql = "insert into bids ";
         String columns = "";
         String values = "";
-        if (siteUser.getId() != null) {
-            columns += strPlusCommaPlusValue(columns, "bid_create_user_id");
-            values += strPlusCommaPlusValue(values, "'" + siteUser.getId() + "'");
+
+        if (siteUser != null) {
+            columns = strPlusCommaPlusValue(columns, "bid_create_user_id");
+            values = strPlusCommaPlusValue(values, "'" + siteUser.getId() + "'");
         }
         if (bidNumber != null) {
-            columns += strPlusCommaPlusValue(columns, "bid_number");
-            values += strPlusCommaPlusValue(values, "'" + bidNumber + "'");
+            columns = strPlusCommaPlusValue(columns, "bid_number");
+            values = strPlusCommaPlusValue(values, "'" + bidNumber + "'");
         }
         {
             //дата создания, она же дата последнего апдейта
-            columns += strPlusCommaPlusValue(columns, "bid_date_create");
-            values += strPlusCommaPlusValue(values, "now()");
-            columns += strPlusCommaPlusValue(columns, "bid_date_last_update");
-            values += strPlusCommaPlusValue(values, "now()");
+            columns = strPlusCommaPlusValue(columns, "bid_date_create");
+            values = strPlusCommaPlusValue(values, "now()");
+            columns = strPlusCommaPlusValue(columns, "bid_date_last_update");
+            values = strPlusCommaPlusValue(values, "now()");
         }
         if (oilStorage.getIdOilStorage() != null) {
-            columns += strPlusCommaPlusValue(columns, "bid_storage_in_id");
-            values += strPlusCommaPlusValue(values, "'" + oilStorage.getIdOilStorage() + "'");
+            columns = strPlusCommaPlusValue(columns, "bid_storage_in_id");
+            values = strPlusCommaPlusValue(values, "'" + oilStorage.getIdOilStorage() + "'");
         }
         if (driver.getIdDriver() != null) {
-            columns += strPlusCommaPlusValue(columns, "bid_driver_id");
-            values += strPlusCommaPlusValue(values, "'" + driver.getIdDriver() + "'");
+            columns = strPlusCommaPlusValue(columns, "bid_driver_id");
+            values = strPlusCommaPlusValue(values, "'" + driver.getIdDriver() + "'");
         }
-        if (car.getId_cars() != null) {
-            columns += strPlusCommaPlusValue(columns, "bid_car_id");
-            values += strPlusCommaPlusValue(values, "'" + car.getId_cars() + "'");
+        if (car.getId_car() != null) {
+            columns = strPlusCommaPlusValue(columns, "bid_car_id");
+            values = strPlusCommaPlusValue(values, "'" + car.getId_car() + "'");
         }
         if (carOilSections != null && carOilSections.size() != 0) {
-            for (OilSections oilSections: carOilSections){
-                
+            addColumnsAndValuesForSetions(columns, values, carOilSections, request);
+        }
+
+        if (trailerOilSections != null && trailerOilSections.size() != 0) {
+            if (trailer != null) {
+                columns = strPlusCommaPlusValue(columns, "bid_trailer_id");
+                values = strPlusCommaPlusValue(values, "'" + trailer.getId_trailer() + "'");
             }
+            addColumnsAndValuesForSetions(columns, values, trailerOilSections, request);
         }
-
-
-        Map<String, String[]> param = request.getParameterMap();
-        for (Map.Entry<String, String[]> pair : param.entrySet()) {
-            System.out.println(pair.getKey() + " - " + pair.getValue());
-        }
-
-        String str = request.getParameterNames().toString();
-        return str;
+        if (emptySectionFlag) return "Error: секции пусты";
+        sql += "(" + columns + ") values (" + values + ")";
+        if (!dbMvc.getInsertResult(sql)) return "Заявка создана";
+        else return "Неизвестная ошибка добавления заявки";
     }
 
     private String strPlusCommaPlusValue(String str, String value) {
-        if (!str.equals("")) str += ",";
-        str += value;
-        return str;
+        String strTmp = new String(str);
+        if (!str.equals("")) strTmp += ",";
+        strTmp += value;
+        return strTmp;
+    }
+
+    private void addColumnsAndValuesForSetions(String columns, String values, ArrayList<OilSections> tmpOilSections, HttpServletRequest request) {
+        for (OilSections oilSections : tmpOilSections) {
+            String oilTypeIdTmp = request.getParameter(oilSections.getId_section() + "_oilTypeId");
+            if (oilTypeIdTmp.equals("-1")) continue;
+            String storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_storageOutId");
+            if (storageOutIdTmp.equals("-1")) continue;
+            emptySectionFlag = false;
+            columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_oilType_id");
+            values = strPlusCommaPlusValue(values, "'" + oilTypeIdTmp + "'");
+            columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_storageOut_id");
+            values = strPlusCommaPlusValue(values, "'" + storageOutIdTmp + "'");
+        }
     }
 }
