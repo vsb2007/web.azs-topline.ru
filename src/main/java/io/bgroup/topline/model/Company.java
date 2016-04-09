@@ -2,6 +2,7 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +10,16 @@ import java.util.Map;
 public class Company {
     @Autowired
     private DbModel dbMvc;
+    @Autowired
+    private CompanyUnit companyUnitMvc;
 
     private String idCompany;
     private String companyName;
+    //private ArrayList<CompanyUnit> companyUnitsList;
+
+    public ArrayList<CompanyUnit> getCompanyUnitsList(String idCompany) {
+        return companyUnitMvc.getComapnyUnitList(getCompany(idCompany));
+    }
 
     public String getIdCompany() {
         return idCompany;
@@ -29,7 +37,7 @@ public class Company {
         this.companyName = companyName;
     }
 
-    public ArrayList<Company> getComapnyList() {
+    public ArrayList<Company> getCompanyList() {
         ArrayList<Company> companyList = null;
         String sql = "select * from company";
         companyList = getCompanyFromDbSelect(sql);
@@ -57,5 +65,34 @@ public class Company {
             companyArrayList.add(company);
         }
         return companyArrayList;
+    }
+
+    public String getCompanyForAjax(HttpServletRequest request) {
+        String response = "";
+        String postId = request.getParameter("postId");
+        if (postId == null) return "Error: ошибка в передаче запроса postId";
+        if (postId.equals("-1")) return "";
+        else if (postId.equals("1")) return "";
+        else if (postId.equals("2")) return "";
+        else if (postId.equals("3")) return getCompanyListAsStringForSelectForAjax();
+        return response;
+    }
+
+    private String getCompanyListAsStringForSelectForAjax() {
+        String response = "";
+        ArrayList<Company> companyList = getCompanyList();
+        if (companyList == null) return "Ошибка поиска компаний";
+        response += "<li ripple>" +
+                "       <span class=\"item-text\">" +
+                "                    <select class=\"dropdown-menu\" id=\"companyId\" name=\"companyId\" onchange=\"getCompanyUnits(this)\">" +
+                "                        <option value=\"-1\">Выбрете организацию</option>";
+        for (Company company : companyList) {
+            response += "<option value=\"" + company.getIdCompany() + "\">" + company.getCompanyName() + "</option>";
+        }
+        response += "</select><br><span class=\"secondary-text\">" +
+                "                        <label for=\"companyId\" class=\"label\">Организация</label>" +
+                "                    </span></span>" +
+                "                </li>";
+        return response;
     }
 }

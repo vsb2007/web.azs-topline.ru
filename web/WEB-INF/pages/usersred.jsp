@@ -93,6 +93,48 @@
     </span>
                 </li>
                 <li ripple>
+                    <span class="item-text">
+                    <select class="dropdown-menu" id="postId" name="postId" onchange="checkCompany(this)">
+                        <option value="-1">Сущность</option>
+                        <c:forEach items="${postList}" var="post">
+                            <c:if test="${post.getIdPost() == userRed.getPost().getIdPost()}">
+                                <option value="${post.getIdPost()}" selected>${post.getPostName()}</option>
+                            </c:if>
+                            <c:if test="${post.getIdPost() != userRed.getPost().getIdPost()}">
+                                <option value="${post.getIdPost()}">${post.getPostName()}</option>
+                            </c:if>
+                        </c:forEach>
+                    </select><br>
+
+                    <span class="secondary-text">
+                        <label for="postId" class="label">Сущность</label>
+                    </span></span>
+                </li>
+                <div id="divCompany">&nbsp;
+                    <c:if test="${userRed.getCompany()!=NULL}">
+                        <li ripple>
+                        <span class="item-text">
+                            <select class="dropdown-menu" id="companyId" name="companyId"
+                                    onchange="getCompanyUnits(this)">
+                                <option value="-1">Выбрете организацию</option>
+                        <c:forEach items="${companyList}" var="company">
+                            <c:if test="${company.getIdCompany() == userRed.getCompany().getIdCompany()}">
+                                <option value="${company.getIdCompany()}" selected>${company.getCompanyName()}</option>
+                            </c:if>
+                            <c:if test="${company.getIdCompany() != userRed.getCompany().getIdCompany()}">
+                                <option value="${company.getIdCompany()}">${company.getCompanyName()}</option>
+                            </c:if>
+                        </c:forEach>
+                                </select><br>
+                            <span class="secondary-text">
+                                <label for="companyId" class="label">Организация</label>
+                            </span>
+                        </span>
+                        </li>
+                    </c:if>
+                </div>
+                <div id="divCompanyAndUnits">&nbsp;</div>
+                <li ripple>
     <span class="item-text">
     <div class="switch">
         <%
@@ -118,7 +160,7 @@
             <br>
             <input type="hidden" id="red_form" value="1" name="red_form">
             <input type="hidden" id="user-red-id-label" name="user-red-id-label" value="<%=userRed.getId()%>">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
             <button class="button raised color-white bg-blue-500" type="submit" id="updateButton" name="updateButton">
                 Сохранить
             </button>
@@ -134,17 +176,19 @@
             }
         %>
     </div>
-    <div class="section">
-        <form action="/usersred" method="post">
-            <input type="hidden" id="delete_form" value="1" name="delete_form">
-            <input type="hidden" id="user-delete-id-label" name="user-delete-id-label" value="<%=userRed.getId()%>">
-            <button class="button raised color-white bg-red-500" type="submit">Удалить</button>
-        </form>
+    <!-- <div class="section">
+    <form action="/usersred" method="post">
+    <input type="hidden" id="delete_form" value="1" name="delete_form">
+    <input type="hidden" id="user-delete-id-label" name="user-delete-id-label" value="<%=userRed.getId()%>">
+    <button class="button raised color-white bg-red-500" type="submit">Удалить</button>
+    </form>
     </div>
+    -->
     <%
             }
         }
     %>
+    <script src="js/usersRed.js"></script>
 </sec:authorize>
 <sec:authorize access="!hasRole('ROLE_USERS_RED')">
     Нужна авторизация

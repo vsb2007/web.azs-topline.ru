@@ -21,15 +21,21 @@ public class SiteUser {
     private String isDelete = "";
     private String id;
     private String error;
-    private String postId;
-    private String companyId;
-    private String companyUnitId;
+    private Post post;
+    private Company company;
+    private CompanyUnit companyUnit;
 
     @Autowired
     private DbModel dbMvc;
 
     @Autowired
     PasswordEncoder passwordEncoderMvc;
+    @Autowired
+    Post postMvc;
+    @Autowired
+    Company companyMvc;
+    @Autowired
+    CompanyUnit companyUnitMvc;
 
     public SiteUser() {
 
@@ -94,6 +100,30 @@ public class SiteUser {
             this.email = "";
         else
             this.email = email;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    private void setPost(Post post) {
+        this.post = post;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    private void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public CompanyUnit getCompanyUnit() {
+        return companyUnit;
+    }
+
+    private void setCompanyUnit(CompanyUnit companyUnit) {
+        this.companyUnit = companyUnit;
     }
 
     public void setId(String id) {
@@ -189,84 +219,116 @@ public class SiteUser {
     }
 
     private String updateUserMessage(SiteUser redUser, HttpServletRequest request) {
-       /* try {
-            request.setCharacterEncoding("UTF-8");
-        }
-        catch (Exception e){}
-    */
-        String userNameFromForm = request.getParameter("user-name-label");
-        String userPasswordFromForm = request.getParameter("user-password-label");
-        String userFioFromForm = request.getParameter("user-fio-label");
-        String userPhoneFromForm = request.getParameter("user-phone-label");
-        String userEmailFromForm = request.getParameter("user-email-label");
-        String userIdFromForm = request.getParameter("user-red-id-label");
-        String userActiveFlagFromForm = request.getParameter("user-active-flag");
-        String sql;
-        //System.out.println(request.getCharacterEncoding());
-        //System.out.println(userFioFromForm);
+        try {
 
 
+            String userNameFromForm = request.getParameter("user-name-label");
+            String userPasswordFromForm = request.getParameter("user-password-label");
+            String userFioFromForm = request.getParameter("user-fio-label");
+            String userPhoneFromForm = request.getParameter("user-phone-label");
+            String userEmailFromForm = request.getParameter("user-email-label");
+            String userIdFromForm = request.getParameter("user-red-id-label");
+            String userActiveFlagFromForm = request.getParameter("user-active-flag");
+            String userPostIdFromForm = request.getParameter("postId");
+            String userCompanyIdFromForm = request.getParameter("companyId");
+            String userCompanyUnitIdFromForm = request.getParameter("companyUnitId");
+            String sql;
 
-        //System.out.println(userFioFromForm);
-        if (userNameFromForm != null
-                && !redUser.getName().equals(userNameFromForm)
-                && !userNameFromForm.equals("")) {
-            sql = "update users set username='" + userNameFromForm + "' where id_user=" + userIdFromForm;
-            boolean flag = dbMvc.getInsertResult(sql);
-            if (flag) {
-                return "Ошибка обновления имени";
+            if (userNameFromForm != null
+                    && !redUser.getName().equals(userNameFromForm)
+                    && !userNameFromForm.equals("")) {
+                sql = "update users set username='" + userNameFromForm + "' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления имени";
+                }
             }
-        }
-        if (userPasswordFromForm != null && !userPasswordFromForm.equals("")) {
-            String password = passwordEncoderMvc.encode(userPasswordFromForm);
-            sql = "update users set password='" + password + "' where id_user=" + userIdFromForm;
-            boolean flag = dbMvc.getInsertResult(sql);
-            if (flag) {
-                return "Ошибка обновления пароля";
+            if (userPasswordFromForm != null && !userPasswordFromForm.equals("")) {
+                String password = passwordEncoderMvc.encode(userPasswordFromForm);
+                sql = "update users set password='" + password + "' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления пароля";
+                }
             }
-        }
-        if (userFioFromForm != null) {
-            // (!!!) не понятно, почему приходит в левой кодировке
+            if (userFioFromForm != null) {
+                // (!!!) не понятно, почему приходит в левой кодировке
             /*try {
                 userFioFromForm = new String(request.getParameter("user-fio-label").getBytes("CP1252"), "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }*/
-            sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
-            boolean flag = dbMvc.getInsertResult(sql);
-            if (flag) {
-                return "Ошибка обновления ФИО";
+                sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления ФИО";
+                }
             }
-        }
-        if (userPhoneFromForm != null) {
-            sql = "update users set user_phone='" + userPhoneFromForm + "' where id_user=" + userIdFromForm;
-            boolean flag = dbMvc.getInsertResult(sql);
-            if (flag) {
-                return "Ошибка обновления телефона";
+            if (userPhoneFromForm != null) {
+                sql = "update users set user_phone='" + userPhoneFromForm + "' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления телефона";
+                }
             }
-        }
-        if (userEmailFromForm != null) {
-            sql = "update users set user_email='" + userEmailFromForm + "' where id_user=" + userIdFromForm;
-            boolean flag = dbMvc.getInsertResult(sql);
-            if (flag) {
-                return "Ошибка обновления email";
+            if (userEmailFromForm != null) {
+                sql = "update users set user_email='" + userEmailFromForm + "' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления email";
+                }
             }
-        }
-        if (userActiveFlagFromForm != null) {
-            if (userActiveFlagFromForm.equals("0")) {
-                sql = "update users set enabled=true where id_user=" + userIdFromForm;
+            if (userPostIdFromForm != null) {
+                sql = "update users set user_post_id='" + userPostIdFromForm + "' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления PostId";
+                }
+            }
+            if (userCompanyIdFromForm != null) {
+                sql = "update users set user_company_id='" + userCompanyIdFromForm + "' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления CompanyId";
+                }
+            } else {
+                sql = "update users set user_company_id='-1' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления CompanyId -1";
+                }
+            }
+            if (userCompanyUnitIdFromForm != null) {
+                sql = "update users set user_company_unit_id='" + userCompanyUnitIdFromForm + "' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления CompanyUnitId";
+                }
+            } else {
+                sql = "update users set user_company_unit_id='-1' where id_user=" + userIdFromForm;
+                boolean flag = dbMvc.getInsertResult(sql);
+                if (flag) {
+                    return "Ошибка обновления CompanyUnitId -1";
+                }
+            }
+            if (userActiveFlagFromForm != null) {
+                if (userActiveFlagFromForm.equals("0")) {
+                    sql = "update users set enabled=true where id_user=" + userIdFromForm;
+                    boolean flag = dbMvc.getInsertResult(sql);
+                    if (flag) {
+                        return "Ошибка обновления блокировки";
+                    }
+                }
+            }
+            if (userActiveFlagFromForm == null || !userActiveFlagFromForm.equals("0")) {
+                sql = "update users set enabled=false where id_user=" + userIdFromForm;
                 boolean flag = dbMvc.getInsertResult(sql);
                 if (flag) {
                     return "Ошибка обновления блокировки";
                 }
             }
-        }
-        if (userActiveFlagFromForm == null || !userActiveFlagFromForm.equals("0")) {
-            sql = "update users set enabled=false where id_user=" + userIdFromForm;
-            boolean flag = dbMvc.getInsertResult(sql);
-            if (flag) {
-                return "Ошибка обновления блокировки";
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return "Изменения сохранены";
     }
@@ -290,29 +352,49 @@ public class SiteUser {
 
     private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
         Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, Object> pair = iterator.next();
-            if (pair.getKey().equals("id_user")) {
-                redUser.setId(pair.getValue().toString());
-            } else if (pair.getKey().equals("username")) {
-                redUser.setName(pair.getValue().toString());
-            } else if (pair.getKey().equals("user_email")) {
-                if (pair.getValue() == null)
-                    redUser.setEmail(null);
-                else redUser.setEmail(pair.getValue().toString());
-            } else if (pair.getKey().equals("user_fio")) {
-                if (pair.getValue() == null)
-                    redUser.setFio(null);
-                else redUser.setFio(pair.getValue().toString());
-            } else if (pair.getKey().equals("user_phone")) {
-                if (pair.getValue() == null)
-                    redUser.setPhone(null);
-                else redUser.setPhone(pair.getValue().toString());
-            } else if (pair.getKey().equals("enabled")) {
-                if (pair.getValue() == null)
-                    redUser.setIsEnable(null);
-                else redUser.setIsEnable(pair.getValue().toString());
+        try {
+
+
+            while (iterator.hasNext()) {
+                Map.Entry<String, Object> pair = iterator.next();
+                if (pair.getKey().equals("id_user")) {
+                    redUser.setId(pair.getValue().toString());
+                } else if (pair.getKey().equals("username")) {
+                    redUser.setName(pair.getValue().toString());
+                } else if (pair.getKey().equals("user_email")) {
+                    if (pair.getValue() == null)
+                        redUser.setEmail(null);
+                    else redUser.setEmail(pair.getValue().toString());
+                } else if (pair.getKey().equals("user_fio")) {
+                    if (pair.getValue() == null)
+                        redUser.setFio(null);
+                    else redUser.setFio(pair.getValue().toString());
+                } else if (pair.getKey().equals("user_phone")) {
+                    if (pair.getValue() == null)
+                        redUser.setPhone(null);
+                    else redUser.setPhone(pair.getValue().toString());
+                } else if (pair.getKey().equals("enabled")) {
+                    if (pair.getValue() == null)
+                        redUser.setIsEnable(null);
+                    else redUser.setIsEnable(pair.getValue().toString());
+                } else if (pair.getKey().equals("user_post_id")) {
+                    if (pair.getValue() == null)
+                        redUser.setPost(null);
+                    else redUser.setPost(postMvc.getPost(pair.getValue().toString()));
+                } else if (pair.getKey().equals("user_company_unit_id")) {
+                    if (pair.getValue() == null)
+                        redUser.setCompanyUnit(null);
+                    else redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
+                }
+                // Да! я знаю, что этот метод не обязателен и его можно получить из метода чуть выше
+                else if (pair.getKey().equals("user_company_id")) {
+                    if (pair.getValue() == null)
+                        redUser.setCompany(null);
+                    else redUser.setCompany(companyMvc.getCompany(pair.getValue().toString()));
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -320,7 +402,7 @@ public class SiteUser {
         if (!isUserHasRole(principal, "ROLE_USERS_ADD")) return false;
         String userNameFromFormUserAdd = request.getParameter("username");
         String sql;
-        sql = "select * from users where user_name='" + userNameFromFormUserAdd + "'";
+        sql = "select * from users where username='" + userNameFromFormUserAdd + "'";
         List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql);
         if (dbSelectResult != null && dbSelectResult.size() > 0) {
             this.error = "Пользователь существует";

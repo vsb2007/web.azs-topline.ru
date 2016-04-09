@@ -102,6 +102,23 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return driver;
     }
 
+    @Bean(name = "post")
+    public Post post() {
+        Post post = new Post();
+        return post;
+    }
+
+    @Bean(name = "company")
+    public Company company() {
+        Company company = new Company();
+        return company;
+    }
+    @Bean(name = "companyUnit")
+    public CompanyUnit companyUnit() {
+        CompanyUnit companyUnit = new CompanyUnit();
+        return companyUnit;
+    }
+
     @Bean(name = "oilStorage")
     public OilStorage oilStorage() {
         OilStorage oilStorage = new OilStorage();

@@ -2,6 +2,7 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,17 +14,19 @@ import java.util.Map;
 public class CompanyUnit {
     @Autowired
     private DbModel dbMvc;
+    @Autowired
+    private Company companyMvc;
 
     private String idCompanyUnit;
     private String companyUnitName;
-    private String company_id;
+    private Company company;
 
-    public String getCompany_id() {
-        return company_id;
+    public Company getCompany() {
+        return company;
     }
 
-    private void setCompany_id(String company_id) {
-        this.company_id = company_id;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public String getIdCompanyUnit() {
@@ -49,6 +52,13 @@ public class CompanyUnit {
         return companyUnitList;
     }
 
+    public ArrayList<CompanyUnit> getComapnyUnitList(Company company) {
+        ArrayList<CompanyUnit> companyUnitList = null;
+        String sql = "select * from company_unit where company_id = '" + company.getIdCompany() + "'";
+        companyUnitList = getCompanyUnitFromDbSelect(sql);
+        return companyUnitList;
+    }
+
     public CompanyUnit getCompanyUnit(String idCompanyUnit) {
         ArrayList<CompanyUnit> companyUnitArrayList = null;
         String sql = "select * from company_unit where id_company_unit='" + idCompanyUnit + "'";
@@ -64,12 +74,35 @@ public class CompanyUnit {
         ArrayList<CompanyUnit> companyUnitArrayList = null;
         for (Map row : companyUnitListFromDb) {
             CompanyUnit companyUnit = new CompanyUnit();
-            companyUnit.setIdCompanyUnit((String) row.get("id_company_unit").toString());
-            companyUnit.setCompanyUnitName((String) row.get("company_unit_name").toString());
-            companyUnit.setCompany_id((String) row.get("company_id"));
+            companyUnit.setIdCompanyUnit(row.get("id_company_unit").toString());
+            companyUnit.setCompanyUnitName(row.get("company_unit_name").toString());
+            companyUnit.setCompany(companyMvc.getCompany(row.get("company_id").toString()));
             if (companyUnitArrayList == null) companyUnitArrayList = new ArrayList<CompanyUnit>();
             companyUnitArrayList.add(companyUnit);
         }
         return companyUnitArrayList;
+    }
+
+    public String getCompanyUnitsForAjax(HttpServletRequest request) {
+        String response = "";
+        String companyId = request.getParameter("companyId");
+        if (companyId == null) return "Ошибка: в передача companyId";
+
+        Company company = companyMvc.getCompany(companyId);
+        ArrayList<CompanyUnit> companyUnitsList = getComapnyUnitList(company);
+
+        if (companyUnitsList == null) return "Ошибка поиска подразделений";
+        response += "<li ripple>" +
+                "       <span class=\"item-text\">" +
+                "                    <select class=\"dropdown-menu\" id=\"companyUnitId\" name=\"companyUnitId\">" +
+                "                        <option value=\"-1\">Выбрете подразделение</option>";
+        for (CompanyUnit companyUnit : companyUnitsList) {
+            response += "<option value=\"" + companyUnit.getIdCompanyUnit() + "\">" + companyUnit.getCompanyUnitName() + "</option>";
+        }
+        response += "</select><br><span class=\"secondary-text\">" +
+                "                        <label for=\"companyUnitId\" class=\"label\">Подразделение</label>" +
+                "                    </span></span>" +
+                "                </li>";
+        return response;
     }
 }
