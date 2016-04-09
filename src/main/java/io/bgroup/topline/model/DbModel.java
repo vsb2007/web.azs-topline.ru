@@ -7,10 +7,6 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
-/*
-потом переделать на хибернейт !!!
- */
-
 public class DbModel {
 
     @Autowired

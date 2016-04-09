@@ -8,6 +8,10 @@
     <div class="section">
         ${message}
     </div>
+    <c:forEach items="${bidsList}" var="bid">
+        ${bid.getCreateUser().getName()} ${bid.getDriver().getDriverFio()} <br>
+    </c:forEach>
+
 
     <script src="js/bidCreate.js"></script>
 

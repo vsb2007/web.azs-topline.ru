@@ -20,32 +20,30 @@ public class MvcBidController {
     private DriverManagerDataSource dataSource;
 
     @Autowired
-    private SiteUser siteUser;
+    private SiteUser siteUserMvc;
 
     @Autowired
-    private Car car;
+    private Car carMvc;
 
     @Autowired
-    private Driver driver;
+    private Driver driverMvc;
 
     @Autowired
-    private OilStorage oilStorage;
+    private OilStorage oilStorageMvc;
 
     @Autowired
-    private OilType oilType;
+    private OilType oilTypeMvc;
 
     @Autowired
-    private Bid bid;
+    private Bid bidMvc;
 
     @RequestMapping(value = "/bidcreate")
     public ModelAndView bidcreate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        //if (request!=null) bid.createBid(principal,request);
-
-        SiteUser bidUser = siteUser.findSiteUser(principal);
-        ArrayList<Car> carsList = car.getCarsList();
-        ArrayList<Driver> driversList = driver.getDriverList();
-        ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
+        SiteUser bidUser = siteUserMvc.findSiteUser(principal);
+        ArrayList<Car> carsList = carMvc.getCarsList();
+        ArrayList<Driver> driversList = driverMvc.getDriverList();
+        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
 
         model.addObject("appUser", bidUser);
         model.addObject("carsList", carsList);
@@ -58,25 +56,22 @@ public class MvcBidController {
     @RequestMapping(value = "/bidcreateform")
     public ModelAndView bidcreatedo(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        String message = bid.createBid(principal, request);
+        String message = bidMvc.createBid(principal, request);
         if (request != null) {
             model.addObject("message", message);
         }
-
-/*
-        SiteUser bidUser = siteUser.findSiteUser(principal);
-        ArrayList<Car> carsList = car.getCarsList();
-        ArrayList<Driver> driversList = driver.getDriverList();
-        ArrayList<OilStorage> oilStorageList = oilStorage.getOilStorageList();
-
-        model.addObject("appUser", bidUser);
-        model.addObject("carsList", carsList);
-        model.addObject("driversList", driversList);
-        model.addObject("oilStorageList", oilStorageList);
-        */
+        ArrayList<Bid> bidsArrayList = bidMvc.getBidsList(principal);
+        model.addObject("bidsList", bidsArrayList);
         model.setViewName("bidListOpen");
         return model;
 
     }
-
+    @RequestMapping(value = "/bidlistopen")
+    public ModelAndView bidlistopen(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        ArrayList<Bid> bidsArrayList = bidMvc.getBidsList(principal);
+        model.addObject("bidsList", bidsArrayList);
+        model.setViewName("bidListOpen");
+        return model;
+    }
 }

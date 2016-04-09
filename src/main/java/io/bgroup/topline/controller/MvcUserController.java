@@ -15,6 +15,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 @Controller
@@ -71,7 +73,8 @@ public class MvcUserController {
     @RequestMapping(value = "/usersred")
     public ModelAndView UsersRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        SiteUser userRed = siteUser.findRedSiteUser(principal,request);
+//        System.out.println(request.getCharacterEncoding());
+        SiteUser userRed = siteUser.findRedSiteUser(principal, request);
         model.addObject("userRed", userRed);
         model.setViewName("usersred");
         return model;

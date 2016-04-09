@@ -98,8 +98,6 @@
         <artifactId>spring-javaconfig</artifactId>
         <version>1.0.0.m3</version>
     </dependency>
-
-
 </dependencies>
 
 

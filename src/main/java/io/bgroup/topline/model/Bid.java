@@ -5,20 +5,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class Bid {
+    private String id_bid;
+    private SiteUser createUser;
+    private String name;
+    private OilStorage oilStorageIn;
+    private Driver driver;
+    private Car car;
+    private Trailer trailer;
+    //private List<OilStorage> oilStorageOutList;
     private String dateOfCreation;
     private String dateOfClose;
     private String error;
     private boolean emptySectionFlag = true;
-    /*
-      private SiteUser siteUser;
-      private OilStorage oilStorage;
-      private Driver driver;
-      private Car car;
-      private Trailer trailer;
-   */
+
     @Autowired
     private SiteUser siteUserMvc;
     @Autowired
@@ -32,6 +36,13 @@ public class Bid {
     @Autowired
     private DbModel dbMvc;
 
+    public SiteUser getCreateUser() {
+        return createUser;
+    }
+
+    private void setCreateUser(SiteUser createUser) {
+        this.createUser = createUser;
+    }
 
     public void setError(String error) {
         this.error = error;
@@ -50,6 +61,54 @@ public class Bid {
     }
 
     public Bid() {
+    }
+
+    public String getId_bid() {
+        return id_bid;
+    }
+
+    private void setId_bid(String id_bid) {
+        this.id_bid = id_bid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private void setName(String name) {
+        this.name = name;
+    }
+
+    public OilStorage getOilStorageIn() {
+        return oilStorageIn;
+    }
+
+    private void setOilStorageIn(OilStorage oilStorageIn) {
+        this.oilStorageIn = oilStorageIn;
+    }
+
+    public Driver getDriver() {
+        return driver;
+    }
+
+    private void setDriver(Driver driver) {
+        this.driver = driver;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    private void setCar(Car car) {
+        this.car = car;
+    }
+
+    public Trailer getTrailer() {
+        return trailer;
+    }
+
+    private void setTrailer(Trailer trailer) {
+        this.trailer = trailer;
     }
 
     public String getDateOfCreation() {
@@ -121,7 +180,12 @@ public class Bid {
             values = strPlusCommaPlusValue(values, "'" + car.getId_car() + "'");
         }
         if (carOilSections != null && carOilSections.size() != 0) {
-            addColumnsAndValuesForSetions(columns, values, carOilSections, request);
+            String[] columnAndValue = new String[2];
+            columnAndValue[0] = columns;
+            columnAndValue[1] = values;
+            addColumnsAndValuesForSetions(columnAndValue, carOilSections, request);
+            columns = columnAndValue[0];
+            values = columnAndValue[1];
         }
 
         if (trailerOilSections != null && trailerOilSections.size() != 0) {
@@ -129,7 +193,12 @@ public class Bid {
                 columns = strPlusCommaPlusValue(columns, "bid_trailer_id");
                 values = strPlusCommaPlusValue(values, "'" + trailer.getId_trailer() + "'");
             }
-            addColumnsAndValuesForSetions(columns, values, trailerOilSections, request);
+            String[] columnAndValue = new String[2];
+            columnAndValue[0] = columns;
+            columnAndValue[1] = values;
+            addColumnsAndValuesForSetions(columnAndValue, trailerOilSections, request);
+            columns = columnAndValue[0];
+            values = columnAndValue[1];
         }
         if (emptySectionFlag) return "Error: секции пусты";
         sql += "(" + columns + ") values (" + values + ")";
@@ -144,7 +213,9 @@ public class Bid {
         return strTmp;
     }
 
-    private void addColumnsAndValuesForSetions(String columns, String values, ArrayList<OilSections> tmpOilSections, HttpServletRequest request) {
+    private void addColumnsAndValuesForSetions(String[] columnAndValue, ArrayList<OilSections> tmpOilSections, HttpServletRequest request) {
+        String columns = columnAndValue[0];
+        String values = columnAndValue[1];
         for (OilSections oilSections : tmpOilSections) {
             String oilTypeIdTmp = request.getParameter(oilSections.getId_section() + "_oilTypeId");
             if (oilTypeIdTmp.equals("-1")) continue;
@@ -155,6 +226,59 @@ public class Bid {
             values = strPlusCommaPlusValue(values, "'" + oilTypeIdTmp + "'");
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_storageOut_id");
             values = strPlusCommaPlusValue(values, "'" + storageOutIdTmp + "'");
+        }
+        columnAndValue[0] = columns;
+        columnAndValue[1] = values;
+    }
+
+    public ArrayList<Bid> getBidsList(UsernamePasswordAuthenticationToken principal) {
+        if (!siteUserMvc.isUserHasRole(principal, "ROLE_BID_LIST")) return null;
+        String sql;
+        sql = "select * from bids where bid_is_close='0'";
+        ArrayList<Bid> bidsList = null;
+        bidsList = getBidsFromDbSelect(sql);
+        return bidsList;
+    }
+
+    private ArrayList<Bid> getBidsFromDbSelect(String sql) {
+        List<Map<String, Object>> bidsListFromDb = null;
+        bidsListFromDb = dbMvc.getSelectResult(sql);
+        if (bidsListFromDb == null) return null;
+        ArrayList<Bid> bidsList = null;
+        for (Map row : bidsListFromDb) {
+            Bid bid = new Bid();
+            setBidFromMapRow(bid, row);
+            if (bidsList == null) bidsList = new ArrayList<Bid>();
+            bidsList.add(bid);
+        }
+        return bidsList;
+    }
+
+    private void setBidFromMapRow(Bid bid, Map row) {
+        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Object> pair = iterator.next();
+            if (pair.getKey().equals("id_bids")) {
+                if (pair.getValue() != null) {
+                    bid.setId_bid(pair.getValue().toString());
+                } else bid.setId_bid(null);
+            } else if (pair.getKey().equals("bid_create_user_id")) {
+                if (pair.getValue() != null) {
+                    bid.setCreateUser(siteUserMvc.findSiteUser((Integer) pair.getValue()));
+                } else bid.setCreateUser(null);
+            } else if (pair.getKey().equals("bid_storage_in_id")) {
+                if (pair.getValue() != null) {
+                    bid.setOilStorageIn(oilStorageMvc.getOilStorage(pair.getValue().toString()));
+                } else bid.setOilStorageIn(null);
+            } else if (pair.getKey().equals("bid_driver_id")) {
+                if (pair.getValue() != null) {
+                    bid.setDriver(driverMvc.getDriver(pair.getValue().toString()));
+                } else bid.setDriver(null);
+            } else if (pair.getKey().equals("bid_car_id")) {
+                if (pair.getValue() != null) {
+                    bid.setCar(carMvc.getCar(pair.getValue().toString()));
+                } else bid.setCar(null);
+            }
         }
     }
 }

@@ -3,11 +3,12 @@ package io.bgroup.topline.model;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class Car {
-    private final int countOilSection = 2;
+    private final int countOilSection = 3;
     private String id_car;
     private String car_number;
     private String car_name;
@@ -51,25 +52,33 @@ public class Car {
         ArrayList<Car> carsList = null;
         for (Map row : carsListFromDb) {
             Car car = new Car();
-            ArrayList<OilSections> oilSections = null;
-            car.setCar_block((String) row.get("car_block").toString());
-            car.setId_car((String) row.get("id_car").toString());
-            car.setCar_number((String) row.get("car_number").toString());
-            car.setCar_name((String) row.get("car_name").toString());
-            for (int i = 1; i <= countOilSection; i++) {
-                String car_sec = row.get("car_sec_" + i).toString();
-                if (!car_sec.equals("0")) {
-                    if (oilSections == null) {
-                        oilSections = new ArrayList<OilSections>();
-                        car.setOilSections(oilSections);
-                    }
-                    oilSections.add(new OilSections("car_sec_" + i, car_sec));
-                }
-            }
+            setCarFromMapRow(car, row);
             if (carsList == null) carsList = new ArrayList<Car>();
             carsList.add(car);
         }
         return carsList;
+    }
+
+    private void setCarFromMapRow(Car car, Map row) {
+        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+        while (iterator.hasNext()) {
+            break;
+        }
+        car.setCar_block((String) row.get("car_block").toString());
+        car.setId_car((String) row.get("id_car").toString());
+        car.setCar_number((String) row.get("car_number").toString());
+        car.setCar_name((String) row.get("car_name").toString());
+        ArrayList<OilSections> oilSections = null;
+        for (int i = 1; i <= countOilSection; i++) {
+            String car_sec = row.get("car_sec_" + i).toString();
+            if (!car_sec.equals("0")) {
+                if (oilSections == null) {
+                    oilSections = new ArrayList<OilSections>();
+                    car.setOilSections(oilSections);
+                }
+                oilSections.add(new OilSections("car_sec_" + i, car_sec));
+            }
+        }
     }
 
     public ArrayList<OilSections> getOilSections() {

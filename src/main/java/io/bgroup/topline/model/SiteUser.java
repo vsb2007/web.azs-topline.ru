@@ -6,7 +6,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,9 @@ public class SiteUser {
     private String isDelete = "";
     private String id;
     private String error;
+    private String postId;
+    private String companyId;
+    private String companyUnitId;
 
     @Autowired
     private DbModel dbMvc;
@@ -119,7 +124,7 @@ public class SiteUser {
         return findSiteUser(principal.getName());
     }
 
-    private SiteUser findSiteUser(int id_user) {
+    public SiteUser findSiteUser(int id_user) {
         SiteUser findUser = null;
         String sql;
         List<Map<String, Object>> findUsersList = null;
@@ -184,6 +189,11 @@ public class SiteUser {
     }
 
     private String updateUserMessage(SiteUser redUser, HttpServletRequest request) {
+       /* try {
+            request.setCharacterEncoding("UTF-8");
+        }
+        catch (Exception e){}
+    */
         String userNameFromForm = request.getParameter("user-name-label");
         String userPasswordFromForm = request.getParameter("user-password-label");
         String userFioFromForm = request.getParameter("user-fio-label");
@@ -192,6 +202,12 @@ public class SiteUser {
         String userIdFromForm = request.getParameter("user-red-id-label");
         String userActiveFlagFromForm = request.getParameter("user-active-flag");
         String sql;
+        //System.out.println(request.getCharacterEncoding());
+        //System.out.println(userFioFromForm);
+
+
+
+        //System.out.println(userFioFromForm);
         if (userNameFromForm != null
                 && !redUser.getName().equals(userNameFromForm)
                 && !userNameFromForm.equals("")) {
@@ -210,6 +226,12 @@ public class SiteUser {
             }
         }
         if (userFioFromForm != null) {
+            // (!!!) не понятно, почему приходит в левой кодировке
+            /*try {
+                userFioFromForm = new String(request.getParameter("user-fio-label").getBytes("CP1252"), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }*/
             sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
             boolean flag = dbMvc.getInsertResult(sql);
             if (flag) {
@@ -267,19 +289,31 @@ public class SiteUser {
     }
 
     private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
-        redUser.setId(row.get("id_user").toString());
-        redUser.setName(row.get("username").toString());
-        //System.out.println("User: name");
-        redUser.setEmail(row.get("user_email").toString());
-        //System.out.println("User: email");
-        redUser.setFio(row.get("user_fio").toString());
-        //System.out.println("User: fio");
-        redUser.setPhone(row.get("user_phone").toString());
-        //System.out.println("User: phone");
-        redUser.setIsEnable(row.get("enabled").toString());
-        //System.out.println("User: enable");
-
-        //System.out.println("User: " + row.get("id_user"));
+        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Object> pair = iterator.next();
+            if (pair.getKey().equals("id_user")) {
+                redUser.setId(pair.getValue().toString());
+            } else if (pair.getKey().equals("username")) {
+                redUser.setName(pair.getValue().toString());
+            } else if (pair.getKey().equals("user_email")) {
+                if (pair.getValue() == null)
+                    redUser.setEmail(null);
+                else redUser.setEmail(pair.getValue().toString());
+            } else if (pair.getKey().equals("user_fio")) {
+                if (pair.getValue() == null)
+                    redUser.setFio(null);
+                else redUser.setFio(pair.getValue().toString());
+            } else if (pair.getKey().equals("user_phone")) {
+                if (pair.getValue() == null)
+                    redUser.setPhone(null);
+                else redUser.setPhone(pair.getValue().toString());
+            } else if (pair.getKey().equals("enabled")) {
+                if (pair.getValue() == null)
+                    redUser.setIsEnable(null);
+                else redUser.setIsEnable(pair.getValue().toString());
+            }
+        }
     }
 
     public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {

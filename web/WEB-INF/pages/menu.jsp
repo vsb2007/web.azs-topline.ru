@@ -17,7 +17,7 @@
             <li ripple><a href="/bidcreate"><i class="icon-input"></i>Создать заявку</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_LIST')">
-            <li ripple><a href="/bidcreate"><i class="icon-input"></i>Открытые заявки</a></li>
+            <li ripple><a href="/bidlistopen"><i class="icon-input"></i>Открытые заявки</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_LIST_CLOSED')">
             <li ripple><a href="/bidcreate"><i class="icon-input"></i>Закрытые заявки</a></li>

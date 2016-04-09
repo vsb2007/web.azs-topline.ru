@@ -1,29 +1,31 @@
+<%@ include file="header.jsp" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="io.bgroup.topline.model.SiteUser" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%@ include file="header.jsp" %>
 <%@ include file="menu.jsp" %>
 
-<sec:authorize access="hasRole('ROLE_USERSRED')">
+<sec:authorize access="hasRole('ROLE_USERS_RED')">
     <%
         SiteUser userRed = (SiteUser) request.getAttribute("userRed");
         String error = null;
-        if (userRed!=null){
-             error = userRed.getError();
+        if (userRed != null) {
+            error = userRed.getError();
         }
 
         if (userRed == null) {
     %>
     <div class="section">
-            <%
-                if (userRed == null) {
-            %>
-            Пользователь не найден
-            <%
-                }
-            %>
+        <%
+            if (userRed == null) {
+        %>
+        Пользователь не найден
+        <%
+            }
+        %>
         </h2></div>
     <%
     } else {
@@ -32,7 +34,7 @@
     <div class="section">
         <h2>Пользователь <%=userRed.getName()%>
         </h2>
-        <form action="/usersred" method="post">
+        <form action="/usersred" method="get">
             <ul class="list">
                 <li ripple>
     <span class="item-text">
@@ -104,14 +106,16 @@
         <%
             }
         %>
-        <label for="user-active-flag"></label>
+        <label for="user-active-flag">&nbsp;</label>
+        <span class="secondary-text">
+        <label for="user-active-flag" class="label">Активен</label>
+        </span>
     </div>
-    <span class="secondary-text">
-    <label for="user-active-flag" class="label">Активен</label>
-    </span>
+
     </span>
                 </li>
             </ul>
+            <br>
             <input type="hidden" id="red_form" value="1" name="red_form">
             <input type="hidden" id="user-red-id-label" name="user-red-id-label" value="<%=userRed.getId()%>">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -142,7 +146,7 @@
         }
     %>
 </sec:authorize>
-<sec:authorize access="!hasRole('ROLE_USERSRED')">
+<sec:authorize access="!hasRole('ROLE_USERS_RED')">
     Нужна авторизация
 </sec:authorize>
 <%@ include file="footer.jsp" %>

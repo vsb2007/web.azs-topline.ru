@@ -25,7 +25,7 @@
                 for (SiteUser siteUser : listUsers) {
             %>
             <li ripple>
-                <sec:authorize access="hasRole('ROLE_USERSRED')">
+                <sec:authorize access="hasRole('ROLE_USERS_RED')">
                 <form action="/usersred" method="post">
                     </sec:authorize>
                     <input type="hidden" id="user-find-label" value="1" name="user-find-label">
@@ -56,7 +56,7 @@
 		</span>
                         </button>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <sec:authorize access="hasRole('ROLE_USERSRED')">
+                        <sec:authorize access="hasRole('ROLE_USERS_RED')">
                 </form>
                 </sec:authorize>
             </li>
@@ -72,7 +72,7 @@
         %>
     </div>
     <div class="section">
-        <sec:authorize access="hasRole('ROLE_USERSADD')">
+        <sec:authorize access="hasRole('ROLE_USERS_ADD')">
         <form action="usersadd" method="post">
             <input type="text" class="text-input border-green-500" placeholder="User name" required name="username"
                    id="username"> <br>
