@@ -16,6 +16,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import java.sql.SQLException;
+
 @Configuration
 @EnableWebMvc
 @ComponentScan("io.bgroup.topline")
@@ -50,11 +52,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return new JdbcTemplate(this.dataSource());
     }
 
-    @Bean(name = "dbToplineWeb")
-    public DbModel dbToplineWeb() {
-        return new DbModel();
-    }
-
     @Bean(name = "dataSource")
     public DriverManagerDataSource dataSource() {
         String jdbcHost = this.environment.getProperty("jdbc.host");
@@ -70,6 +67,12 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         driverManagerDataSource.setPassword(jdbcPassword);
 
         return driverManagerDataSource;
+    }
+
+    @Bean(name = "dbModel")
+    public DbModel dbModel() {
+        DbModel dbModel = new DbModel();
+        return dbModel;
     }
 
     @Bean(name = "siteUser")
@@ -113,6 +116,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         Company company = new Company();
         return company;
     }
+
     @Bean(name = "companyUnit")
     public CompanyUnit companyUnit() {
         CompanyUnit companyUnit = new CompanyUnit();

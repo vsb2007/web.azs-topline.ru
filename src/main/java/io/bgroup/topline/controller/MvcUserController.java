@@ -1,9 +1,6 @@
 package io.bgroup.topline.controller;
 
-import io.bgroup.topline.model.Company;
-import io.bgroup.topline.model.CompanyUnit;
-import io.bgroup.topline.model.Post;
-import io.bgroup.topline.model.SiteUser;
+import io.bgroup.topline.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +28,8 @@ public class MvcUserController {
     private Company companyMvc;
     @Autowired
     private CompanyUnit companyUnitMvc;
+    @Autowired
+    private DbModel dbMvc;
 
     @RequestMapping(value = {"/", "/index**", "/index"})
     public String welcomePage(Model model, UsernamePasswordAuthenticationToken principal) {

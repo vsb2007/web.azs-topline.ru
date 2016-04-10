@@ -3,6 +3,8 @@ package io.bgroup.topline.model;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
  * ToplineWeb.2.5
  */
 public class CompanyUnit {
+
     @Autowired
     private DbModel dbMvc;
     @Autowired
@@ -21,10 +24,13 @@ public class CompanyUnit {
     private String companyUnitName;
     private Company company;
 
-    public Company getCompany() {
-        return company;
+    public CompanyUnit() {
     }
 
+    /*public Company getCompany() {
+        return company;
+    }
+*/
     public void setCompany(Company company) {
         this.company = company;
     }
@@ -52,9 +58,9 @@ public class CompanyUnit {
         return companyUnitList;
     }
 
-    public ArrayList<CompanyUnit> getComapnyUnitList(Company company) {
+    public ArrayList<CompanyUnit> getCompanyUnitList(String companyId) {
         ArrayList<CompanyUnit> companyUnitList = null;
-        String sql = "select * from company_unit where company_id = '" + company.getIdCompany() + "'";
+        String sql = "select * from company_unit where company_id = '" + companyId + "'";
         companyUnitList = getCompanyUnitFromDbSelect(sql);
         return companyUnitList;
     }
@@ -68,19 +74,42 @@ public class CompanyUnit {
     }
 
     private ArrayList<CompanyUnit> getCompanyUnitFromDbSelect(String sql) {
-        List<Map<String, Object>> companyUnitListFromDb = null;
-        companyUnitListFromDb = dbMvc.getSelectResult(sql);
-        if (companyUnitListFromDb == null) return null;
-        ArrayList<CompanyUnit> companyUnitArrayList = null;
-        for (Map row : companyUnitListFromDb) {
-            CompanyUnit companyUnit = new CompanyUnit();
-            companyUnit.setIdCompanyUnit(row.get("id_company_unit").toString());
-            companyUnit.setCompanyUnitName(row.get("company_unit_name").toString());
-            companyUnit.setCompany(companyMvc.getCompany(row.get("company_id").toString()));
-            if (companyUnitArrayList == null) companyUnitArrayList = new ArrayList<CompanyUnit>();
-            companyUnitArrayList.add(companyUnit);
+        ResultSet resultSet = null;
+
+        try {
+            resultSet = dbMvc.getSelectResult(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (resultSet == null) return null;
+        ArrayList<CompanyUnit> companyUnitArrayList = new ArrayList<CompanyUnit>();
+        try {
+            while (resultSet.next()) {
+                CompanyUnit companyUnit = new CompanyUnit();
+                setCompanyUnitFromResulset(companyUnit, resultSet);
+                if (companyUnitArrayList == null) companyUnitArrayList = new ArrayList<CompanyUnit>();
+                companyUnitArrayList.add(companyUnit);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return companyUnitArrayList;
+    }
+
+    private void setCompanyUnitFromResulset(CompanyUnit companyUnit, ResultSet resultSet) {
+        try {
+            if (resultSet != null) {
+                String companyUnitId = resultSet.getString(DbModel.tableCompanyUnit.id_company_unit.toString());
+                String companyUnitName = resultSet.getString(DbModel.tableCompanyUnit.company_unit_name.toString());
+                String companyId = resultSet.getString(DbModel.tableCompanyUnit.company_id.toString());
+
+                companyUnit.setIdCompanyUnit(companyUnitId);
+                companyUnit.setCompanyUnitName(companyUnitName);
+                companyUnit.setCompany(companyMvc.getCompany(companyId));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getCompanyUnitsForAjax(HttpServletRequest request) {
@@ -88,8 +117,8 @@ public class CompanyUnit {
         String companyId = request.getParameter("companyId");
         if (companyId == null) return "Ошибка: в передача companyId";
 
-        Company company = companyMvc.getCompany(companyId);
-        ArrayList<CompanyUnit> companyUnitsList = getComapnyUnitList(company);
+        //Company company = companyMvc.getCompany(companyId);
+        ArrayList<CompanyUnit> companyUnitsList = getCompanyUnitList(companyId);
 
         if (companyUnitsList == null) return "Ошибка поиска подразделений";
         response += "<li ripple>" +

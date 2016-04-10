@@ -2,6 +2,8 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,21 +27,41 @@ public class OilType {
     }
 
     private ArrayList<OilType> getOilTypesFromDbSelect(String sql) {
-        List<Map<String, Object>> oilTypesListFromDb = null;
-        oilTypesListFromDb = dbMvc.getSelectResult(sql);
-        if (oilTypesListFromDb == null) return null;
+        ResultSet resultSet = null;
+        try {
+            resultSet = dbMvc.getSelectResult(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (resultSet == null) return null;
 
         ArrayList<OilType> oilTypeArrayList = null;
-        for (Map row : oilTypesListFromDb) {
-            OilType oilType = new OilType();
-            oilType.setOilTypeBlock((String) row.get("block").toString());
-            oilType.setId_oilType((String) row.get("id_Nomenclature").toString());
-            oilType.setOilTypeName((String) row.get("Name").toString());
-
-            if (oilTypeArrayList == null) oilTypeArrayList = new ArrayList<OilType>();
-            oilTypeArrayList.add(oilType);
+        try {
+            while (resultSet.next()) {
+                OilType oilType = new OilType();
+                setOilTypeFromResultSet(oilType,resultSet);
+                if (oilTypeArrayList == null) oilTypeArrayList = new ArrayList<OilType>();
+                oilTypeArrayList.add(oilType);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return oilTypeArrayList;
+    }
+    private void setOilTypeFromResultSet(OilType oilType, ResultSet resultSet){
+        try {
+            if (resultSet != null) {
+                String oilTypeId = resultSet.getString(DbModel.tableNomenclature.id_Nomenclature.toString());
+                String oilTypeBlock = resultSet.getString(DbModel.tableNomenclature.block.toString());
+                String oilTypeName =  resultSet.getString(DbModel.tableNomenclature.Name.toString());
+
+                oilType.setOilTypeBlock(oilTypeBlock);
+                oilType.setId_oilType(oilTypeId);
+                oilType.setOilTypeName(oilTypeName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getId_oilType() {

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -202,8 +204,13 @@ public class Bid {
         }
         if (emptySectionFlag) return "Error: секции пусты";
         sql += "(" + columns + ") values (" + values + ")";
-        if (!dbMvc.getInsertResult(sql)) return "Заявка создана";
-        else return "Неизвестная ошибка добавления заявки";
+        try {
+            if (!dbMvc.getInsertResult(sql)) return "Заявка создана";
+            else return "Неизвестная ошибка добавления заявки";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "Неизвестная ошибка добавления заявки";
     }
 
     private String strPlusCommaPlusValue(String str, String value) {
@@ -241,21 +248,31 @@ public class Bid {
     }
 
     private ArrayList<Bid> getBidsFromDbSelect(String sql) {
-        List<Map<String, Object>> bidsListFromDb = null;
-        bidsListFromDb = dbMvc.getSelectResult(sql);
-        if (bidsListFromDb == null) return null;
+        ResultSet resultSet = null;
+        try {
+            resultSet = dbMvc.getSelectResult(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (resultSet == null) return null;
         ArrayList<Bid> bidsList = null;
-        for (Map row : bidsListFromDb) {
-            Bid bid = new Bid();
-            setBidFromMapRow(bid, row);
-            if (bidsList == null) bidsList = new ArrayList<Bid>();
-            bidsList.add(bid);
+        try {
+            while (resultSet.next()) {
+                Bid bid = new Bid();
+                setBidFromMapRow(bid, resultSet);
+                if (bidsList == null) bidsList = new ArrayList<Bid>();
+                bidsList.add(bid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return bidsList;
     }
 
-    private void setBidFromMapRow(Bid bid, Map row) {
-        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+    private void setBidFromMapRow(Bid bid, ResultSet resultSet) {
+
+
+        /*Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, Object> pair = iterator.next();
             if (pair.getKey().equals("id_bids")) {
@@ -279,6 +296,6 @@ public class Bid {
                     bid.setCar(carMvc.getCar(pair.getValue().toString()));
                 } else bid.setCar(null);
             }
-        }
+        }*/
     }
 }

@@ -1,12 +1,16 @@
 package io.bgroup.topline.model;
 
+import org.omg.PortableInterceptor.USER_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.jstl.sql.Result;
 import java.io.UnsupportedEncodingException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -141,10 +145,14 @@ public class SiteUser {
     private SiteUser findSiteUser(String name) {
         SiteUser findUser = null;
         String sql;
-        List<Map<String, Object>> findUsersList = null;
+        ResultSet findUsersList = null;
         if (name != null) {
             sql = "select * from users where username='" + name + "'";
-            findUsersList = dbMvc.getSelectResult(sql);
+            try {
+                findUsersList = dbMvc.getSelectResult(sql);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
@@ -157,15 +165,30 @@ public class SiteUser {
     public SiteUser findSiteUser(int id_user) {
         SiteUser findUser = null;
         String sql;
-        List<Map<String, Object>> findUsersList = null;
+        ResultSet findUsersList = null;
         sql = "select * from users where id_user='" + id_user + "'";
-        findUsersList = dbMvc.getSelectResult(sql);
+        try {
+            findUsersList = dbMvc.getSelectResult(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
     }
 
-    private SiteUser getSiteUserFromDbSelect(List<Map<String, Object>> findUsers) {
+    private SiteUser getSiteUserFromDbSelect(ResultSet findUsers) {
         SiteUser findUser = null;
+        try {
+            boolean flag1 = false;
+            int count2 = 0;
+            if (findUsers.first() && findUsers.last()) {
+                findUser = new SiteUser();
+                setSiteUserFromResultSet(findUser, findUsers);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+/*
         if (findUsers != null && findUsers.size() == 1) {
             try {
                 Map row = findUsers.get(0);
@@ -175,7 +198,7 @@ public class SiteUser {
                 this.error = "Ошибка: " + e;
                 //System.out.println(error);
             }
-        }
+        }*/
         return findUser;
     }
 
@@ -192,7 +215,12 @@ public class SiteUser {
         String userIdFromForm = request.getParameter("user-red-id-label");
         sql = "select * from users where id_user='" + userIdFromForm + "'";
 
-        List<Map<String, Object>> findUsersList = dbMvc.getSelectResult(sql);
+        ResultSet findUsersList = null;
+        try {
+            findUsersList = dbMvc.getSelectResult(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         redUser = getSiteUserFromDbSelect(findUsersList);
         return redUser;
@@ -337,25 +365,78 @@ public class SiteUser {
         if (!isUserHasRole(principal, "ROLE_USERS")) return null;
         String sql;
         sql = "select * from users where username!='admin' and user_is_delete=0";
-        List<Map<String, Object>> listDbUser = dbMvc.getSelectResult(sql);
+        ResultSet listDbUser = null;
+        try {
+            listDbUser = dbMvc.getSelectResult(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (listDbUser == null) {
             return null;
         }
-        ArrayList<SiteUser> siteUserArrayList = new ArrayList<SiteUser>(listDbUser.size());
-        for (Map row : listDbUser) {
-            SiteUser tmpSiteUser = new SiteUser();
-            setSiteUserFromMapRow(tmpSiteUser, row);
-            siteUserArrayList.add(tmpSiteUser);
+        ArrayList<SiteUser> siteUserArrayList = new ArrayList<SiteUser>();
+        try {
+            while (listDbUser.next()) {
+                SiteUser tmpSiteUser = new SiteUser();
+                setSiteUserFromResultSet(tmpSiteUser, listDbUser);
+                siteUserArrayList.add(tmpSiteUser);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return siteUserArrayList;
     }
 
-    private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
-        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+    //private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
+    private void setSiteUserFromResultSet(SiteUser redUser, ResultSet resultSet) {
+        //Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
         try {
+            if (resultSet != null) {
+                String userName = resultSet.getString(DbModel.tableUsers.username.toString());
+                String userFio = resultSet.getString(DbModel.tableUsers.user_fio.toString());
+                String userPhone = resultSet.getString(DbModel.tableUsers.user_phone.toString());
+                String userEmail = resultSet.getString(DbModel.tableUsers.user_email.toString());
+                String userEnable = resultSet.getString(DbModel.tableUsers.enabled.toString());
+                String userIsDelete = resultSet.getString(DbModel.tableUsers.user_is_delete.toString());
+                String userId = resultSet.getString(DbModel.tableUsers.id_user.toString());
+                String userPostId = resultSet.getString(DbModel.tableUsers.user_post_id.toString());
+                String userCompanyId = resultSet.getString(DbModel.tableUsers.user_company_id.toString());
+                String userCompanyUnitId = resultSet.getString(DbModel.tableUsers.user_company_unit_id.toString());
 
+                Post post;
+                Company company;
+                CompanyUnit companyUnit;
 
-            while (iterator.hasNext()) {
+                if (id != null) {
+                    redUser.setId(id);
+                }
+                if (userName!=null) {
+                    redUser.setName(userName);
+                }
+                if (userEmail!=null) {
+                        redUser.setEmail(userEmail);
+                }
+                if (userFio!=null) {
+                    redUser.setFio(userFio);
+                }
+                if (userPhone!=null) {
+                    redUser.setPhone(userPhone);
+                }
+                if (userEnable.equals("1")) {
+                    redUser.setIsEnable("true");
+                }
+                if (userPostId !=null) {
+                    redUser.setPost(postMvc.getPost(userPostId));
+                }
+                if (userCompanyId!=null) {
+                    redUser.setCompany(companyMvc.getCompany(userCompanyId));
+                }
+                if (userCompanyUnitId!=null) {
+                    redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(userCompanyUnitId));
+                }
+            }
+
+        /*while (iterator.hasNext()) {
                 Map.Entry<String, Object> pair = iterator.next();
                 if (pair.getKey().equals("id_user")) {
                     redUser.setId(pair.getValue().toString());
@@ -384,7 +465,12 @@ public class SiteUser {
                 } else if (pair.getKey().equals("user_company_unit_id")) {
                     if (pair.getValue() == null)
                         redUser.setCompanyUnit(null);
-                    else redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
+                    else {
+                        String companyUnitId = pair.getValue().toString();
+                        if (companyUnitId.equals("-1")) redUser.setCompanyUnit(null);
+                        else
+                            redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
+                    }
                 }
                 // Да! я знаю, что этот метод не обязателен и его можно получить из метода чуть выше
                 else if (pair.getKey().equals("user_company_id")) {
@@ -392,10 +478,15 @@ public class SiteUser {
                         redUser.setCompany(null);
                     else redUser.setCompany(companyMvc.getCompany(pair.getValue().toString()));
                 }
-            }
-        } catch (Exception e) {
+        }*/
+        } catch (
+                Exception e
+                )
+
+        {
             e.printStackTrace();
         }
+
     }
 
     public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
@@ -403,13 +494,25 @@ public class SiteUser {
         String userNameFromFormUserAdd = request.getParameter("username");
         String sql;
         sql = "select * from users where username='" + userNameFromFormUserAdd + "'";
-        List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql);
-        if (dbSelectResult != null && dbSelectResult.size() > 0) {
+        ResultSet dbSelectResult = null;
+        try {
+            dbSelectResult = dbMvc.getSelectResult(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        SiteUser tmpSiteUser = new SiteUser();
+        setSiteUserFromResultSet(tmpSiteUser, dbSelectResult);
+        if (tmpSiteUser != null && tmpSiteUser.getName().equals(userNameFromFormUserAdd)) {
             this.error = "Пользователь существует";
             return false;
         } else {
             sql = "INSERT INTO users (username) VALUES ('" + userNameFromFormUserAdd + "')";
-            boolean flag = dbMvc.getInsertResult(sql);
+            boolean flag = false;
+            try {
+                flag = dbMvc.getInsertResult(sql);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (!flag)
                 this.error = "Пользователь добавлен";
             else

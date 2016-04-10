@@ -24,7 +24,7 @@ public class MvcBidAjaxController {
     public String getCarSections(HttpServletRequest request) {
         String responseBody = "Error";
         if (request != null) {
-            responseBody = car.getCarSectionsForAjax(request.getParameter("idCar"));
+         //   responseBody = car.getCarSectionsForAjax(request.getParameter("idCar"));
         }
         return responseBody;
     }
@@ -34,7 +34,7 @@ public class MvcBidAjaxController {
     public String getTrailerSections(HttpServletRequest request) {
         String responseBody = "Error";
         if (request != null) {
-            responseBody = trailer.getTrailerSectionsForAjax(request.getParameter("idTrailer"));
+      //      responseBody = trailer.getTrailerSectionsForAjax(request.getParameter("idTrailer"));
         }
         return responseBody;
     }
@@ -44,7 +44,7 @@ public class MvcBidAjaxController {
     public String getTrailers(HttpServletRequest request) {
         String responseBody = "Error";
         if (request != null) {
-            responseBody = trailer.getTrailerForAjax(request.getParameter("idCar"));
+            //responseBody = trailer.getTrailerForAjax(request.getParameter("idCar"));
         }
         return responseBody;
     }

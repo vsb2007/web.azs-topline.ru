@@ -2,6 +2,8 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -93,31 +95,54 @@ public class Trailer {
     }
 
     private ArrayList<Trailer> getTrailersFromDbSelect(String sql) {
-        List<Map<String, Object>> trailersListFromDb = null;
-        trailersListFromDb = dbMvc.getSelectResult(sql);
-        if (trailersListFromDb == null) return null;
+        ResultSet resultSet = null;
+        try {
+            resultSet = dbMvc.getSelectResult(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (resultSet == null) return null;
         ArrayList<Trailer> trailerList = null;
-        for (Map row : trailersListFromDb) {
-            Trailer trailer = new Trailer();
-            ArrayList<OilSections> oilSections = null;
-            trailer.setTrailer_block((String) row.get("trailer_block").toString());
-            trailer.setId_trailer((String) row.get("id_trailer").toString());
-            trailer.setTrailer_number((String) row.get("trailer_number").toString());
-            trailer.setTrailer_car_id((String) row.get("trailer_car_id").toString());
-            for (int i = 1; i <= countOilSection; i++) {
-                String trailer_sec = row.get("trailer_sec_" + i).toString();
-                if (!trailer_sec.equals("0")) {
-                    if (oilSections == null) {
-                        oilSections = new ArrayList<OilSections>();
-                        trailer.setOilSections(oilSections);
-                    }
-                    oilSections.add(new OilSections("trailer_sec_" + i, trailer_sec));
-                }
+        try {
+            while (resultSet.next()) {
+                Trailer trailer = new Trailer();
+                setTrailerFromResultSet(trailer, resultSet);
+                if (trailerList == null) trailerList = new ArrayList<Trailer>();
+                trailerList.add(trailer);
             }
-            if (trailerList == null) trailerList = new ArrayList<Trailer>();
-            trailerList.add(trailer);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return trailerList;
+    }
+
+    private void setTrailerFromResultSet(Trailer trailer, ResultSet resultSet) {
+        try {
+            if (resultSet != null) {
+                String trailerId = resultSet.getString(DbModel.tableTrailer.id_trailer.toString());
+                String trailerNumber = resultSet.getString(DbModel.tableTrailer.trailer_number.toString());
+                String trailerCarId = resultSet.getString(DbModel.tableTrailer.trailer_car_id.toString());
+                String trailerBlock = resultSet.getString(DbModel.tableTrailer.trailer_block.toString());
+
+                trailer.setTrailer_block(trailerBlock);
+                trailer.setId_trailer(id_trailer);
+                trailer.setTrailer_number(trailerNumber);
+                trailer.setTrailer_car_id(trailerCarId);
+                ArrayList<OilSections> oilSections = null;
+                for (int i = 1; i <= countOilSection; i++) {
+                    String trailer_sec = resultSet.getString("trailer_sec_" + i).toString();
+                    if (!trailer_sec.equals("0")) {
+                        if (oilSections == null) {
+                            oilSections = new ArrayList<OilSections>();
+                            trailer.setOilSections(oilSections);
+                        }
+                        oilSections.add(new OilSections("trailer_sec_" + i, trailer_sec));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getTrailerSectionsForAjax(String idTrailer) {
