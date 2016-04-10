@@ -29,7 +29,7 @@ public class CompanyUnit {
         return company;
     }
 
-    public void setCompany(Company company) {
+    private void setCompany(Company company) {
         this.company = company;
     }
 
@@ -52,10 +52,7 @@ public class CompanyUnit {
     public ArrayList<CompanyUnit> getCompanyUnitList(String companyId) {
         ArrayList<CompanyUnit> companyUnitList = null;
         String sql = "select * from company_unit where company_id = '" + companyId + "'";
-        System.out.println("getCompanyUnitList: " + companyId);
-        System.out.println(sql);
         companyUnitList = getCompanyUnitFromDbSelect(sql);
-        System.out.println("Получили companyUnitList");
         return companyUnitList;
     }
 
@@ -69,25 +66,7 @@ public class CompanyUnit {
 
     private ArrayList<CompanyUnit> getCompanyUnitFromDbSelect(String sql) {
         List<Map<String, Object>> companyUnitListFromDb = null;
-        System.out.println("Это последняя строчка перед ошибкой:" + sql);
-        //return null;
-        boolean flag=false;
-        DbModel dbModelTmp;
-        try {
-            if (dbMvc == null) {
-                System.out.println("dbMvc is null");
-                dbModelTmp = new DbModel();
-                companyUnitListFromDb = dbModelTmp.getSelectResult(sql);
-                flag = true;
-            }
-            else {
-                companyUnitListFromDb = dbMvc.getSelectResult(sql);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        System.out.println("sql: " + sql);
+        companyUnitListFromDb = dbMvc.getSelectResult(sql);
         if (companyUnitListFromDb == null) return null;
         ArrayList<CompanyUnit> companyUnitArrayList = null;
 
@@ -95,18 +74,11 @@ public class CompanyUnit {
             CompanyUnit companyUnit = new CompanyUnit();
             companyUnit.setIdCompanyUnit(row.get("id_company_unit").toString());
             companyUnit.setCompanyUnitName(row.get("company_unit_name").toString());
-            System.out.println("test: " + row.get("company_id").toString());
             companyUnit.setCompany(companyMvc.getCompany(row.get("company_id").toString()));
             if (companyUnitArrayList == null) companyUnitArrayList = new ArrayList<CompanyUnit>();
             companyUnitArrayList.add(companyUnit);
         }
-        System.out.println("Вышли из getCompanyUnitFromDbSelect");
-        if (flag){
-            dbModelTmp = null;
-            flag = false;
-        }
         return companyUnitArrayList;
-
     }
 
     public String getCompanyUnitsForAjax(HttpServletRequest request) {

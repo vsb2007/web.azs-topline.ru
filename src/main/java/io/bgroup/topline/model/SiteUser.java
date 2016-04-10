@@ -210,8 +210,6 @@ public class SiteUser {
 
     private String updateUserMessage(SiteUser redUser, HttpServletRequest request) {
         try {
-
-
             String userNameFromForm = request.getParameter("user-name-label");
             String userPasswordFromForm = request.getParameter("user-password-label");
             String userFioFromForm = request.getParameter("user-fio-label");
