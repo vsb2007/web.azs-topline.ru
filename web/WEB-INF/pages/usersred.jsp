@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="io.bgroup.topline.model.SiteUser" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@ page language="java" pageEncoding="UTF-8" %>
 
 
 <%@ include file="menu.jsp" %>
@@ -34,7 +34,7 @@
     <div class="section">
         <h2>Пользователь <%=userRed.getName()%>
         </h2>
-        <form action="/usersred" method="get">
+        <form action="/usersred" method="post">
             <ul class="list">
                 <li ripple>
     <span class="item-text">
@@ -141,7 +141,7 @@
                         <span class="item-text">
                             <select class="dropdown-menu" id="companyUnitId" name="companyUnitId">
                                 <option value="-1">Выбрете подразделение</option>
-                                <c:forEach
+                             <%--   <c:forEach
                                         items="${userRed.getCompanyUnit().getCompanyUnitList(userRed.getCompanyUnit().getCompany().getIdCompany())}"
                                         var="companyUnit">
                                     <c:if test="${companyUnit.getIdCompanyUnit() == userRed.getCompanyUnit().getIdCompanyUnit()}">
@@ -153,7 +153,7 @@
                                 </option>
                                     </c:if>
                                 </c:forEach>
-
+                                --%>
                                 </select><br>
                             <span class="secondary-text">
                                 <label for="companyUnitId" class="label">Подразделение</label>

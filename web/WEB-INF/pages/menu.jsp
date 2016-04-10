@@ -1,5 +1,5 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" pageEncoding="UTF-8"%>
 
 <div class="sidemenu sidebar responsive" id="navigation-sidemenu" hidden>
     <div class="sidemenu-hero">
