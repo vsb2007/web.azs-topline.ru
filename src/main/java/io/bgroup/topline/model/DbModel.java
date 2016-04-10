@@ -12,10 +12,10 @@ public class DbModel {
     @Autowired
     private JdbcTemplate jdbcTemplateMvc;
 
-    public void setJdbcTemplateMvc(JdbcTemplate jdbcTemplate) {
+   /* public void setJdbcTemplateMvc(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplateMvc = jdbcTemplate;
     }
-
+*/
     private String error;
 
     public DbModel() {
@@ -30,12 +30,13 @@ public class DbModel {
     }
 
     public List<Map<String, Object>> getSelectResult(String sql) {
+        System.out.println("А попадем ли мы сюда: " + sql);
         List<Map<String, Object>> list = null;
         try {
             list = jdbcTemplateMvc.queryForList(sql);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            //return null;
         }
         return list;
     }

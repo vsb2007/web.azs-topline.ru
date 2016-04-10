@@ -17,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 @Controller
@@ -76,9 +77,24 @@ public class MvcUserController {
     @RequestMapping(value = "/usersred")
     public ModelAndView UsersRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+
+        //System.out.println("1111");
         SiteUser userRed = siteUserMvc.findRedSiteUser(principal, request);
-        ArrayList<Post> postArrayList = postMvc.getPostList();
+        /*
+        System.out.println(userRed.getName());
+        System.out.println("idCompany: " + userRed.getCompanyUnit().getCompany().getIdCompany());
+        CompanyUnit companyUnit = userRed.getCompanyUnit();
+        System.out.println("unitName: " + companyUnit.getCompanyUnitName());
+
+        ArrayList<CompanyUnit> arrayList = companyUnit.getCompanyUnitList("4");
+        System.out.println("взяли лист");
+        System.out.println("size: " + arrayList.size());
+
+
+        */
         ArrayList<Company> companyArrayList = companyMvc.getCompanyList();
+        //ArrayList<Company> companyArrayList = companyUnitMvc.getCompany().getCompanyList();
+        ArrayList<Post> postArrayList = postMvc.getPostList();
         model.addObject("userRed", userRed);
         model.addObject("postList", postArrayList);
         model.addObject("companyList", companyArrayList);

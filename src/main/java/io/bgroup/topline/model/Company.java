@@ -10,16 +10,16 @@ import java.util.Map;
 public class Company {
     @Autowired
     private DbModel dbMvc;
-    @Autowired
-    private CompanyUnit companyUnitMvc;
+    //@Autowired
+    //private CompanyUnit companyUnitMvc;
 
     private String idCompany;
     private String companyName;
     //private ArrayList<CompanyUnit> companyUnitsList;
 
-    public ArrayList<CompanyUnit> getCompanyUnitsList(String idCompany) {
-        return companyUnitMvc.getComapnyUnitList(getCompany(idCompany));
-    }
+    //public ArrayList<CompanyUnit> getCompanyUnitsList(String companyId) {
+//        return companyUnitMvc.getCompanyUnitList(companyId);
+  //  }
 
     public String getIdCompany() {
         return idCompany;

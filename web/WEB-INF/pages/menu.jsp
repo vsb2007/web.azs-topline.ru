@@ -11,7 +11,7 @@
         <li class="divider"></li>
         <sec:authorize access="hasRole('ROLE_ADMIN')">
             <li ripple><a href="/users"><i class="icon-input"></i>Пользователи</a></li>
-            <li ripple><a href="/roles"><i class="icon-input"></i>Роли</a></li>
+            <li ripple><a href="/company"><i class="icon-input"></i>Организации</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
             <li ripple><a href="/bidcreate"><i class="icon-input"></i>Создать заявку</a></li>

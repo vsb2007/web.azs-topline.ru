@@ -12,6 +12,7 @@ import java.util.Map;
  * ToplineWeb.2.5
  */
 public class CompanyUnit {
+
     @Autowired
     private DbModel dbMvc;
     @Autowired
@@ -20,6 +21,9 @@ public class CompanyUnit {
     private String idCompanyUnit;
     private String companyUnitName;
     private Company company;
+
+    public CompanyUnit() {
+    }
 
     public Company getCompany() {
         return company;
@@ -45,17 +49,13 @@ public class CompanyUnit {
         this.companyUnitName = companyUnitName;
     }
 
-    public ArrayList<CompanyUnit> getComapnyUnitList() {
+    public ArrayList<CompanyUnit> getCompanyUnitList(String companyId) {
         ArrayList<CompanyUnit> companyUnitList = null;
-        String sql = "select * from company_unit";
+        String sql = "select * from company_unit where company_id = '" + companyId + "'";
+        System.out.println("getCompanyUnitList: " + companyId);
+        System.out.println(sql);
         companyUnitList = getCompanyUnitFromDbSelect(sql);
-        return companyUnitList;
-    }
-
-    public ArrayList<CompanyUnit> getComapnyUnitList(Company company) {
-        ArrayList<CompanyUnit> companyUnitList = null;
-        String sql = "select * from company_unit where company_id = '" + company.getIdCompany() + "'";
-        companyUnitList = getCompanyUnitFromDbSelect(sql);
+        System.out.println("Получили companyUnitList");
         return companyUnitList;
     }
 
@@ -69,27 +69,51 @@ public class CompanyUnit {
 
     private ArrayList<CompanyUnit> getCompanyUnitFromDbSelect(String sql) {
         List<Map<String, Object>> companyUnitListFromDb = null;
-        companyUnitListFromDb = dbMvc.getSelectResult(sql);
+        System.out.println("Это последняя строчка перед ошибкой:" + sql);
+        //return null;
+        boolean flag=false;
+        DbModel dbModelTmp;
+        try {
+            if (dbMvc == null) {
+                System.out.println("dbMvc is null");
+                dbModelTmp = new DbModel();
+                companyUnitListFromDb = dbModelTmp.getSelectResult(sql);
+                flag = true;
+            }
+            else {
+                companyUnitListFromDb = dbMvc.getSelectResult(sql);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        System.out.println("sql: " + sql);
         if (companyUnitListFromDb == null) return null;
         ArrayList<CompanyUnit> companyUnitArrayList = null;
+
         for (Map row : companyUnitListFromDb) {
             CompanyUnit companyUnit = new CompanyUnit();
             companyUnit.setIdCompanyUnit(row.get("id_company_unit").toString());
             companyUnit.setCompanyUnitName(row.get("company_unit_name").toString());
+            System.out.println("test: " + row.get("company_id").toString());
             companyUnit.setCompany(companyMvc.getCompany(row.get("company_id").toString()));
             if (companyUnitArrayList == null) companyUnitArrayList = new ArrayList<CompanyUnit>();
             companyUnitArrayList.add(companyUnit);
         }
+        System.out.println("Вышли из getCompanyUnitFromDbSelect");
+        if (flag){
+            dbModelTmp = null;
+            flag = false;
+        }
         return companyUnitArrayList;
+
     }
 
     public String getCompanyUnitsForAjax(HttpServletRequest request) {
         String response = "";
         String companyId = request.getParameter("companyId");
         if (companyId == null) return "Ошибка: в передача companyId";
-
-        Company company = companyMvc.getCompany(companyId);
-        ArrayList<CompanyUnit> companyUnitsList = getComapnyUnitList(company);
+        ArrayList<CompanyUnit> companyUnitsList = getCompanyUnitList(companyId);
 
         if (companyUnitsList == null) return "Ошибка поиска подразделений";
         response += "<li ripple>" +

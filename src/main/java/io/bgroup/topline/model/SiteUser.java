@@ -22,18 +22,14 @@ public class SiteUser {
     private String id;
     private String error;
     private Post post;
-    private Company company;
     private CompanyUnit companyUnit;
 
     @Autowired
     private DbModel dbMvc;
-
     @Autowired
     PasswordEncoder passwordEncoderMvc;
     @Autowired
     Post postMvc;
-    @Autowired
-    Company companyMvc;
     @Autowired
     CompanyUnit companyUnitMvc;
 
@@ -108,14 +104,6 @@ public class SiteUser {
 
     private void setPost(Post post) {
         this.post = post;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    private void setCompany(Company company) {
-        this.company = company;
     }
 
     public CompanyUnit getCompanyUnit() {
@@ -208,7 +196,9 @@ public class SiteUser {
         SiteUser redUser = null;
 
         if (userFindValue != null && userFindValue.equals("1")) {
+            System.out.println("Зашли сюда");
             redUser = findUser(request);
+            System.out.println("Вышли отсюда");
         } else if (userRedFormValue != null && userRedFormValue.equals("1")) {
             redUser = findUser(request);
             String tmpError = updateUserMessage(redUser, request);
@@ -353,8 +343,6 @@ public class SiteUser {
     private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
         Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
         try {
-
-
             while (iterator.hasNext()) {
                 Map.Entry<String, Object> pair = iterator.next();
                 if (pair.getKey().equals("id_user")) {
@@ -382,15 +370,14 @@ public class SiteUser {
                         redUser.setPost(null);
                     else redUser.setPost(postMvc.getPost(pair.getValue().toString()));
                 } else if (pair.getKey().equals("user_company_unit_id")) {
-                    if (pair.getValue() == null)
+                    if (pair.getValue() == null) {
+                        System.out.println("user_company_unit_id is null");
                         redUser.setCompanyUnit(null);
-                    else redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
-                }
-                // Да! я знаю, что этот метод не обязателен и его можно получить из метода чуть выше
-                else if (pair.getKey().equals("user_company_id")) {
-                    if (pair.getValue() == null)
-                        redUser.setCompany(null);
-                    else redUser.setCompany(companyMvc.getCompany(pair.getValue().toString()));
+                    }
+                    else{
+                        System.out.println("user_company_unit_id: " + pair.getValue().toString());
+                        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
+                    }
                 }
             }
         } catch (Exception e) {

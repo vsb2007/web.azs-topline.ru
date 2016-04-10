@@ -50,8 +50,8 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return new JdbcTemplate(this.dataSource());
     }
 
-    @Bean(name = "dbToplineWeb")
-    public DbModel dbToplineWeb() {
+    @Bean(name = "dbModel")
+    public DbModel dbModel() {
         return new DbModel();
     }
 
@@ -113,6 +113,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         Company company = new Company();
         return company;
     }
+    
     @Bean(name = "companyUnit")
     public CompanyUnit companyUnit() {
         CompanyUnit companyUnit = new CompanyUnit();

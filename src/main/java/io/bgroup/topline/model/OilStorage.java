@@ -49,14 +49,14 @@ public class OilStorage {
 
     public ArrayList<OilStorage> getOilStorageList() {
         ArrayList<OilStorage> oilStorageList = null;
-        String sql = "select * from storages where Block='0'";
+        String sql = "select * from company_unit where Block='0'";
         oilStorageList = getOilStorageFromDbSelect(sql);
         return oilStorageList;
     }
 
     public OilStorage getOilStorage(String idOilStorage) {
         ArrayList<OilStorage> oilStorageList = null;
-        String sql = "select * from storages where id_sklad = '" + idOilStorage + "'";
+        String sql = "select * from company_unit where id_company_unit = '" + idOilStorage + "'";
         oilStorageList = getOilStorageFromDbSelect(sql);
         if (oilStorageList == null || oilStorageList.size() == 0) return null;
         return oilStorageList.get(0);
@@ -71,8 +71,8 @@ public class OilStorage {
         for (Map row : oilStorageListFromDb) {
             OilStorage oilStorage = new OilStorage();
             oilStorage.setOilStorageBlock((String) row.get("Block").toString());
-            oilStorage.setIdOilStorage((String) row.get("id_sklad").toString());
-            oilStorage.setOilStorageName((String) row.get("Name").toString());
+            oilStorage.setIdOilStorage((String) row.get("id_company_unit").toString());
+            oilStorage.setOilStorageName((String) row.get("company_unit_name").toString());
             oilStorage.setOilStorageIsAzs((String) row.get("IsAZS").toString());
             if (oilStorageArrayList == null) oilStorageArrayList = new ArrayList<OilStorage>();
             oilStorageArrayList.add(oilStorage);
