@@ -30,7 +30,6 @@ public class DbModel {
     }
 
     public List<Map<String, Object>> getSelectResult(String sql) {
-        System.out.println("А попадем ли мы сюда: " + sql);
         List<Map<String, Object>> list = null;
         try {
             list = jdbcTemplateMvc.queryForList(sql);

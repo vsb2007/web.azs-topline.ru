@@ -76,28 +76,18 @@ public class MvcUserController {
 
     @RequestMapping(value = "/usersred")
     public ModelAndView UsersRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        System.out.println(request.getCharacterEncoding());
         ModelAndView model = new ModelAndView();
-
-        //System.out.println("1111");
         SiteUser userRed = siteUserMvc.findRedSiteUser(principal, request);
-        /*
-        System.out.println(userRed.getName());
-        System.out.println("idCompany: " + userRed.getCompanyUnit().getCompany().getIdCompany());
-        CompanyUnit companyUnit = userRed.getCompanyUnit();
-        System.out.println("unitName: " + companyUnit.getCompanyUnitName());
-
-        ArrayList<CompanyUnit> arrayList = companyUnit.getCompanyUnitList("4");
-        System.out.println("взяли лист");
-        System.out.println("size: " + arrayList.size());
-
-
-        */
+        ArrayList<CompanyUnit> companyUnitList = null;
+        if (userRed.getCompanyUnit() != null && userRed.getCompanyUnit().getCompany() != null)
+            companyUnitList = companyUnitMvc.getCompanyUnitList(userRed.getCompanyUnit().getCompany().getIdCompany());
         ArrayList<Company> companyArrayList = companyMvc.getCompanyList();
-        //ArrayList<Company> companyArrayList = companyUnitMvc.getCompany().getCompanyList();
         ArrayList<Post> postArrayList = postMvc.getPostList();
         model.addObject("userRed", userRed);
         model.addObject("postList", postArrayList);
         model.addObject("companyList", companyArrayList);
+        model.addObject("companyUnitList", companyUnitList);
         model.setViewName("usersred");
         return model;
     }

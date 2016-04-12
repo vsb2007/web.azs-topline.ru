@@ -171,34 +171,25 @@ public class SiteUser {
         String userNameFromButtonValue = request.getParameter("buttonuserred");
         String sql;
         SiteUser redUser = null;
-
         if (userNameFromButtonValue != null && !userNameFromButtonValue.equals("")) {
             redUser = findSiteUser(userNameFromButtonValue);
             return redUser;
         }
-
         String userIdFromForm = request.getParameter("user-red-id-label");
         sql = "select * from users where id_user='" + userIdFromForm + "'";
-
         List<Map<String, Object>> findUsersList = dbMvc.getSelectResult(sql);
-
         redUser = getSiteUserFromDbSelect(findUsersList);
         return redUser;
     }
 
     public SiteUser findRedSiteUser(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         if (!isUserHasRole(principal, "ROLE_USERS_RED")) return null;
-
         String userFindValue = request.getParameter("user-find-label");
         String userRedFormValue = request.getParameter("red_form");
         String userDelValue = request.getParameter("user-delete-id-label");
-
         SiteUser redUser = null;
-
         if (userFindValue != null && userFindValue.equals("1")) {
-            System.out.println("Зашли сюда");
             redUser = findUser(request);
-            System.out.println("Вышли отсюда");
         } else if (userRedFormValue != null && userRedFormValue.equals("1")) {
             redUser = findUser(request);
             String tmpError = updateUserMessage(redUser, request);
@@ -221,7 +212,6 @@ public class SiteUser {
             String userCompanyIdFromForm = request.getParameter("companyId");
             String userCompanyUnitIdFromForm = request.getParameter("companyUnitId");
             String sql;
-
             if (userNameFromForm != null
                     && !redUser.getName().equals(userNameFromForm)
                     && !userNameFromForm.equals("")) {
@@ -240,12 +230,6 @@ public class SiteUser {
                 }
             }
             if (userFioFromForm != null) {
-                // (!!!) не понятно, почему приходит в левой кодировке
-            /*try {
-                userFioFromForm = new String(request.getParameter("user-fio-label").getBytes("CP1252"), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }*/
                 sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
                 boolean flag = dbMvc.getInsertResult(sql);
                 if (flag) {
@@ -369,11 +353,9 @@ public class SiteUser {
                     else redUser.setPost(postMvc.getPost(pair.getValue().toString()));
                 } else if (pair.getKey().equals("user_company_unit_id")) {
                     if (pair.getValue() == null) {
-                        System.out.println("user_company_unit_id is null");
                         redUser.setCompanyUnit(null);
                     }
                     else{
-                        System.out.println("user_company_unit_id: " + pair.getValue().toString());
                         redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
                     }
                 }

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ include file="header.jsp" %>
@@ -7,7 +7,7 @@
 <sec:authorize access="hasRole('ROLE_BID_LIST')">
     <div class="section">
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
-            <form action="/bidcreateform" method="post">
+            <form action="bidcreateform" method="get">
                 <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
                        name="bidNumber"
                        id="bidName"> <br>

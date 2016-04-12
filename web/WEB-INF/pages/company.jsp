@@ -1,9 +1,8 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="io.bgroup.topline.model.SiteUser" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="io.bgroup.topline.model.Company" %>
-
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ include file="header.jsp" %>
 <%@ include file="menu.jsp" %>
@@ -13,7 +12,7 @@
         <ul class="list">
             <c:forEach items="${companyList}" var="company">
                 <li ripple>
-                    <form action="/companyView" method="post">
+                    <form action="companyView" method="get">
                         <button class="button raised color-white bg-blue-500" value="${company.getIdCompany()}"
                                 name="buttonCompanyRed" id="buttonCompanyRed"
                                 style="width: 150px"

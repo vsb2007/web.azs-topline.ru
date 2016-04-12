@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -15,6 +16,9 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.view.velocity.VelocityViewResolver;
+
+import java.nio.charset.Charset;
 
 @Configuration
 @EnableWebMvc
@@ -29,6 +33,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
+        resolver.setContentType("text/html;charset=UTF-8");
         resolver.setPrefix("/WEB-INF/pages/");
         resolver.setSuffix(".jsp");
         return resolver;
@@ -43,6 +48,12 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/gif/**").addResourceLocations("/WEB-INF/pages/css/").setCachePeriod(31556926);
         registry.addResourceHandler("/demo-files/**").addResourceLocations("/WEB-INF/pages/demo-files/").setCachePeriod(31556926);
         registry.addResourceHandler("/fonts/**").addResourceLocations("/WEB-INF/pages/fonts/").setCachePeriod(31556926);
+    }
+
+    @Bean
+    public StringHttpMessageConverter stringHttpMessageConverter() {
+        //этот медот для кодировки не помог
+        return new StringHttpMessageConverter(Charset.forName("UTF-8"));
     }
 
     @Bean(name = "jdbcTemplate")

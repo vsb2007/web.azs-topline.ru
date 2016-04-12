@@ -30,7 +30,7 @@ function checkCompany(post) {
 
     if (post.value != -1) {
         var token = document.getElementById("token");
-        xmlhttp.open("POST", "/getCompany", true);
+        xmlhttp.open("POST", "getCompany", true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send("postId=" + post.value + "&" + token.name + "=" + token.value);
     }
@@ -62,7 +62,7 @@ function getCompanyUnits(company) {
 
     if (company.value != -1) {
         var token = document.getElementById("token");
-        xmlhttp.open("POST", "/getCompanyAndUnits", true);
+        xmlhttp.open("POST", "getCompanyAndUnits", true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send("companyId=" + company.value + "&" + token.name + "=" + token.value);
     }

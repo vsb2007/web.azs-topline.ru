@@ -1,15 +1,14 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ page import="io.bgroup.topline.model.SiteUser" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="io.bgroup.topline.model.RolesUrl" %>
-
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ include file="header.jsp" %>
 <%@ include file="menu.jsp" %>
 <sec:authorize access="hasRole('ROLE_LINKS')">
 
 <div class="section">
-    <form action="/roles" method="post">
+    <form action="roles" method="post">
         <input type="text" class="text-input border-green-500" placeholder="Link" required name="linkUrl"
                id="linkUrl"> &nbsp;&nbsp;
         <input type="text" class="text-input border-green-500" placeholder="Description" required name="linkDescription"
@@ -51,7 +50,7 @@
                 for (RolesUrl RolesUrl : rolesUrlsList) {
         %>
         <li ripple>
-            <form action="/permissions" method="post">
+            <form action="permissions" method="post">
                 <input type="hidden" id="permissions-red-label" value="1" name="permissions-red-label">
                 <input value="<%=RolesUrl.getId()%>" name="buttonPermissionRed" id="buttonPermissionRed" type="hidden">
                 <%

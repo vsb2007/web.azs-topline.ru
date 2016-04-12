@@ -1,13 +1,12 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ include file="header.jsp" %>
 <%@ include file="menu.jsp" %>
 
 <sec:authorize access="hasRole('ROLE_COMPANY_RED')">
     <div class="section">
-        <form action="companyRed" method="post">
+        <form action="companyRed" method="get">
             <ul class="list">
                 <li ripple>
                 <span class="item-text">

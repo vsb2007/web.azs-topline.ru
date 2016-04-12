@@ -1,11 +1,11 @@
-<%@ include file="header.jsp" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="io.bgroup.topline.model.SiteUser" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page language="java" pageEncoding="UTF-8" %>
 
 
+<%@ include file="header.jsp" %>
 <%@ include file="menu.jsp" %>
 
 <sec:authorize access="hasRole('ROLE_USERS_RED')">
@@ -32,9 +32,10 @@
         if (userRed != null) {
     %>
     <div class="section">
+        Encoding : <%=request.getCharacterEncoding()%>
         <h2>Пользователь <%=userRed.getName()%>
         </h2>
-        <form action="/usersred" method="post">
+        <form action="usersred" method="get" accept-charset="UTF-8">
             <ul class="list">
                 <li ripple>
     <span class="item-text">
@@ -136,13 +137,11 @@
                 <div id="divCompanyAndUnits">
                     <c:if test="${userRed.getCompanyUnit()!=NULL}">
                         <li ripple>
-                           <%-- ${userRed.getCompanyUnit().getCompany().getIdCompany()} --%>
-
                         <span class="item-text">
                             <select class="dropdown-menu" id="companyUnitId" name="companyUnitId">
                                 <option value="-1">Выбрете подразделение</option>
-                             <%--   <c:forEach
-                                        items="${userRed.getCompanyUnit().getCompanyUnitList(userRed.getCompanyUnit().getCompany().getIdCompany())}"
+                                <c:forEach
+                                        items="${companyUnitList}"
                                         var="companyUnit">
                                     <c:if test="${companyUnit.getIdCompanyUnit() == userRed.getCompanyUnit().getIdCompanyUnit()}">
                                 <option value="${companyUnit.getIdCompanyUnit()}"
@@ -153,7 +152,6 @@
                                 </option>
                                     </c:if>
                                 </c:forEach>
-                                --%>
                                 </select><br>
                             <span class="secondary-text">
                                 <label for="companyUnitId" class="label">Подразделение</label>
@@ -161,7 +159,6 @@
                         </span>
                         </li>
                     </c:if>
-
                 </div>
                 <li ripple>
     <span class="item-text">

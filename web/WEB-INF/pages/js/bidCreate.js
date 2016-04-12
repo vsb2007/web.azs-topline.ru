@@ -26,7 +26,7 @@ function onCarSelect(car) {
 
     if (car.value != -1) {
         var token = document.getElementById("token");
-        xmlhttp.open("POST", "/getCarSections", true);
+        xmlhttp.open("POST", "getCarSections", true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send("idCar=" + car.value + "&" + token.name + "=" + token.value);
     }
@@ -59,7 +59,7 @@ function getTrailerOnGetCarSection(car) {
     }
     if (car.value != -1) {
         var token = document.getElementById("token");
-        xmlhttp.open("POST", "/getTrailers", true);
+        xmlhttp.open("POST", "getTrailers", true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send("idCar=" + car.value + "&" + token.name + "=" + token.value);
     }
@@ -92,7 +92,7 @@ function onTrailerSelect(trailer) {
 
     if (car.value != -1) {
         var token = document.getElementById("token");
-        xmlhttp.open("POST", "/getTrailerSections", true);
+        xmlhttp.open("POST", "getTrailerSections", true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send("idTrailer=" + trailer.value + "&" + token.name + "=" + token.value);
     }

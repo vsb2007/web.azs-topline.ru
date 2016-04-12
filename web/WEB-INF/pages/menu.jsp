@@ -1,5 +1,5 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ page language="java" pageEncoding="UTF-8"%>
 
 <div class="sidemenu sidebar responsive" id="navigation-sidemenu" hidden>
     <div class="sidemenu-hero">
@@ -10,23 +10,23 @@
 
         <li class="divider"></li>
         <sec:authorize access="hasRole('ROLE_ADMIN')">
-            <li ripple><a href="/users"><i class="icon-input"></i>Пользователи</a></li>
-            <li ripple><a href="/company"><i class="icon-input"></i>Организации</a></li>
+            <li ripple><a href="users"><i class="icon-input"></i>Пользователи</a></li>
+            <li ripple><a href="company"><i class="icon-input"></i>Организации</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
-            <li ripple><a href="/bidcreate"><i class="icon-input"></i>Создать заявку</a></li>
+            <li ripple><a href="bidcreate"><i class="icon-input"></i>Создать заявку</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_LIST')">
-            <li ripple><a href="/bidlistopen"><i class="icon-input"></i>Открытые заявки</a></li>
+            <li ripple><a href="bidlistopen"><i class="icon-input"></i>Открытые заявки</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_LIST_CLOSED')">
-            <li ripple><a href="/bidcreate"><i class="icon-input"></i>Закрытые заявки</a></li>
+            <li ripple><a href="bidcreate"><i class="icon-input"></i>Закрытые заявки</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_LOGIN')">
-            <li ripple><a href="/logout"><i class="icon-menu"></i>Выход</a></li>
+            <li ripple><a href="logout"><i class="icon-menu"></i>Выход</a></li>
         </sec:authorize>
         <sec:authorize access="!hasRole('ROLE_LOGIN')">
-            <li ripple><a href="/index"><i class="icon-menu"></i>Вход</a></li>
+            <li ripple><a href="index"><i class="icon-menu"></i>Вход</a></li>
         </sec:authorize>
     </ul>
 </div>
