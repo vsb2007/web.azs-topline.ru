@@ -44,7 +44,6 @@ public class MvcBidController {
         ArrayList<Car> carsList = carMvc.getCarsList();
         ArrayList<Driver> driversList = driverMvc.getDriverList();
         ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
-
         model.addObject("appUser", bidUser);
         model.addObject("carsList", carsList);
         model.addObject("driversList", driversList);

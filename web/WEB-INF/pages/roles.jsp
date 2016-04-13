@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ page import="io.bgroup.topline.model.SiteUser" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="io.bgroup.topline.model.RolesUrl" %>
+<%@ page import="io.bgroup.topline.model.Role" %>
 
 <%@ include file="header.jsp" %>
 <%@ include file="menu.jsp" %>
@@ -45,9 +45,9 @@
     <h2>Доступные линки</h2>
     <ul class="list">
         <%
-            ArrayList<RolesUrl> rolesUrlsList = (ArrayList<RolesUrl>) request.getAttribute("linkUrlList");
+            ArrayList<Role> rolesUrlsList = (ArrayList<Role>) request.getAttribute("linkUrlList");
             if (rolesUrlsList != null) {
-                for (RolesUrl RolesUrl : rolesUrlsList) {
+                for (Role RolesUrl : rolesUrlsList) {
         %>
         <li ripple>
             <form action="permissions" method="post">

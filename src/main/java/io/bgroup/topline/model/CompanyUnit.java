@@ -1,6 +1,7 @@
 package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -21,8 +22,17 @@ public class CompanyUnit {
     private String idCompanyUnit;
     private String companyUnitName;
     private Company company;
+    private String error;
 
     public CompanyUnit() {
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     public Company getCompany() {
@@ -100,5 +110,45 @@ public class CompanyUnit {
                 "                    </span></span>" +
                 "                </li>";
         return response;
+    }
+
+    public CompanyUnit getCompanyUnit(HttpServletRequest request) {
+        CompanyUnit companyUnit = null;
+        if (request == null) return null;
+        String compaUnitId = request.getParameter("companyUnitId").toString();
+        if (compaUnitId != null)
+            companyUnit = getCompanyUnit(compaUnitId);
+        return companyUnit;
+    }
+
+    public void redCompanyUnit(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        String companyUnitName = request.getParameter("companyUnitName");
+        String companyUnitId = request.getParameter("companyUnitId");
+        String sql = "update company_unit set company_unit_name = '" + companyUnitName +
+                "' where id_company_unit = '" + companyUnitId + "'";
+        boolean flag = dbMvc.getInsertResult(sql);
+        if (flag) {
+            this.error = "Ошибка обновления имени";
+        }
+        this.error = "Изменения сохранены";
+    }
+
+    public void addCompanyUnit(HttpServletRequest request) {
+
+        String companyUnitNameFromForm = request.getParameter("companyUnitName");
+        String companyId = request.getParameter("companyId");
+
+        if (companyUnitNameFromForm == null){
+            this.error = "ошибка request";
+            return;
+        }
+        String sql;
+
+        sql = "INSERT INTO company_unit (company_unit_name,company_id) VALUES ('" + companyUnitNameFromForm + "','"+ companyId + "')";
+        boolean flag = dbMvc.getInsertResult(sql);
+        if (!flag)
+            this.error = "подразделение добавлено";
+        else
+            this.error = "Подразделение не добавлена, ошибка!!!";
     }
 }

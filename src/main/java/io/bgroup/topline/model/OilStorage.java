@@ -73,7 +73,8 @@ public class OilStorage {
             oilStorage.setOilStorageBlock((String) row.get("Block").toString());
             oilStorage.setIdOilStorage((String) row.get("id_company_unit").toString());
             oilStorage.setOilStorageName((String) row.get("company_unit_name").toString());
-            oilStorage.setOilStorageIsAzs((String) row.get("IsAZS").toString());
+            //oilStorage.setOilStorageIsAzs((String) row.get("IsAZS").toString());
+            oilStorage.setOilStorageIsAzs(null);
             if (oilStorageArrayList == null) oilStorageArrayList = new ArrayList<OilStorage>();
             oilStorageArrayList.add(oilStorage);
         }

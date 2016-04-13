@@ -44,7 +44,7 @@ public class MvcCompanyController {
     @RequestMapping(value = "/companyAdd")
     public ModelAndView companyAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        companyMvc.addCompany(principal,request);
+        companyMvc.addCompany(principal, request);
         model.addObject("errorCompanyAdd", companyMvc.getError());
         ArrayList<Company> companyList = companyMvc.getCompanyList();
         model.addObject("companyList", companyList);
@@ -55,24 +55,56 @@ public class MvcCompanyController {
     @RequestMapping(value = "/companyRed")
     public ModelAndView companyRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        companyMvc.redCompany(principal,request);
-        System.out.println("111");
+        companyMvc.redCompany(principal, request);
         model.addObject("errorCompanyRed", companyMvc.getError());
         Company company = companyMvc.getCompany(request);
-        System.out.println("222: "+ company.getCompanyName());
         ArrayList<CompanyUnit> companyUnitList = companyUnitMvc.getCompanyUnitList(company.getIdCompany());
-        System.out.println("333");
 
         model.addObject("company", company);
         model.addObject("companyUnitList", companyUnitList);
         model.setViewName("companyView");
         return model;
     }
+
     @RequestMapping(value = "/companyView")
     public ModelAndView companyView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         Company company = companyMvc.getCompany(request);
         ArrayList<CompanyUnit> companyUnitList = companyUnitMvc.getCompanyUnitList(company.getIdCompany());
+        model.addObject("company", company);
+        model.addObject("companyUnitList", companyUnitList);
+        model.setViewName("companyView");
+        return model;
+    }
+
+    @RequestMapping(value = "/companyUnitView")
+    public ModelAndView companyUnitView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(request);
+        model.addObject("companyUnit", companyUnit);
+        model.setViewName("companyUnitView");
+        return model;
+    }
+
+    @RequestMapping(value = "/companyUnitRed")
+    public ModelAndView companyUnitRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        companyUnitMvc.redCompanyUnit(principal, request);
+        CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(request);
+        model.addObject("errorCompanyUnitRed", companyUnitMvc.getError());
+        model.addObject("companyUnit", companyUnit);
+        model.setViewName("companyUnitView");
+        return model;
+    }
+
+    @RequestMapping(value = "/companyUnitAdd")
+    public ModelAndView companyUnitAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        Company company = companyMvc.getCompany(request);
+        companyUnitMvc.addCompanyUnit(request);
+        ArrayList<CompanyUnit> companyUnitList = companyUnitMvc.getCompanyUnitList(company.getIdCompany());
+        companyUnitMvc.redCompanyUnit(principal, request);
+        model.addObject("errorCompanyUnitRed", companyUnitMvc.getError());
         model.addObject("company", company);
         model.addObject("companyUnitList", companyUnitList);
         model.setViewName("companyView");

@@ -76,7 +76,6 @@ public class MvcUserController {
 
     @RequestMapping(value = "/usersred")
     public ModelAndView UsersRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
-        System.out.println(request.getCharacterEncoding());
         ModelAndView model = new ModelAndView();
         SiteUser userRed = siteUserMvc.findRedSiteUser(principal, request);
         ArrayList<CompanyUnit> companyUnitList = null;
