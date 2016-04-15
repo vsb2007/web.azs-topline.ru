@@ -27,7 +27,7 @@
     </div>
     <div class="section">
         <sec:authorize access="hasRole('ROLE_COMPANY_RED')">
-            <form action="companyUnitAdd" method="get">
+            <form action="companyUnitAdd" method="post">
                 <input type="text" class="text-input border-green-500" placeholder="Company unit name" required
                        name="companyUnitName"
                        id="companyUnitName"> <br>

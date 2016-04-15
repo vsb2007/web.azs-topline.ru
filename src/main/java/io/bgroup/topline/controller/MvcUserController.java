@@ -1,9 +1,6 @@
 package io.bgroup.topline.controller;
 
-import io.bgroup.topline.model.Company;
-import io.bgroup.topline.model.CompanyUnit;
-import io.bgroup.topline.model.Post;
-import io.bgroup.topline.model.SiteUser;
+import io.bgroup.topline.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,8 +29,10 @@ public class MvcUserController {
     private Company companyMvc;
     @Autowired
     private CompanyUnit companyUnitMvc;
+    @Autowired
+    private Role roleMvc;
 
-    @RequestMapping(value = {"/", "/index**", "/index"})
+    @RequestMapping(value = {"/", "index**", "index"})
     public String welcomePage(Model model, UsernamePasswordAuthenticationToken principal) {
         try {
             model.addAttribute("dbUserName", principal.getName());
@@ -43,16 +42,16 @@ public class MvcUserController {
         return "index";
     }
 
-    @RequestMapping(value = "/logout")
+    @RequestMapping(value = "logout")
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        return "redirect:/index?logout";
+        return "redirect:index?logout";
     }
 
-    @RequestMapping(value = "/users")
+    @RequestMapping(value = "users")
     public ModelAndView UsersPage(UsernamePasswordAuthenticationToken principal) {
         ModelAndView model = new ModelAndView();
         ArrayList<SiteUser> list = siteUserMvc.getListSiteUsers(principal);
@@ -61,7 +60,7 @@ public class MvcUserController {
         return model;
     }
 
-    @RequestMapping(value = "/usersadd")
+    @RequestMapping(value = "usersadd")
     public ModelAndView UsersAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
 
@@ -74,7 +73,7 @@ public class MvcUserController {
         return model;
     }
 
-    @RequestMapping(value = "/usersred")
+    @RequestMapping(value = "usersred")
     public ModelAndView UsersRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         SiteUser userRed = siteUserMvc.findRedSiteUser(principal, request);
@@ -83,15 +82,17 @@ public class MvcUserController {
             companyUnitList = companyUnitMvc.getCompanyUnitList(userRed.getCompanyUnit().getCompany().getIdCompany());
         ArrayList<Company> companyArrayList = companyMvc.getCompanyList();
         ArrayList<Post> postArrayList = postMvc.getPostList();
+        ArrayList<Role> userRoleList = roleMvc.getRoleListByUser(userRed.getName());
         model.addObject("userRed", userRed);
         model.addObject("postList", postArrayList);
         model.addObject("companyList", companyArrayList);
         model.addObject("companyUnitList", companyUnitList);
+        model.addObject("roleList", userRoleList);
         model.setViewName("usersred");
         return model;
     }
 
-    @RequestMapping(value = "/roles")
+    @RequestMapping(value = "roles")
     public ModelAndView Roles(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         model.setViewName("roles");
@@ -99,7 +100,7 @@ public class MvcUserController {
     }
 
     //test
-    @RequestMapping("/profile")
+    @RequestMapping("profile")
     public String profile(Model model, UsernamePasswordAuthenticationToken principal) {
         model.addAttribute("principal", principal.getPrincipal());
         return "profile";

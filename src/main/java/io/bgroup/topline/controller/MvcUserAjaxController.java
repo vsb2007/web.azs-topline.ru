@@ -4,6 +4,7 @@ import io.bgroup.topline.model.Company;
 import io.bgroup.topline.model.CompanyUnit;
 import io.bgroup.topline.model.SiteUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,7 +23,7 @@ public class MvcUserAjaxController {
     private CompanyUnit companyUnitMvc;
 
     @ResponseBody
-    @RequestMapping(value = "/getCompany", produces = {"text/plain; charset=UTF-8"})
+    @RequestMapping(value = "getCompany", produces = {"text/plain; charset=UTF-8"})
     public String getCompany(HttpServletRequest request) {
         String responseBody = "Error";
         if (request != null) {
@@ -32,7 +33,7 @@ public class MvcUserAjaxController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/getCompanyAndUnits", produces = {"text/plain; charset=UTF-8"})
+    @RequestMapping(value = "getCompanyAndUnits", produces = {"text/plain; charset=UTF-8"})
     public String getCompanyAndUnits(HttpServletRequest request) {
         String responseBody = "Error";
         if (request != null) {
@@ -40,4 +41,14 @@ public class MvcUserAjaxController {
         }
         return responseBody;
     }
+    @ResponseBody
+    @RequestMapping(value = "saveRoleForUser", produces = {"text/plain; charset=UTF-8"})
+    public String saveRoleForUser(HttpServletRequest request, UsernamePasswordAuthenticationToken principal) {
+        String responseBody = "Error";
+        if (request != null) {
+            responseBody = siteUserMvc.saveRoleForUserForAjax(request,principal);
+        }
+        return responseBody;
+    }
+
 }

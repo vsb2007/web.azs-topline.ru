@@ -12,7 +12,7 @@
         <ul class="list">
             <c:forEach items="${companyList}" var="company">
                 <li ripple>
-                    <form action="companyView" method="get">
+                    <form action="companyView" method="post">
                         <button class="button raised color-white bg-blue-500" value="${company.getIdCompany()}"
                                 name="buttonCompanyRed" id="buttonCompanyRed"
                                 style="width: 150px"

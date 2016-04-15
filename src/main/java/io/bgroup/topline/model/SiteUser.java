@@ -23,6 +23,7 @@ public class SiteUser {
     private String error;
     private Post post;
     private CompanyUnit companyUnit;
+    private ArrayList<Role> rolesList;
 
     @Autowired
     private DbModel dbMvc;
@@ -32,9 +33,19 @@ public class SiteUser {
     Post postMvc;
     @Autowired
     CompanyUnit companyUnitMvc;
+    @Autowired
+    Role roleMvc;
 
     public SiteUser() {
 
+    }
+
+    public ArrayList<Role> getRolesList() {
+        return rolesList;
+    }
+
+    public void setRolesList(ArrayList<Role> rolesList) {
+        this.rolesList = rolesList;
     }
 
     public String getError() {
@@ -354,8 +365,7 @@ public class SiteUser {
                 } else if (pair.getKey().equals("user_company_unit_id")) {
                     if (pair.getValue() == null) {
                         redUser.setCompanyUnit(null);
-                    }
-                    else{
+                    } else {
                         redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
                     }
                 }
@@ -392,5 +402,34 @@ public class SiteUser {
             }
         }
         return false;
+    }
+
+    public String saveRoleForUserForAjax(HttpServletRequest request, UsernamePasswordAuthenticationToken principal) {
+        String response = "Error";
+        if (!isUserHasRole(principal, "ROLE_USERS_RED")) return "Нет прав на редактирование";
+        String userId = (String) request.getParameter("userId").toString();
+        int userIdInt = -1;
+        try {
+            userIdInt = Integer.parseInt(userId);
+        }
+        catch (Exception e){
+            userIdInt = -1;
+        }
+        String role = (String) request.getParameter("role").toString();
+        String operation = (String) request.getParameter("operation").toString();
+        String sql = null;
+        SiteUser siteUserTmp = findSiteUser(userIdInt);
+        if (siteUserTmp == null || siteUserTmp.getName() == null) return "не верные параметры";
+        if (operation.equals("add")) {
+            sql = "delete from user_roles where username = '" + siteUserTmp.getName() + "' and role = '" + role + "'";
+            dbMvc.getInsertResult(sql);
+            sql = "insert into user_roles (role,username) values ('" + role + "','" + siteUserTmp.getName() + "')";
+            dbMvc.getInsertResult(sql);
+        }else if (operation.equals("remove")) {
+            sql = "delete from user_roles where username = '" + siteUserTmp.getName() + "' and role = '" + role + "';";
+            dbMvc.getInsertResult(sql);
+        }else return "что-то не так";
+
+        return "Ok";
     }
 }

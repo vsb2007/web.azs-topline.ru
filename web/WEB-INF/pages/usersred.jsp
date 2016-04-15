@@ -12,7 +12,7 @@
     <div class="section">
         <h2>Пользователь ${userRed.getName()}
         </h2>
-        <form action="usersred" method="get" accept-charset="UTF-8">
+        <form action="usersred" method="post" accept-charset="utf-8">
             <ul class="list">
                 <li ripple>
     <span class="item-text">
@@ -178,9 +178,31 @@
     </form>
     </div>
     -->
-    <script src="js/usersRed.js"></script>
+
 </sec:authorize>
-<sec:authorize access="!hasRole('ROLE_USERS_RED')">
-    Нужна авторизация
+<sec:authorize access="hasRole('ROLE_USERS_RED')">
+    <div class="section">
+        <c:forEach
+                items="${roleList}"
+                var="role">
+            <div class="switch">
+                <c:if test="${role.getHasRole()==1}">
+                    <input type="checkbox" id="r-${role.getRoleName()}"
+                           name="r-${role.getRoleName()}" value="1" onchange="changeRoleForUser(this,'${role.getRoleName()}')" checked/>
+                </c:if>
+                <c:if test="${role.getHasRole()==-1}">
+                    <input type="checkbox" id="r-${role.getRoleName()}"
+                           name="r-${role.getRoleName()}" value="1" onchange="changeRoleForUser(this,'${role.getRoleName()}')"/>
+                </c:if>
+                <label for="r-${role.getRoleName()}">&nbsp;</label>
+                <span class="secondary-text">
+                    <label for="r-${role.getRoleName()}" class="label">${role.getRoleName()} </label>
+                    <span id="div${role.getRoleName()}"></span>
+                </span>
+            </div>
+            <br>
+        </c:forEach>
+    </div>
+    <script src="js/usersRed.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

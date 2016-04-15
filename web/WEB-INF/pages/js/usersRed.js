@@ -67,3 +67,36 @@ function getCompanyUnits(company) {
         xmlhttp.send("companyId=" + company.value + "&" + token.name + "=" + token.value);
     }
 }
+
+function changeRoleForUser(role, roleName) {
+    var xmlhttp;
+    document.getElementById("div" + roleName).innerHTML = "<ul class='zmdi-hc-ul'>" +
+        "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>Saving...</li>" +
+        "</ul>";
+
+    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+    }
+    else {// code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            if (role.value == 1) {
+                document.getElementById("div" + roleName).innerHTML = xmlhttp.responseText;
+            }
+        }
+    }
+
+    
+        var token = document.getElementById("token");
+        var userId = document.getElementById("user-red-id-label");
+        xmlhttp.open("POST", "saveRoleForUser", true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    if (role.checked) {
+        xmlhttp.send("userId=" + userId.value + "&" + token.name + "=" + token.value + "&role=" + roleName+ "&operation=add");
+    }
+    else {
+        xmlhttp.send("userId=" + userId.value + "&" + token.name + "=" + token.value + "&role=" + roleName+ "&operation=remove");
+    }
+}

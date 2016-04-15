@@ -97,3 +97,4 @@ function onTrailerSelect(trailer) {
         xmlhttp.send("idTrailer=" + trailer.value + "&" + token.name + "=" + token.value);
     }
 }
+

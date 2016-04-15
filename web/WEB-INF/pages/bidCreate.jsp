@@ -7,7 +7,7 @@
 <sec:authorize access="hasRole('ROLE_BID_LIST')">
     <div class="section">
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
-            <form action="bidcreateform" method="get">
+            <form action="bidcreateform" method="post">
                 <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
                        name="bidNumber"
                        id="bidName"> <br>
