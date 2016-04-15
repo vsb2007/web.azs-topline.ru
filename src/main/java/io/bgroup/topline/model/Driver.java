@@ -9,12 +9,23 @@ import java.util.Map;
 public class Driver {
     @Autowired
     private DbModel dbMvc;
+    @Autowired
+    private SiteUser siteUserMvc;
 
     private String idDriver;
     private String driverFio;
     private String driverPhone;
     private String driverEmail;
     private String driverBlock;
+    private SiteUser driver;
+
+    public SiteUser getDriver() {
+        return driver;
+    }
+
+    private void setDriver(SiteUser driver) {
+        this.driver = driver;
+    }
 
     public String getIdDriver() {
         return idDriver;
@@ -58,14 +69,14 @@ public class Driver {
 
     public ArrayList<Driver> getDriverList() {
         ArrayList<Driver> driverList = null;
-        String sql = "select * from drivers where drivers_block='0'";
+        String sql = "select * from users where enabled='1' and user_post_id='2'";
         driverList = getDriverFromDbSelect(sql);
         return driverList;
     }
 
     public Driver getDriver(String idDriver) {
         ArrayList<Driver> driverList = null;
-        String sql = "select * from drivers where id_drivers='" + idDriver + "'";
+        String sql = "select * from users where id_user='" + idDriver + "'";
         driverList = getDriverFromDbSelect(sql);
         if (driverList == null || driverList.size() == 0) return null;
         return driverList.get(0);
@@ -78,11 +89,24 @@ public class Driver {
         ArrayList<Driver> driverList = null;
         for (Map row : driverListFromDb) {
             Driver driver = new Driver();
-            driver.setDriverBlock((String) row.get("drivers_block").toString());
-            driver.setDriverEmail((String) row.get("drivers_email").toString());
-            driver.setDriverPhone((String) row.get("drivers_phone").toString());
-            driver.setDriverFio((String) row.get("drivers_fio").toString());
-            driver.setIdDriver((String) row.get("id_drivers").toString());
+            driver.setIdDriver((String) row.get("id_user").toString());
+            if (driver.getIdDriver()!=null) {
+                int userId = -1;
+                try {
+                    userId = Integer.parseInt(driver.getIdDriver());
+                }
+                catch (Exception e){
+                    userId = -1;
+                }
+                driver.setDriver(siteUserMvc.findSiteUser(userId));
+            }
+            if (driver.getDriver()!=null){
+                driver.setDriverBlock(driver.getDriver().getIsEnable());
+                driver.setDriverEmail(driver.getDriver().getEmail());
+                driver.setDriverPhone(driver.getDriver().getPhone());
+                driver.setDriverFio(driver.getDriver().getFio());
+            }
+
             if (driverList == null) driverList = new ArrayList<Driver>();
             driverList.add(driver);
         }

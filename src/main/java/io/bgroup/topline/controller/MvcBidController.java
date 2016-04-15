@@ -37,7 +37,7 @@ public class MvcBidController {
     @Autowired
     private Bid bidMvc;
 
-    @RequestMapping(value = "/bidcreate")
+    @RequestMapping(value = "bidcreate")
     public ModelAndView bidcreate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         SiteUser bidUser = siteUserMvc.findSiteUser(principal);
@@ -52,7 +52,7 @@ public class MvcBidController {
         return model;
     }
 
-    @RequestMapping(value = "/bidcreateform")
+    @RequestMapping(value = "bidcreateform")
     public ModelAndView bidcreatedo(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         String message = bidMvc.createBid(principal, request);
@@ -65,7 +65,7 @@ public class MvcBidController {
         return model;
 
     }
-    @RequestMapping(value = "/bidlistopen")
+    @RequestMapping(value = "bidlistopen")
     public ModelAndView bidlistopen(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         ArrayList<Bid> bidsArrayList = bidMvc.getBidsList(principal);

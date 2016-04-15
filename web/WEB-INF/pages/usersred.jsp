@@ -188,11 +188,13 @@
             <div class="switch">
                 <c:if test="${role.getHasRole()==1}">
                     <input type="checkbox" id="r-${role.getRoleName()}"
-                           name="r-${role.getRoleName()}" value="1" onchange="changeRoleForUser(this,'${role.getRoleName()}')" checked/>
+                           name="r-${role.getRoleName()}" value="1"
+                           onchange="changeRoleForUser(this,'${role.getRoleName()}')" checked/>
                 </c:if>
                 <c:if test="${role.getHasRole()==-1}">
                     <input type="checkbox" id="r-${role.getRoleName()}"
-                           name="r-${role.getRoleName()}" value="1" onchange="changeRoleForUser(this,'${role.getRoleName()}')"/>
+                           name="r-${role.getRoleName()}" value="1"
+                           onchange="changeRoleForUser(this,'${role.getRoleName()}')"/>
                 </c:if>
                 <label for="r-${role.getRoleName()}">&nbsp;</label>
                 <span class="secondary-text">
