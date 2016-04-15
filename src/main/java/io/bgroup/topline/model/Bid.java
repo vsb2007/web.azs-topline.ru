@@ -234,11 +234,9 @@ public class Bid {
     public ArrayList<Bid> getBidsList(UsernamePasswordAuthenticationToken principal) {
         if (!siteUserMvc.isUserHasRole(principal, "ROLE_BID_LIST")) return null;
         SiteUser siteUserTmp = siteUserMvc.findSiteUser(principal);
-        System.out.println("get user");
         if (siteUserTmp == null) return null;
         String sql = null;
         if (siteUserTmp.getPost()==null && !siteUserTmp.getName().equals("admin")) return null;
-        System.out.println("get post");
         if (siteUserTmp.getName().equals("admin") || siteUserTmp.getPost().getIdPost().equals("1")) { //  руководитель
             sql = "select * from bids where bid_is_close='0'";
         } else if (siteUserTmp.getPost().getIdPost().equals("2")) { //Водитель
@@ -261,7 +259,6 @@ public class Bid {
 
         if (sql == null) return null;
         ArrayList<Bid> bidsList = null;
-        System.out.println(sql);
         bidsList = getBidsFromDbSelect(sql);
         return bidsList;
     }
