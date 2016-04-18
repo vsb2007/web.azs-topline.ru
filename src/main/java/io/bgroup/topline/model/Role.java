@@ -55,7 +55,8 @@ public class Role {
                 "left join\n" +
                 "(select role as role2 from user_roles where username = '" + siteUserName + "') \n" +
                 "ss on ss.role2 = user_roles.role\n" +
-                "where user_roles.username = 'admin'";
+                "where user_roles.username = 'admin'" +
+                "order by user_roles.role";
         ArrayList<Role> rolesUrlsList = getUserRolesFromDbSelect(sql);
         return rolesUrlsList;
     }

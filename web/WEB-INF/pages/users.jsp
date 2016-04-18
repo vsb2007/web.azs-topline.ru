@@ -19,17 +19,17 @@
                             <input type="hidden" id="user-find-label" value="1" name="user-find-label">
                             <input value="${siteUser.getName()}" name="buttonuserred" id="buttonuserred" type="hidden">
                             <c:if test="${siteUser.getIsEnable().equals(\"true\")}">
-                            <button class="button raised color-white bg-blue-500" type="submit" style="width: 15em;">
-                                </c:if>
-                                <c:if test="${!siteUser.getIsEnable().equals(\"true\")}">
+                                <button class="button raised color-white bg-blue-500" type="submit"
+                                        style="width: 15em;"/>
+                            </c:if>
+                            <c:if test="${!siteUser.getIsEnable().equals(\"true\")}">
                                 <button class="button raised color-white bg-grey-500" type="submit"
-                                        style="width: 15em;">
-                                    </c:if>
+                                        style="width: 15em;"/>
+                            </c:if>
 		                    <span class="item-text">${siteUser.getName()}
 			                    <span class="secondary-text">${siteUser.getFio()}</span>
 		                    </span>
-                                </button>
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         </form>
                     </sec:authorize>
                 </li>

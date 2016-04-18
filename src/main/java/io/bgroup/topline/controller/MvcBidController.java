@@ -65,12 +65,30 @@ public class MvcBidController {
         return model;
 
     }
+
     @RequestMapping(value = "bidlistopen")
     public ModelAndView bidlistopen(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         ArrayList<Bid> bidsArrayList = bidMvc.getBidsList(principal);
         model.addObject("bidsList", bidsArrayList);
         model.setViewName("bidListOpen");
+        return model;
+    }
+
+    @RequestMapping(value = "bidView")
+    public ModelAndView bidView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        Bid bid = bidMvc.getBidForView(principal,request);
+        SiteUser bidUser = siteUserMvc.findSiteUser(principal);
+        ArrayList<Car> carsList = carMvc.getCarsList();
+        ArrayList<Driver> driversList = driverMvc.getDriverList();
+        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        model.addObject("appUser", bidUser);
+        model.addObject("carsList", carsList);
+        model.addObject("driversList", driversList);
+        model.addObject("oilStorageList", oilStorageList);
+        model.addObject("bid", bid);
+        model.setViewName("bidView");
         return model;
     }
 }

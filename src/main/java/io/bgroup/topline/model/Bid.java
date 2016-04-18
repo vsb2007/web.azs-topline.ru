@@ -17,11 +17,14 @@ public class Bid {
     private Driver driver;
     private Car car;
     private Trailer trailer;
-    //private List<OilStorage> oilStorageOutList;
     private String dateOfCreation;
     private String dateOfClose;
+
+
+    //для логики
     private String error;
     private boolean emptySectionFlag = true;
+
 
     @Autowired
     private SiteUser siteUserMvc;
@@ -236,7 +239,7 @@ public class Bid {
         SiteUser siteUserTmp = siteUserMvc.findSiteUser(principal);
         if (siteUserTmp == null) return null;
         String sql = null;
-        if (siteUserTmp.getPost()==null && !siteUserTmp.getName().equals("admin")) return null;
+        if (siteUserTmp.getPost() == null && !siteUserTmp.getName().equals("admin")) return null;
         if (siteUserTmp.getName().equals("admin") || siteUserTmp.getPost().getIdPost().equals("1")) { //  руководитель
             sql = "select * from bids where bid_is_close='0'";
         } else if (siteUserTmp.getPost().getIdPost().equals("2")) { //Водитель
@@ -256,7 +259,6 @@ public class Bid {
                     "or bid_trailer_sec_5_storageOut_id = '" + companyUnitId + "' " +
                     "or bid_trailer_sec_6_storageOut_id = '" + companyUnitId + "' )";
         }
-
         if (sql == null) return null;
         ArrayList<Bid> bidsList = null;
         bidsList = getBidsFromDbSelect(sql);
@@ -289,6 +291,10 @@ public class Bid {
                 if (pair.getValue() != null) {
                     bid.setCreateUser(siteUserMvc.findSiteUser((Integer) pair.getValue()));
                 } else bid.setCreateUser(null);
+            } else if (pair.getKey().equals("bid_number")) {
+                if (pair.getValue() != null) {
+                    bid.setName((String) pair.getValue());
+                } else bid.setName(null);
             } else if (pair.getKey().equals("bid_storage_in_id")) {
                 if (pair.getValue() != null) {
                     bid.setOilStorageIn(oilStorageMvc.getOilStorage(pair.getValue().toString()));
@@ -301,7 +307,30 @@ public class Bid {
                 if (pair.getValue() != null) {
                     bid.setCar(carMvc.getCar(pair.getValue().toString()));
                 } else bid.setCar(null);
+            } else if (pair.getKey().equals("bid_trailer_id")) {
+                if (pair.getValue() != null) {
+                    bid.setTrailer(trailerMvc.getTrailer(pair.getValue().toString()));
+                } else bid.setTrailer(null);
             }
         }
+    }
+
+    public Bid getBidForView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        if (!siteUserMvc.findSiteUser(principal).isUserHasRole(principal, "ROLE_BID_VIEW")) return null;
+        String bidId = request.getParameter("bidIdButton");
+        if (bidId == null) return null;
+        Bid bid = getBid(bidId);
+        return bid;
+    }
+
+    public Bid getBid(String bidId) {
+        if (bidId == null) return null;
+        String sql = "select * from bids where id_bids='" + bidId + "'";
+        if (sql == null) return null;
+        ArrayList<Bid> bidsList = null;
+        bidsList = getBidsFromDbSelect(sql);
+        if (bidsList == null || bidsList.size() != 1) return null;
+        Bid bid = bidsList.get(0);
+        return bid;
     }
 }
