@@ -24,6 +24,14 @@ public class OilType {
         return oilTypesList;
     }
 
+    public OilType getOilType(String id_oilType) {
+        ArrayList<OilType> oilTypesList = null;
+        String sql = "select * from nomenclature where id_Nomenclature='" + id_oilType + "'";
+        oilTypesList = getOilTypesFromDbSelect(sql);
+        if (oilTypesList == null || oilTypesList.size() != 1) return null;
+        return oilTypesList.get(0);
+    }
+
     private ArrayList<OilType> getOilTypesFromDbSelect(String sql) {
         List<Map<String, Object>> oilTypesListFromDb = null;
         oilTypesListFromDb = dbMvc.getSelectResult(sql);

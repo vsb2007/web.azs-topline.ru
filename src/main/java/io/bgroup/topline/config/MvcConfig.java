@@ -149,6 +149,12 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return bid;
     }
 
+    @Bean(name = "bidDetail")
+    public BidDetail bidDetail() {
+        BidDetail bidDetail = new BidDetail();
+        return bidDetail;
+    }
+
     @Bean(name = "role")
     public Role role() {
         Role role = new Role();

@@ -60,10 +60,10 @@ public class Car {
     }
 
     private void setCarFromMapRow(Car car, Map row) {
-        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+       /* Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
         while (iterator.hasNext()) {
             break;
-        }
+        }*/
         car.setCar_block((String) row.get("car_block").toString());
         car.setId_car((String) row.get("id_car").toString());
         car.setCar_number((String) row.get("car_number").toString());

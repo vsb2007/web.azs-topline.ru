@@ -36,6 +36,8 @@ public class MvcBidController {
 
     @Autowired
     private Bid bidMvc;
+    @Autowired
+    private BidDetail bidDetailMvc;
 
     @RequestMapping(value = "bidcreate")
     public ModelAndView bidcreate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
@@ -79,15 +81,39 @@ public class MvcBidController {
     public ModelAndView bidView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         Bid bid = bidMvc.getBidForView(principal,request);
-        SiteUser bidUser = siteUserMvc.findSiteUser(principal);
-        ArrayList<Car> carsList = carMvc.getCarsList();
-        ArrayList<Driver> driversList = driverMvc.getDriverList();
-        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
-        model.addObject("appUser", bidUser);
-        model.addObject("carsList", carsList);
-        model.addObject("driversList", driversList);
-        model.addObject("oilStorageList", oilStorageList);
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        //ArrayList<Car> carsList = carMvc.getCarsList();
+        //ArrayList<Driver> driversList = driverMvc.getDriverList();
+        //ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(),bid.getCar());
+        ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(),bid.getTrailer());
+        model.addObject("siteUser", siteUser);
+        //model.addObject("carsList", carsList);
+        //model.addObject("driversList", driversList);
+        //model.addObject("oilStorageList", oilStorageList);
         model.addObject("bid", bid);
+        model.addObject("bidDetailsCar",bidDetailsCar);
+        model.addObject("bidDetailsTrailer",bidDetailsTrailer);
+        model.setViewName("bidView");
+        return model;
+    }
+    @RequestMapping(value = "bidUpdate")
+    public ModelAndView bidUpdate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        Bid bid = bidMvc.updateBid(principal,request);
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        //ArrayList<Car> carsList = carMvc.getCarsList();
+        //ArrayList<Driver> driversList = driverMvc.getDriverList();
+        //ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(),bid.getCar());
+        ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(),bid.getTrailer());
+        model.addObject("siteUser", siteUser);
+        //model.addObject("carsList", carsList);
+        //model.addObject("driversList", driversList);
+        //model.addObject("oilStorageList", oilStorageList);
+        model.addObject("bid", bid);
+        model.addObject("bidDetailsCar",bidDetailsCar);
+        model.addObject("bidDetailsTrailer",bidDetailsTrailer);
         model.setViewName("bidView");
         return model;
     }
