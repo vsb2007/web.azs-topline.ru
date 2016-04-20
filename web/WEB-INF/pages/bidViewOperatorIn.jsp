@@ -7,6 +7,7 @@
 <sec:authorize access="hasRole('ROLE_BID_VIEW')">
     <div class="section">
             ${message}
+        OperIn
     </div>
     <div class="section">
             <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
@@ -14,7 +15,6 @@
         <c:set var="readonlyTmp" value="" scope="application"/>
         <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
                     && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
-                    && !siteUser.getName().equals(\"admin\")
                     }">
             <c:set var="readonlyTmp" value="readonly" scope="application"/>
         </c:if>
@@ -46,18 +46,14 @@
             Доставка:<br>
             Секции на машине:<br>
             <c:forEach items="${bidDetailsCar}" var="bidDetails">
-                <c:if test="${(bid.getCreateUser().getName().equals(siteUser.getName()))
-                    || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
+                <c:if test="${(siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
                     || (!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
                     &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
-                    || siteUser.getName().equals(\"admin\")
-                    || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
                     <c:set var="valT" value="" scope="application"/>
                     <c:set var="valP" value="" scope="application"/>
                     <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
                     && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
-                    && !siteUser.getName().equals(\"admin\")
                     }">
                         <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
                         <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
@@ -81,18 +77,14 @@
             </c:forEach>
             Секции на прицепе:<br>
             <c:forEach items="${bidDetailsTrailer}" var="bidDetails">
-                <c:if test="${(bid.getCreateUser().getName().equals(siteUser.getName()))
-                    || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
+                <c:if test="${(siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
                     || (!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
                     &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
-                    || siteUser.getName().equals(\"admin\")
-                    || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
                     <c:set var="valT" value="" scope="application"/>
                     <c:set var="valP" value="" scope="application"/>
                     <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
                     && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
-                    && !siteUser.getName().equals(\"admin\")
                     }">
                         <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
                         <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
