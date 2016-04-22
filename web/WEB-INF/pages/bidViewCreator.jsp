@@ -54,29 +54,63 @@
                     || siteUser.getName().equals(\"admin\")
                     || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
-                    <c:set var="valT" value="" scope="application"/>
-                    <c:set var="valP" value="" scope="application"/>
-                    <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
-                    && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
-                    && !siteUser.getName().equals(\"admin\")
-                    }">
-                        <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
-                        <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
-                    </c:if>
-
-                    <input type="text" class="text-input border-green-500"
-                           value="Секция ${bidDetails.getSection().getOilSectionName()} (${bidDetails.getSection().getVol()}л.)"
-                           readonly>&nbsp;
-                    <input type="text" class="text-input border-green-500"
-                           value="${bidDetails.getOilType().getOilTypeName()}" readonly>&nbsp;
-                    <input type="text" class="text-input border-green-500"
-                           value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>&nbsp;
-                    <input class="text-input border-green-500" placeholder="Плотность" required
-                           name="${bidDetails.getSection().getId_section()}_p"
-                           value="${valP}" type="number" step="any"  ${readonlyTmp}>&nbsp;
-                    <input class="text-input border-green-500" placeholder="Температура" required
-                           name="${bidDetails.getSection().getId_section()}_t"
-                           value="${valT}" type="number" step="any"  ${readonlyTmp}>&nbsp; <br>
+                    <div class="grid-list">
+                        <div class="tile">
+                            <input type="text" class="text-input border-green-500"
+                                   value="Секция ${bidDetails.getSection().getOilSectionName()} (${bidDetails.getSection().getVol()}л.)"
+                                   readonly>
+                            <div>
+                                <span class="secondary-text">Секция</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input type="text" class="text-input border-green-500"
+                                   value="${bidDetails.getOilType().getOilTypeName()}" readonly>
+                            <div>
+                                <span class="secondary-text">Вид топлива</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input type="text" class="text-input border-green-500"
+                                   value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
+                            <div>
+                                <span class="secondary-text">Назначение</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input class="text-input border-green-500" placeholder="0" required
+                                   name="${bidDetails.getSection().getId_section()}_volume"
+                                   id="${bidDetails.getSection().getId_section()}_volume"
+                                   value="" type="number" step="any"  ${readonlyTmp}>
+                            <div>
+                                <span class="secondary-text">Литры</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input class="text-input border-green-500" placeholder="0" required
+                                   name="${bidDetails.getSection().getId_section()}_p"
+                                   value="" type="number" step="any"  ${readonlyTmp}>
+                            <div>
+                                <span class="secondary-text">Плотность</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input class="text-input border-green-500" placeholder="0" required
+                                   name="${bidDetails.getSection().getId_section()}_t"
+                                   value="" type="number" step="any"  ${readonlyTmp}>
+                            <div>
+                                <span class="secondary-text">Температура</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input class="text-input border-green-500" placeholder="0" required
+                                   name="${bidDetails.getSection().getId_section()}_mass"
+                                   value="" type="number" step="any"  ${readonlyTmp}>
+                            <div>
+                                <span class="secondary-text">Масса</span>
+                            </div>
+                        </div>
+                    </div>
                 </c:if>
 
             </c:forEach>
@@ -89,29 +123,64 @@
                     || siteUser.getName().equals(\"admin\")
                     || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
-                    <c:set var="valT" value="" scope="application"/>
-                    <c:set var="valP" value="" scope="application"/>
-                    <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
-                    && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
-                    && !siteUser.getName().equals(\"admin\")
-                    }">
-                        <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
-                        <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
-                    </c:if>
 
-                    <input type="text" class="text-input border-green-500"
-                           value="Секция ${bidDetails.getSection().getOilSectionName()} (${bidDetails.getSection().getVol()}л.)"
-                           readonly>&nbsp;
-                    <input type="text" class="text-input border-green-500"
-                           value="${bidDetails.getOilType().getOilTypeName()}" readonly>&nbsp;
-                    <input type="text" class="text-input border-green-500"
-                           value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>&nbsp;
-                    <input class="text-input border-green-500" placeholder="Плотность" required
-                           name="${bidDetails.getSection().getId_section()}_p"
-                           value="${valP}" type="number" step="any"  ${readonlyTmp}>&nbsp;
-                    <input class="text-input border-green-500" placeholder="Температура" required
-                           name="${bidDetails.getSection().getId_section()}_t"
-                           value="${valT}" type="number" step="any"  ${readonlyTmp}>&nbsp; <br>
+                    <div class="grid-list">
+                        <div class="tile">
+                            <input type="text" class="text-input border-green-500"
+                                   value="Секция ${bidDetails.getSection().getOilSectionName()} (${bidDetails.getSection().getVol()}л.)"
+                                   readonly>
+                            <div>
+                                <span class="secondary-text">Секция</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input type="text" class="text-input border-green-500"
+                                   value="${bidDetails.getOilType().getOilTypeName()}" readonly>
+                            <div>
+                                <span class="secondary-text">Вид топлива</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input type="text" class="text-input border-green-500"
+                                   value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
+                            <div>
+                                <span class="secondary-text">Назначение</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input class="text-input border-green-500" placeholder="0" required
+                                   name="${bidDetails.getSection().getId_section()}_volume"
+                                   id="${bidDetails.getSection().getId_section()}_volume"
+                                   value="" type="number" step="any"  ${readonlyTmp}>
+                            <div>
+                                <span class="secondary-text">Литры</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input class="text-input border-green-500" placeholder="0" required
+                                   name="${bidDetails.getSection().getId_section()}_p"
+                                   value="" type="number" step="any"  ${readonlyTmp}>
+                            <div>
+                                <span class="secondary-text">Плотность</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input class="text-input border-green-500" placeholder="0" required
+                                   name="${bidDetails.getSection().getId_section()}_t"
+                                   value="" type="number" step="any"  ${readonlyTmp}>
+                            <div>
+                                <span class="secondary-text">Температура</span>
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <input class="text-input border-green-500" placeholder="0" required
+                                   name="${bidDetails.getSection().getId_section()}_mass"
+                                   value="" type="number" step="any"  ${readonlyTmp}>
+                            <div>
+                                <span class="secondary-text">Масса</span>
+                            </div>
+                        </div>
+                    </div>
                 </c:if>
             </c:forEach>
 

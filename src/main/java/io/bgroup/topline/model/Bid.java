@@ -451,24 +451,22 @@ public class Bid {
     private boolean updateBidDbFields(Bid bid, HttpServletRequest request) {
         ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
-        System.out.println("1111");
         String sql = "update bids set ";
-        sql += "bid_date_freeze=now(), bid_is_freeze='1',";
         String suffix = "";
         if (bid.getBid_is_freeze().equals("0")) {
             suffix = "in";
+            sql += "bid_date_freeze=now(), bid_is_freeze='1',";
         } else suffix = "out";
         String sqlCar = addSqlForUpdateString(bidDetailsCar, suffix, request);
-        System.out.println("222");
         String sqlTrailer = addSqlForUpdateString(bidDetailsTrailer, suffix, request);
-        System.out.println("3333");
         if (!sqlCar.equals("")) sql += sqlCar;
         if (!sqlCar.equals("") && !sqlTrailer.equals("")) sql += "," + sqlTrailer;
         if (sqlCar.equals("") && !sqlTrailer.equals("")) sql += sqlTrailer;
         if (sqlCar.equals("") && sqlTrailer.equals("")) return false;
         sql += " where id_bids='" + bid.getId_bid() + "'";
-        if (dbMvc.getInsertResult(sql)) return false;
         System.out.println(sql);
+        if (dbMvc.getInsertResult(sql)) return false;
+
         return true;
     }
 
@@ -479,12 +477,11 @@ public class Bid {
             if (!sql.equals("")) sql += ",";
             String strP = request.getParameter(bidDetail.getSection().getId_section() + "_p");
             String strT = request.getParameter(bidDetail.getSection().getId_section() + "_t");
-            String volume = bidDetail.getSection().getVol();
-            if (suffix.equals("in")) {
-                sql += "bid_" + bidDetail.getSection().getId_section() + "_volume='" + volume + "',";
-            }
+            String volume = request.getParameter(bidDetail.getSection().getId_section() + "_volume");
+            sql += "bid_" + bidDetail.getSection().getId_section() + "_volume_" + suffix + "='" + volume + "',";
             sql += "bid_" + bidDetail.getSection().getId_section() + "_p_" + suffix + "='" + strP + "',";
             sql += "bid_" + bidDetail.getSection().getId_section() + "_t_" + suffix + "='" + strT + "'";
+            sql += "bid_" + bidDetail.getSection().getId_section() + "_date_" + suffix + "=now()";
         }
         return sql;
     }

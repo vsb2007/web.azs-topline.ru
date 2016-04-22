@@ -19,7 +19,10 @@ public class BidDetail {
     private String plOut;
     private String tempIn;
     private String tempOut;
-    private String volume;
+    private String volumeIn;
+    private String volumeOut;
+    private String massIn;
+    private String massOut;
 
     @Autowired
     DbModel dbMvc;
@@ -88,12 +91,36 @@ public class BidDetail {
         this.tempOut = tempOut;
     }
 
-    public String getVolume() {
-        return volume;
+    public String getVolumeIn() {
+        return volumeIn;
     }
 
-    public void setVolume(String volume) {
-        this.volume = volume;
+    public void setVolumeIn(String volumeIn) {
+        this.volumeIn = volumeIn;
+    }
+
+    public String getVolumeOut() {
+        return volumeOut;
+    }
+
+    public void setVolumeOut(String volumeOut) {
+        this.volumeOut = volumeOut;
+    }
+
+    public String getMassIn() {
+        return massIn;
+    }
+
+    public void setMassIn(String massIn) {
+        this.massIn = massIn;
+    }
+
+    public String getMassOut() {
+        return massOut;
+    }
+
+    public void setMassOut(String massOut) {
+        this.massOut = massOut;
     }
 
     public ArrayList<BidDetail> getBidDetailList(String bidId, Object object) {
@@ -117,7 +144,10 @@ public class BidDetail {
         String pOutTmp = null;
         String tInTmp = null;
         String tOutTmp = null;
-        String volumeTmp = null;
+        String volumeInTmp = null;
+        String volumeOutTmp = null;
+        String massInTmp = null;
+        String massOutTmp = null;
         for (OilSections oilSection : oilSectionsList) {
             String oilTypeId = null;
             String destinationId = null;
@@ -152,10 +182,22 @@ public class BidDetail {
                     if (pair.getValue() != null) {
                         tOutTmp = pair.getValue().toString();
                     } else tOutTmp = null;
-                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_volume")) {
+                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_volume_in")) {
                     if (pair.getValue() != null) {
-                        volumeTmp = pair.getValue().toString();
-                    } else volumeTmp = null;
+                        volumeInTmp = pair.getValue().toString();
+                    } else volumeInTmp = null;
+                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_volume_out")) {
+                    if (pair.getValue() != null) {
+                        volumeOutTmp = pair.getValue().toString();
+                    } else volumeOutTmp = null;
+                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_mass_in")) {
+                    if (pair.getValue() != null) {
+                        massInTmp = pair.getValue().toString();
+                    } else massInTmp = null;
+                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_mass_out")) {
+                    if (pair.getValue() != null) {
+                        massOutTmp = pair.getValue().toString();
+                    } else massOutTmp = null;
                 }
             }
 
@@ -171,7 +213,10 @@ public class BidDetail {
             bidDetail.setPlOut(pOutTmp);
             bidDetail.setTempIn(tInTmp);
             bidDetail.setTempOut(tOutTmp);
-            bidDetail.setVolume(volumeTmp);
+            bidDetail.setVolumeIn(volumeInTmp);
+            bidDetail.setVolumeOut(volumeOutTmp);
+            bidDetail.setMassIn(massInTmp);
+            bidDetail.setMassOut(massOutTmp);
             if (bidDetailArrayList == null) bidDetailArrayList = new ArrayList<BidDetail>();
             bidDetailArrayList.add(bidDetail);
         }
