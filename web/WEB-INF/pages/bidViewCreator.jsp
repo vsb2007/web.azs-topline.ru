@@ -21,7 +21,8 @@
         </c:if>
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
-                <c:if test="${!readonlyTmp.equals(\"readonly\")}">
+                <c:if test="${!readonlyTmp.equals(\"readonly\") && bid.getBid_is_freeze()!=null
+                                && bid.getBid_is_freeze().equals(\"0\")}">
                     <form action="bidUpdate" method="post">
                 </c:if>
             </sec:authorize>
@@ -47,12 +48,8 @@
             Доставка:<br>
             Секции на машине:<br>
             <c:forEach items="${bidDetailsCar}" var="bidDetails">
-                <c:if test="${(bid.getCreateUser().getName().equals(siteUser.getName()))
-                    || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
-                    || (!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
-                    &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
+                <c:if test="${bid.getCreateUser().getName().equals(siteUser.getName())
                     || siteUser.getName().equals(\"admin\")
-                    || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
                     <c:choose>
                         <c:when test="${bidDetails.getDateOut()!=null}">
@@ -126,18 +123,36 @@
                                 <span class="secondary-text">Масса</span>
                             </div>
                         </div>
+                        <br>
+                        <c:choose>
+                            <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze()!=null
+                                && !bid.getBid_is_freeze().equals(\"0\")}">
+                                <div class="tile">
+                                    <input type="button" class="button raised bg-blue-500 color-white"
+                                           value="${submitButtonValue}">
+                                </div>
+                            </c:when>
+                            <c:when test="${bidDetails.isDone()}">
+                                <div class="tile">
+                                    <input type="button" class="button raised bg-green-500 color-white"
+                                           value="Доставлено">
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="tile">
+
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+
                     </div>
                 </c:if>
 
             </c:forEach>
             Секции на прицепе:<br>
             <c:forEach items="${bidDetailsTrailer}" var="bidDetails">
-                <c:if test="${(bid.getCreateUser().getName().equals(siteUser.getName()))
-                    || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
-                    || (!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
-                    &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
+                <c:if test="${bid.getCreateUser().getName().equals(siteUser.getName())
                     || siteUser.getName().equals(\"admin\")
-                    || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
                     <c:choose>
                         <c:when test="${bidDetails.getDateOut()!=null}">
@@ -211,12 +226,34 @@
                                 <span class="secondary-text">Масса</span>
                             </div>
                         </div>
+                        <br>
+                        <c:choose>
+                            <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze()!=null
+                                && !bid.getBid_is_freeze().equals(\"0\")}">
+                                <div class="tile">
+                                    <input type="button" class="button raised bg-blue-500 color-white"
+                                           value="${submitButtonValue}">
+                                </div>
+                            </c:when>
+                            <c:when test="${bidDetails.isDone()}">
+                                <div class="tile">
+                                    <input type="button" class="button raised bg-green-500 color-white"
+                                           value="Доставлено">
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="tile">
+
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </c:if>
             </c:forEach>
 
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
-                <c:if test="${!readonlyTmp.equals(\"readonly\")}">
+                <c:if test="${!readonlyTmp.equals(\"readonly\") && bid.getBid_is_freeze()!=null
+                                && bid.getBid_is_freeze().equals(\"0\")}">
                     <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
                     <input type="hidden" name="bidId" value="${bid.getId_bid()}">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>

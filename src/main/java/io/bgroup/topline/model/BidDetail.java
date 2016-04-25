@@ -271,11 +271,13 @@ public class BidDetail {
     }
 
     public boolean isSectionBidUp(ArrayList<BidDetail> bidDetails, Bid bid, SiteUser siteUser) {
+        if (bid == null) return false;
         if (bidDetails == null) return false;
+        if (siteUser == null) return false;
         for (BidDetail bidDetail : bidDetails) {
             if ((bid.getCreateUser().getName().equals(siteUser.getName()))
                     || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
-                    || (bid.getBid_is_freeze().equals("0") && siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetail.getDestination().getIdCompanyUnit()))
+                    || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetail.getDestination().getIdCompanyUnit()))
                     || siteUser.getPost().getIdPost().equals("2")
                     )
                 if (!bidDetail.isDone()) return false;

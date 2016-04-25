@@ -342,10 +342,10 @@ public class Bid {
             ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
             boolean isCarSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsCar, bid, siteUser);
             boolean isTrailerSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsTrailer, bid, siteUser);
-            if ((bidDetailsCar==null || isCarSectionBidUp==true) && (bidDetailsTrailer==null || isTrailerSectionBidUp==true)){
+            if ((bidDetailsCar == null || isCarSectionBidUp == true)
+                    && (bidDetailsTrailer == null || isTrailerSectionBidUp == true)) {
                 bid.setDone(true);
-            }
-            else bid.setDone(false);
+            } else bid.setDone(false);
         }
     }
 
@@ -472,17 +472,13 @@ public class Bid {
             suffix = "in";
             sql += "bid_date_freeze=now(), bid_is_freeze='1',";
         } else suffix = "out";
-        System.out.println("111");
         String sqlCar = addSqlForUpdateString(bidDetailsCar, suffix, request);
-        System.out.println("222");
         String sqlTrailer = addSqlForUpdateString(bidDetailsTrailer, suffix, request);
-        System.out.println("333");
         if (!sqlCar.equals("")) sql += sqlCar;
         if (!sqlCar.equals("") && !sqlTrailer.equals("")) sql += "," + sqlTrailer;
         if (sqlCar.equals("") && !sqlTrailer.equals("")) sql += sqlTrailer;
         if (sqlCar.equals("") && sqlTrailer.equals("")) return false;
         sql += " where id_bids='" + bid.getId_bid() + "'";
-        System.out.println(sql);
         if (dbMvc.getInsertResult(sql)) return false;
 
         return true;
@@ -497,7 +493,6 @@ public class Bid {
             String strT = request.getParameter(bidDetail.getSection().getId_section() + "_t");
             String volume = request.getParameter(bidDetail.getSection().getId_section() + "_volume");
             String strM = request.getParameter(bidDetail.getSection().getId_section() + "_mass");
-            System.out.println(strM + " " + strP + " " + strT + " " + volume);
             if (volume != null && strM != null && strP != null && strT != null) {
                 if (!sql.equals("")) sql += ",";
                 sql += "bid_" + bidDetail.getSection().getId_section() + "_date_" + suffix + "=now(),";
@@ -507,7 +502,6 @@ public class Bid {
                 sql += "bid_" + bidDetail.getSection().getId_section() + "_mass_" + suffix + "='" + strM + "'";
             }
         }
-        System.out.println(sql);
         return sql;
     }
 }

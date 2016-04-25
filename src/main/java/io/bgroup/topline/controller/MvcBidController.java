@@ -86,7 +86,6 @@ public class MvcBidController {
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
         boolean isCarSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsCar, bid, siteUser);
         boolean isTrailerSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsTrailer, bid, siteUser);
-        System.out.println(isCarSectionBidUp + " " + isTrailerSectionBidUp);
         model.addObject("siteUser", siteUser);
         model.addObject("bid", bid);
         model.addObject("isCarSectionBidUp", isCarSectionBidUp);
@@ -107,7 +106,6 @@ public class MvcBidController {
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
         boolean isCarSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsCar, bid, siteUser);
         boolean isTrailerSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsTrailer, bid, siteUser);
-        System.out.println(isCarSectionBidUp + " " + isTrailerSectionBidUp);
         model.addObject("siteUser", siteUser);
         model.addObject("bid", bid);
         model.addObject("isCarSectionBidUp", isCarSectionBidUp);
