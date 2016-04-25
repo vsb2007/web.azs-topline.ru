@@ -13,15 +13,18 @@
             <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
-        <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
-                    && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
-                    && !siteUser.getName().equals(\"admin\")
-                    }">
-            <c:set var="readonlyTmp" value="readonly" scope="application"/>
-        </c:if>
+            <%-- <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
+                        && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
+                        && !siteUser.getName().equals(\"admin\")
+                        }">
+                <c:set var="readonlyTmp" value="readonly" scope="application"/>
+            </c:if>
+                 --%>
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
-                <c:if test="${!readonlyTmp.equals(\"readonly\")}">
+                <c:if test="${!readonlyTmp.equals(\"readonly\")
+                        && (isCarSectionBidUp==false || bidDetailsCar==null)
+                        && (isTrailerSectionBidUp==false || bidDetailsTrailer==null)}">
                     <form action="bidUpdate" method="post">
                 </c:if>
             </sec:authorize>
@@ -51,13 +54,24 @@
                     || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
                     || (!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
                     &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
-                    || siteUser.getName().equals(\"admin\")
                     || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
-                    <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
-                    <c:set var="valP" value="${bidDetails.getPlOut()}" scope="application"/>
-                    <c:set var="valV" value="${bidDetails.getVolumeOut()}" scope="application"/>
-                    <c:set var="valM" value="${bidDetails.getMassOut()}" scope="application"/>
+                    <c:choose>
+                        <c:when test="${bidDetails.getDateOut()!=null}">
+                            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
+                            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
+                            <c:set var="valP" value="${bidDetails.getPlOut()}" scope="application"/>
+                            <c:set var="valV" value="${bidDetails.getVolumeOut()}" scope="application"/>
+                            <c:set var="valM" value="${bidDetails.getMassOut()}" scope="application"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                            <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
+                            <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
+                            <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+                        </c:otherwise>
+                    </c:choose>
                     <div class="grid-list">
                         <div class="tile">
                             <input type="text" class="text-input border-green-500"
@@ -83,9 +97,9 @@
                         </div>
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
-                                   name="${bidDetails.getSection().getId_section()}_value"
-                                   id="${bidDetails.getSection().getId_section()}_value"
-                                   value="${valV}" type="number" step="any"  ${readonlyTmp}>
+                                   name="${bidDetails.getSection().getId_section()}_volume"
+                                   id="${bidDetails.getSection().getId_section()}_volume"
+                                   value="${valV}" type="number" step="any" readonly>
                             <div>
                                 <span class="secondary-text">Литры</span>
                             </div>
@@ -93,7 +107,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_p"
-                                   value="${valP}" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valP}" type="number" step="any" readonly>
                             <div>
                                 <span class="secondary-text">Плотность</span>
                             </div>
@@ -101,7 +115,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_t"
-                                   value="${valT}" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valT}" type="number" step="any" readonly>
                             <div>
                                 <span class="secondary-text">Температура</span>
                             </div>
@@ -109,7 +123,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_mass"
-                                   value="${valM}" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valM}" type="number" step="any" readonly>
                             <div>
                                 <span class="secondary-text">Масса</span>
                             </div>
@@ -123,13 +137,24 @@
                     || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
                     || (!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
                     &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
-                    || siteUser.getName().equals(\"admin\")
                     || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
-                    <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
-                    <c:set var="valP" value="${bidDetails.getPlOut()}" scope="application"/>
-                    <c:set var="valV" value="${bidDetails.getVolumeOut()}" scope="application"/>
-                    <c:set var="valM" value="${bidDetails.getMassOut()}" scope="application"/>
+                    <c:choose>
+                        <c:when test="${bidDetails.getDateOut()!=null}">
+                            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
+                            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
+                            <c:set var="valP" value="${bidDetails.getPlOut()}" scope="application"/>
+                            <c:set var="valV" value="${bidDetails.getVolumeOut()}" scope="application"/>
+                            <c:set var="valM" value="${bidDetails.getMassOut()}" scope="application"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                            <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
+                            <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
+                            <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+                        </c:otherwise>
+                    </c:choose>
                     <div class="grid-list">
                         <div class="tile">
                             <input type="text" class="text-input border-green-500"
@@ -155,9 +180,9 @@
                         </div>
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
-                                   name="${bidDetails.getSection().getId_section()}_value"
-                                   id="${bidDetails.getSection().getId_section()}_value"
-                                   value="${valV}" type="number" step="any"  ${readonlyTmp}>
+                                   name="${bidDetails.getSection().getId_section()}_volume"
+                                   id="${bidDetails.getSection().getId_section()}_volume"
+                                   value="${valV}" type="number" step="any" readonly>
                             <div>
                                 <span class="secondary-text">Литры</span>
                             </div>
@@ -165,7 +190,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_p"
-                                   value="${valP}" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valP}" type="number" step="any" readonly>
                             <div>
                                 <span class="secondary-text">Плотность</span>
                             </div>
@@ -173,7 +198,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_t"
-                                   value="${valT}" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valT}" type="number" step="any" readonly>
                             <div>
                                 <span class="secondary-text">Температура</span>
                             </div>
@@ -181,7 +206,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_mass"
-                                   value="${valM}" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valM}" type="number" step="any" readonly>
                             <div>
                                 <span class="secondary-text">Масса</span>
                             </div>
@@ -190,7 +215,9 @@
                 </c:if>
             </c:forEach>
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
-                <c:if test="${!readonlyTmp.equals(\"readonly\")}">
+                <c:if test="${!readonlyTmp.equals(\"readonly\")
+                        && (isCarSectionBidUp==false || bidDetailsCar==null)
+                        && (isTrailerSectionBidUp==false || bidDetailsTrailer==null)}">
                     <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
                     <input type="hidden" name="bidId" value="${bid.getId_bid()}">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>

@@ -23,6 +23,9 @@ public class BidDetail {
     private String volumeOut;
     private String massIn;
     private String massOut;
+    private String dateIn;
+    private String dateOut;
+    private boolean isDone;
 
     @Autowired
     DbModel dbMvc;
@@ -33,6 +36,14 @@ public class BidDetail {
 
     public BidDetail() {
 
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
     }
 
     public OilSections getSection() {
@@ -123,9 +134,24 @@ public class BidDetail {
         this.massOut = massOut;
     }
 
+    public String getDateIn() {
+        return dateIn;
+    }
+
+    public void setDateIn(String dateIn) {
+        this.dateIn = dateIn;
+    }
+
+    public String getDateOut() {
+        return dateOut;
+    }
+
+    public void setDateOut(String dateOut) {
+        this.dateOut = dateOut;
+    }
+
     public ArrayList<BidDetail> getBidDetailList(String bidId, Object object) {
         ArrayList<OilSections> oilSectionsList = null;
-        String prefix = null;
         if (object instanceof Car) {
             oilSectionsList = ((Car) object).getOilSections();
         }
@@ -148,6 +174,8 @@ public class BidDetail {
         String volumeOutTmp = null;
         String massInTmp = null;
         String massOutTmp = null;
+        String dateInTmp = null;
+        String dateOutTmp = null;
         for (OilSections oilSection : oilSectionsList) {
             String oilTypeId = null;
             String destinationId = null;
@@ -198,6 +226,14 @@ public class BidDetail {
                     if (pair.getValue() != null) {
                         massOutTmp = pair.getValue().toString();
                     } else massOutTmp = null;
+                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_date_in")) {
+                    if (pair.getValue() != null) {
+                        dateInTmp = pair.getValue().toString();
+                    } else dateInTmp = null;
+                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_date_out")) {
+                    if (pair.getValue() != null) {
+                        dateOutTmp = pair.getValue().toString();
+                    } else dateOutTmp = null;
                 }
             }
 
@@ -217,9 +253,33 @@ public class BidDetail {
             bidDetail.setVolumeOut(volumeOutTmp);
             bidDetail.setMassIn(massInTmp);
             bidDetail.setMassOut(massOutTmp);
+            bidDetail.setDateIn(dateInTmp);
+            bidDetail.setDateOut(dateOutTmp);
+            if (pOutTmp != null
+                    && tOutTmp != null
+                    && volumeOutTmp != null
+                    && massOutTmp != null
+                    && dateOutTmp != null) {
+                bidDetail.setDone(true);
+            } else {
+                bidDetail.setDone(false);
+            }
             if (bidDetailArrayList == null) bidDetailArrayList = new ArrayList<BidDetail>();
             bidDetailArrayList.add(bidDetail);
         }
         return bidDetailArrayList;
+    }
+
+    public boolean isSectionBidUp(ArrayList<BidDetail> bidDetails, Bid bid, SiteUser siteUser) {
+        if (bidDetails == null) return false;
+        for (BidDetail bidDetail : bidDetails) {
+            if ((bid.getCreateUser().getName().equals(siteUser.getName()))
+                    || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
+                    || (bid.getBid_is_freeze().equals("0") && siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetail.getDestination().getIdCompanyUnit()))
+                    || siteUser.getPost().getIdPost().equals("2")
+                    )
+                if (!bidDetail.isDone()) return false;
+        }
+        return true;
     }
 }

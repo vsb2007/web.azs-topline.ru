@@ -54,6 +54,22 @@
                     || siteUser.getName().equals(\"admin\")
                     || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
+                    <c:choose>
+                        <c:when test="${bidDetails.getDateOut()!=null}">
+                            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
+                            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
+                            <c:set var="valP" value="${bidDetails.getPlOut()}" scope="application"/>
+                            <c:set var="valV" value="${bidDetails.getVolumeOut()}" scope="application"/>
+                            <c:set var="valM" value="${bidDetails.getMassOut()}" scope="application"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                            <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
+                            <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
+                            <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+                        </c:otherwise>
+                    </c:choose>
                     <div class="grid-list">
                         <div class="tile">
                             <input type="text" class="text-input border-green-500"
@@ -81,7 +97,7 @@
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_volume"
                                    id="${bidDetails.getSection().getId_section()}_volume"
-                                   value="" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valV}" type="number" step="any"  ${readonlyTmp}>
                             <div>
                                 <span class="secondary-text">Литры</span>
                             </div>
@@ -89,7 +105,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_p"
-                                   value="" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valP}" type="number" step="any"  ${readonlyTmp}>
                             <div>
                                 <span class="secondary-text">Плотность</span>
                             </div>
@@ -97,7 +113,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_t"
-                                   value="" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valT}" type="number" step="any"  ${readonlyTmp}>
                             <div>
                                 <span class="secondary-text">Температура</span>
                             </div>
@@ -105,7 +121,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_mass"
-                                   value="" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valM}" type="number" step="any"  ${readonlyTmp}>
                             <div>
                                 <span class="secondary-text">Масса</span>
                             </div>
@@ -123,7 +139,22 @@
                     || siteUser.getName().equals(\"admin\")
                     || siteUser.getPost().getIdPost().equals(\"2\")
                     }">
-
+                    <c:choose>
+                        <c:when test="${bidDetails.getDateOut()!=null}">
+                            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
+                            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
+                            <c:set var="valP" value="${bidDetails.getPlOut()}" scope="application"/>
+                            <c:set var="valV" value="${bidDetails.getVolumeOut()}" scope="application"/>
+                            <c:set var="valM" value="${bidDetails.getMassOut()}" scope="application"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                            <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
+                            <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
+                            <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+                        </c:otherwise>
+                    </c:choose>
                     <div class="grid-list">
                         <div class="tile">
                             <input type="text" class="text-input border-green-500"
@@ -151,7 +182,7 @@
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_volume"
                                    id="${bidDetails.getSection().getId_section()}_volume"
-                                   value="" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valV}" type="number" step="any"  ${readonlyTmp}>
                             <div>
                                 <span class="secondary-text">Литры</span>
                             </div>
@@ -159,7 +190,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_p"
-                                   value="" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valP}" type="number" step="any"  ${readonlyTmp}>
                             <div>
                                 <span class="secondary-text">Плотность</span>
                             </div>
@@ -167,7 +198,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_t"
-                                   value="" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valT}" type="number" step="any"  ${readonlyTmp}>
                             <div>
                                 <span class="secondary-text">Температура</span>
                             </div>
@@ -175,7 +206,7 @@
                         <div class="tile">
                             <input class="text-input border-green-500" placeholder="0" required
                                    name="${bidDetails.getSection().getId_section()}_mass"
-                                   value="" type="number" step="any"  ${readonlyTmp}>
+                                   value="${valM}" type="number" step="any"  ${readonlyTmp}>
                             <div>
                                 <span class="secondary-text">Масса</span>
                             </div>

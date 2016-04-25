@@ -17,7 +17,7 @@ public class Bid {
     private Driver driver;
     private Car car;
     private Trailer trailer;
-    private ArrayList<BidDetail> bidDetailList;
+    //private ArrayList<BidDetail> bidDetailList;
 
     private String bid_date_freeze;
     private String bid_is_freeze;
@@ -27,6 +27,7 @@ public class Bid {
     private String bid_date_done;
     private String bid_date_create;
     private String bid_date_last_update;
+    private boolean isDone;
 
     //для логики
     private String error;
@@ -53,6 +54,14 @@ public class Bid {
 
     public SiteUser getCreateUser() {
         return createUser;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
     }
 
     private void setCreateUser(SiteUser createUser) {
@@ -322,7 +331,22 @@ public class Bid {
         if (sql == null) return null;
         ArrayList<Bid> bidsList = null;
         bidsList = getBidsFromDbSelect(sql);
+        setDoneForBid(bidsList, siteUserTmp);
         return bidsList;
+    }
+
+    private void setDoneForBid(ArrayList<Bid> bidsList, SiteUser siteUser) {
+        if (bidsList == null || siteUser == null) return;
+        for (Bid bid : bidsList) {
+            ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
+            ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
+            boolean isCarSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsCar, bid, siteUser);
+            boolean isTrailerSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsTrailer, bid, siteUser);
+            if ((bidDetailsCar==null || isCarSectionBidUp==true) && (bidDetailsTrailer==null || isTrailerSectionBidUp==true)){
+                bid.setDone(true);
+            }
+            else bid.setDone(false);
+        }
     }
 
     private ArrayList<Bid> getBidsFromDbSelect(String sql) {
@@ -406,16 +430,7 @@ public class Bid {
                 } else bid.setBid_date_last_update(null);
             }
         }
-        //bid.setBidDetailList(new BidDetail().getBidDetailList(bid));
     }
-
-   /* public ArrayList<BidDetail> getBidDetailList() {
-        return bidDetailList;
-    }
-
-    public void setBidDetailList(ArrayList<BidDetail> bidDetailList) {
-        this.bidDetailList = bidDetailList;
-    }*/
 
     public Bid getBidForView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         if (!siteUserMvc.findSiteUser(principal).isUserHasRole(principal, "ROLE_BID_VIEW")) return null;
@@ -457,8 +472,11 @@ public class Bid {
             suffix = "in";
             sql += "bid_date_freeze=now(), bid_is_freeze='1',";
         } else suffix = "out";
+        System.out.println("111");
         String sqlCar = addSqlForUpdateString(bidDetailsCar, suffix, request);
+        System.out.println("222");
         String sqlTrailer = addSqlForUpdateString(bidDetailsTrailer, suffix, request);
+        System.out.println("333");
         if (!sqlCar.equals("")) sql += sqlCar;
         if (!sqlCar.equals("") && !sqlTrailer.equals("")) sql += "," + sqlTrailer;
         if (sqlCar.equals("") && !sqlTrailer.equals("")) sql += sqlTrailer;
@@ -474,15 +492,22 @@ public class Bid {
         String sql = "";
         if (bidDetails == null) return sql;
         for (BidDetail bidDetail : bidDetails) {
-            if (!sql.equals("")) sql += ",";
+
             String strP = request.getParameter(bidDetail.getSection().getId_section() + "_p");
             String strT = request.getParameter(bidDetail.getSection().getId_section() + "_t");
             String volume = request.getParameter(bidDetail.getSection().getId_section() + "_volume");
-            sql += "bid_" + bidDetail.getSection().getId_section() + "_volume_" + suffix + "='" + volume + "',";
-            sql += "bid_" + bidDetail.getSection().getId_section() + "_p_" + suffix + "='" + strP + "',";
-            sql += "bid_" + bidDetail.getSection().getId_section() + "_t_" + suffix + "='" + strT + "'";
-            sql += "bid_" + bidDetail.getSection().getId_section() + "_date_" + suffix + "=now()";
+            String strM = request.getParameter(bidDetail.getSection().getId_section() + "_mass");
+            System.out.println(strM + " " + strP + " " + strT + " " + volume);
+            if (volume != null && strM != null && strP != null && strT != null) {
+                if (!sql.equals("")) sql += ",";
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_date_" + suffix + "=now(),";
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_volume_" + suffix + "='" + volume + "',";
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_p_" + suffix + "='" + strP + "',";
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_t_" + suffix + "='" + strT + "',";
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_mass_" + suffix + "='" + strM + "'";
+            }
         }
+        System.out.println(sql);
         return sql;
     }
 }

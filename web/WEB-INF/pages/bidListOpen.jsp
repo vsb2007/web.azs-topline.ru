@@ -18,6 +18,9 @@
                 <c:if test="${bid.getBid_is_freeze() !=null && !bid.getBid_is_freeze().equals(\"0\")}">
                     <c:set var="bgColor" value="bg-red-500" scope="application"/>
                 </c:if>
+                <c:if test="${bid.isDone()}">
+                    <c:set var="bgColor" value="bg-green-500" scope="application"/>
+                </c:if>
                 <li ripple>
                     <form action="bidView" method="post">
                         <input value="${bid.getId_bid()}" name="bidIdButton" id="bidIdButton${bid.getId_bid()}"
