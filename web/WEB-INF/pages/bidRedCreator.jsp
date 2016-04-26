@@ -7,29 +7,29 @@
 <sec:authorize access="hasRole('ROLE_BID_VIEW')">
     <div class="section">
             ${message}
-        OperOut
+        Creator
     </div>
     <div class="section">
             <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
-            <%-- <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
-                        && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
-                        && !siteUser.getName().equals(\"admin\")
-                        }">
-                <c:set var="readonlyTmp" value="readonly" scope="application"/>
-            </c:if>
-                 --%>
+        <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
+                    && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
+                    && !siteUser.getName().equals(\"admin\")
+                    }">
+            <c:set var="readonlyTmp" value="readonly" scope="application"/>
+        </c:if>
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
-                <c:if test="${!readonlyTmp.equals(\"readonly\")
-                        && (isCarSectionBidUp==false || bidDetailsCar==null)
-                        && (isTrailerSectionBidUp==false || bidDetailsTrailer==null)}">
-                    <c:if test="${bid.getBid_is_freeze() !=null && !bid.getBid_is_freeze().equals(\"0\")}">
-                        <form action="bidUpdate" method="post">
-                    </c:if>
+                <c:if test="${!readonlyTmp.equals(\"readonly\") && bid.getBid_is_freeze()!=null
+                                && bid.getBid_is_freeze().equals(\"0\")}">
+                    <form action="bidUpdate" method="post">
                 </c:if>
             </sec:authorize>
+            <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
+                <c:set var="freeze" value="in" scope="application"/>
+                <c:set var="submitButtonValue" value="Отпустить топливо" scope="application"/>
+            </c:if>
             <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
                 <c:set var="freeze" value="out" scope="application"/>
                 <c:set var="submitButtonValue" value="Принять топливо" scope="application"/>
@@ -45,30 +45,25 @@
             <input type="text" class="text-input border-green-500" placeholder="Прицеп" required
                    name="trailer" value="${bid.getTrailer().getTrailer_number()}" readonly> <br>
             <br>
-            <c:if test="${bid.getBid_is_freeze() !=null && !bid.getBid_is_freeze().equals(\"0\")}">
-                Доставка:<br>
-                Секции на машине:<br>
-                <c:forEach items="${bidDetailsCar}" var="bidDetails">
-                    <%@ include file="bidViewOperatorOutSection.jsp" %>
-                </c:forEach>
-                Секции на прицепе:<br>
-                <c:forEach items="${bidDetailsTrailer}" var="bidDetails">
-                    <%@ include file="bidViewOperatorOutSection.jsp" %>
-                </c:forEach>
-                <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
-                <c:if test="${!readonlyTmp.equals(\"readonly\")
-                        && (isCarSectionBidUp==false || bidDetailsCar==null)
-                        && (isTrailerSectionBidUp==false || bidDetailsTrailer==null)}">
+            Доставка:<br>
+            Секции на машине:<br>
+            <c:forEach items="${bidDetailsCar}" var="bidDetails">
+                <%@ include file="bidRedCreatorSection.jsp" %>
+            </c:forEach>
+            Секции на прицепе:<br>
+            <c:forEach items="${bidDetailsTrailer}" var="bidDetails">
+                <%@ include file="bidRedCreatorSection.jsp" %>
+            </c:forEach>
+
+            <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
+                <c:if test="${!readonlyTmp.equals(\"readonly\") && bid.getBid_is_freeze()!=null
+                                && bid.getBid_is_freeze().equals(\"0\")}">
                     <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
                     <input type="hidden" name="bidId" value="${bid.getId_bid()}">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
-                </c:if>
-                <c:if test="${bid.getBid_is_freeze()!=null && !bid.getBid_is_freeze().equals(\"0\")}">
                     </form>
                 </c:if>
-                </sec:authorize>
-            </c:if>
-
+            </sec:authorize>
         </c:if>
             <%-- </sec:authorize> --%>
     </div>

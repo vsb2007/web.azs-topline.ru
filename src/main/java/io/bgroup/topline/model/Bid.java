@@ -309,8 +309,10 @@ public class Bid {
         if (siteUserTmp == null) return null;
         String sql = null;
         if (siteUserTmp.getPost() == null && !siteUserTmp.getName().equals("admin")) return null;
-        if (siteUserTmp.getName().equals("admin") || siteUserTmp.getPost().getIdPost().equals("1")) { //  руководитель
+        if (siteUserTmp.getName().equals("admin")) { //  admin
             sql = "select * from bids where bid_is_close='0'";
+        } else if (siteUserTmp.getPost().getIdPost().equals("1")) { //  руководитель
+            sql = "select * from bids where bid_is_close='0' and bid_create_user_id = '" + siteUserTmp.getId() + "'";
         } else if (siteUserTmp.getPost().getIdPost().equals("2")) { //Водитель
             sql = "select * from bids where bid_is_close='0' and bid_driver_id = '" + siteUserTmp.getId() + "'";
         } else if (siteUserTmp.getPost().getIdPost().equals("3")) { //Оператор

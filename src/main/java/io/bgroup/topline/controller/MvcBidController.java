@@ -96,10 +96,41 @@ public class MvcBidController {
 
         return model;
     }
+
+    @RequestMapping(value = "bidRed")
+    public ModelAndView bidRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        Bid bid = bidMvc.getBidForView(principal, request);
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
+        ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
+        boolean isCarSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsCar, bid, siteUser);
+        boolean isTrailerSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsTrailer, bid, siteUser);
+
+        ArrayList<Car> carsList = carMvc.getCarsList();
+        ArrayList<Driver> driversList = driverMvc.getDriverList();
+        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        ArrayList<OilType> oilTypeList = oilTypeMvc.getOilTypesList();
+
+        model.addObject("siteUser", siteUser);
+        model.addObject("carsList", carsList);
+        model.addObject("driversList", driversList);
+        model.addObject("oilStorageList", oilStorageList);
+        model.addObject("oilTypeList", oilTypeList);
+        model.addObject("bid", bid);
+        model.addObject("isCarSectionBidUp", isCarSectionBidUp);
+        model.addObject("isTrailerSectionBidUp", isTrailerSectionBidUp);
+        model.addObject("bidDetailsCar", bidDetailsCar);
+        model.addObject("bidDetailsTrailer", bidDetailsTrailer);
+        model.setViewName("bidRedCreator");
+
+        return model;
+    }
+
     @RequestMapping(value = "bidClose")
     public ModelAndView bidClose(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        bidMvc.closeBid(principal,request);
+        bidMvc.closeBid(principal, request);
         ArrayList<Bid> bidsArrayList = bidMvc.getBidsList(principal);
         model.addObject("bidsList", bidsArrayList);
         model.setViewName("bidListOpen");
