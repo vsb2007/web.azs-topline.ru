@@ -504,4 +504,13 @@ public class Bid {
         }
         return sql;
     }
+
+    public void closeBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (!siteUser.isUserHasRole(principal, "ROLE_BID_RED")) return;
+        String bidId = request.getParameter("bidIdButton");
+        if (bidId == null) return;
+        String sql = "update bids set bid_date_close=now(), bid_is_close='1' where id_bids='" + bidId + "'";
+        dbMvc.getInsertResult(sql);
+    }
 }

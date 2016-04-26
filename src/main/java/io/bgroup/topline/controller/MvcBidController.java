@@ -96,6 +96,15 @@ public class MvcBidController {
 
         return model;
     }
+    @RequestMapping(value = "bidClose")
+    public ModelAndView bidClose(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        bidMvc.closeBid(principal,request);
+        ArrayList<Bid> bidsArrayList = bidMvc.getBidsList(principal);
+        model.addObject("bidsList", bidsArrayList);
+        model.setViewName("bidListOpen");
+        return model;
+    }
 
     @RequestMapping(value = "bidUpdate")
     public ModelAndView bidUpdate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
