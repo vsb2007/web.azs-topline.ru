@@ -28,23 +28,11 @@
             Доставка:<br>
             Секции на машине:<br>
             <c:forEach items="${bidDetailsCar}" var="bidDetails">
-                    <input type="text" class="text-input border-green-500"
-                           value="Секция ${bidDetails.getSection().getOilSectionName()} (${bidDetails.getSection().getVol()}л.)"
-                           readonly>&nbsp;
-                    <input type="text" class="text-input border-green-500"
-                           value="${bidDetails.getOilType().getOilTypeName()}" readonly>&nbsp;
-                    <input type="text" class="text-input border-green-500"
-                           value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>&nbsp;<br>
+                <%@ include file="bidViewDriverSection.jsp" %>
             </c:forEach>
             Секции на прицепе:<br>
             <c:forEach items="${bidDetailsTrailer}" var="bidDetails">
-                <input type="text" class="text-input border-green-500"
-                       value="Секция ${bidDetails.getSection().getOilSectionName()} (${bidDetails.getSection().getVol()}л.)"
-                       readonly>&nbsp;
-                <input type="text" class="text-input border-green-500"
-                       value="${bidDetails.getOilType().getOilTypeName()}" readonly>&nbsp;
-                <input type="text" class="text-input border-green-500"
-                       value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>&nbsp;<br>
+                <%@ include file="bidViewDriverSection.jsp" %>
             </c:forEach>
         </c:if>
     </div>
