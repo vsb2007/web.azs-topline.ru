@@ -3,6 +3,7 @@
 <c:if test="${bid.getCreateUser().getName().equals(siteUser.getName())
                     || siteUser.getName().equals(\"admin\")
                     }">
+    <%--
     <c:choose>
         <c:when test="${bidDetails.getDateOut()!=null}">
             <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
@@ -17,6 +18,7 @@
             <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
         </c:otherwise>
     </c:choose>
+    --%>
     <div class="grid-list">
         <div class="tile">
             <input type="text" class="text-input border-green-500"
@@ -31,6 +33,10 @@
                 <c:when test="${bidDetails.isDone() || !bid.getBid_is_freeze().equals(\"0\")}">
                     <input type="text" class="text-input border-green-500"
                            value="${bidDetails.getOilType().getOilTypeName()}"
+                           readonly>
+                    <input type="hidden" class="text-input border-green-500"
+                           value="${oilType.getId_oilType()}"
+                           name="${bidDetails.getSection().getId_section()}_oilTypeId"
                            readonly>
                 </c:when>
                 <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze().equals(\"0\")}">
