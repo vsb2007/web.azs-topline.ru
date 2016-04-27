@@ -26,6 +26,9 @@ public class MvcBidController {
     private Car carMvc;
 
     @Autowired
+    private Trailer trailerMvc;
+
+    @Autowired
     private Driver driverMvc;
 
     @Autowired
@@ -111,9 +114,11 @@ public class MvcBidController {
         ArrayList<Driver> driversList = driverMvc.getDriverList();
         ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
         ArrayList<OilType> oilTypeList = oilTypeMvc.getOilTypesList();
+        ArrayList<Trailer> trailersList = trailerMvc.getTrailersList();
 
         model.addObject("siteUser", siteUser);
         model.addObject("carsList", carsList);
+        model.addObject("trailersList", trailersList);
         model.addObject("driversList", driversList);
         model.addObject("oilStorageList", oilStorageList);
         model.addObject("oilTypeList", oilTypeList);
