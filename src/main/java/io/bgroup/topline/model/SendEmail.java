@@ -36,7 +36,7 @@ public class SendEmail {
                 message.setFrom(new InternetAddress("azsreport2015@gmail.com"));
                 message.setRecipients(Message.RecipientType.TO,
                         InternetAddress.parse(driver.getDriverEmail()));
-                message.setSubject("Вам назначена");
+                message.setSubject("Вам назначена заявка");
                 message.setText("Уважаемый " + driver.getDriverFio() + "!"
                         + "\n\n Вам назначена заявка!");
 
