@@ -18,25 +18,18 @@ public class MvcBidController {
 
     @Autowired
     private DriverManagerDataSource dataSource;
-
     @Autowired
     private SiteUser siteUserMvc;
-
     @Autowired
     private Car carMvc;
-
     @Autowired
     private Trailer trailerMvc;
-
     @Autowired
     private Driver driverMvc;
-
     @Autowired
     private OilStorage oilStorageMvc;
-
     @Autowired
     private OilType oilTypeMvc;
-
     @Autowired
     private Bid bidMvc;
     @Autowired

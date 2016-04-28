@@ -204,6 +204,7 @@ public class Bid {
         // на их основе подтягиваем данные
         Car car = carMvc.getCar(carId);
         Driver driver = driverMvc.getDriver(driverId);
+
         Trailer trailer = trailerMvc.getTrailer(trailerId);
         OilStorage oilStorage = oilStorageMvc.getOilStorage(oilStorageId);
         if (car == null || driver == null || oilStorage == null)
@@ -274,8 +275,15 @@ public class Bid {
         }
         if (emptySectionFlag) return "Error: секции пусты";
         sql += "(" + columns + ") values (" + values + ")";
-        if (!dbMvc.getInsertResult(sql)) return "Заявка создана";
-        else return "Неизвестная ошибка добавления заявки";
+        if (!dbMvc.getInsertResult(sql)) {
+            try {
+                if (bidNumber != null && !bidNumber.equals(""))
+                    new SendEmail().sendMail(driver);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "Заявка создана";
+        } else return "Неизвестная ошибка добавления заявки";
     }
 
     private String strPlusCommaPlusValue(String str, String value) {
@@ -535,7 +543,7 @@ public class Bid {
         if (car == null) return "машина не найдена";
         String trailerId = request.getParameter("trailerId");
         if (trailerId == null) return "что-то не то с прицепом";
-        if (trailerId.equals("")) trailerId="-1";
+        if (trailerId.equals("")) trailerId = "-1";
         Trailer trailer = trailerMvc.getTrailer(trailerId);
         //if (trailer == null && !trailerId.equals("-1")) return "трейлер не найден";
         String sql = "";

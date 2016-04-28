@@ -124,7 +124,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         Company company = new Company();
         return company;
     }
-    
+
     @Bean(name = "companyUnit")
     public CompanyUnit companyUnit() {
         CompanyUnit companyUnit = new CompanyUnit();
