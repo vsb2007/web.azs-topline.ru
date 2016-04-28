@@ -10,7 +10,6 @@
         Creator
     </div>
     <div class="section">
-            <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
         <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
@@ -65,7 +64,6 @@
                 </c:if>
             </sec:authorize>
         </c:if>
-            <%-- </sec:authorize> --%>
     </div>
     <script src="js/bidCreate.js"></script>
 </sec:authorize>

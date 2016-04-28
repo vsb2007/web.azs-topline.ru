@@ -10,7 +10,6 @@
         Creator
     </div>
     <div class="section">
-            <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
         Загрузка:<br>
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <form action="javascript:void(null);" method="post" id="bidRedUpdateForm" onsubmit="sendFormForBidRed()">
@@ -87,7 +86,6 @@
                 <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
                     <select class="dropdown-menu" id="trailerId" name="trailerId" onchange="onTrailerSelect(this)">
                         <option value="-1">Выбрать прицеп</option>
-                        ;
                         <c:forEach items="${trailersList}" var="trailer">
                             <c:if test="${trailer.getId_trailer().equals(bid.getTrailer().getId_trailer())}">
                                 <option value="${trailer.getId_trailer()}" selected>

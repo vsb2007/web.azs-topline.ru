@@ -237,7 +237,6 @@ public class BidDetail {
                     } else dateOutTmp = null;
                 }
             }
-
             if (oilTypeId == null) continue;
             if (destinationId == null) continue;
             OilType oilTypeTmp = oilTypeMvc.getOilType(oilTypeId);

@@ -32,82 +32,82 @@
         <input type="hidden" required name="trailer" value="${bid.getTrailer().getTrailer_number()}" readonly>
     </c:if>
     <div class="grid-list">
-    <div class="tile">
-        <input type="text" class="text-input border-green-500"
-               value="Секция ${bidDetails.getSection().getOilSectionName()} (${bidDetails.getSection().getVol()}л.)"
-               readonly>
-        <div>
-            <span class="secondary-text">Секция</span>
+        <div class="tile">
+            <input type="text" class="text-input border-green-500"
+                   value="Секция ${bidDetails.getSection().getOilSectionName()} (${bidDetails.getSection().getVol()}л.)"
+                   readonly>
+            <div>
+                <span class="secondary-text">Секция</span>
+            </div>
         </div>
-    </div>
-    <div class="tile">
-        <input type="text" class="text-input border-green-500"
-               value="${bidDetails.getOilType().getOilTypeName()}" readonly>
-        <div>
-            <span class="secondary-text">Вид топлива</span>
+        <div class="tile">
+            <input type="text" class="text-input border-green-500"
+                   value="${bidDetails.getOilType().getOilTypeName()}" readonly>
+            <div>
+                <span class="secondary-text">Вид топлива</span>
+            </div>
         </div>
-    </div>
-    <div class="tile">
-        <input type="text" class="text-input border-green-500"
-               value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
-        <div>
-            <span class="secondary-text">Назначение</span>
+        <div class="tile">
+            <input type="text" class="text-input border-green-500"
+                   value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
+            <div>
+                <span class="secondary-text">Назначение</span>
+            </div>
         </div>
-    </div>
-    <div class="tile">
-        <input class="text-input border-green-500" placeholder="0" required
-               name="${bidDetails.getSection().getId_section()}_volume"
-               id="${bidDetails.getSection().getId_section()}_volume"
-               value="${valV}" type="number" step="any"  ${readonlyTmp}>
-        <div>
-            <span class="secondary-text">Литры</span>
+        <div class="tile">
+            <input class="text-input border-green-500" placeholder="0" required
+                   name="${bidDetails.getSection().getId_section()}_volume"
+                   id="${bidDetails.getSection().getId_section()}_volume"
+                   value="${valV}" type="number" step="any"  ${readonlyTmp}>
+            <div>
+                <span class="secondary-text">Литры</span>
+            </div>
         </div>
-    </div>
-    <div class="tile">
-        <input class="text-input border-green-500" placeholder="0" required
-               name="${bidDetails.getSection().getId_section()}_p"
-               value="${valP}" type="number" step="any"  ${readonlyTmp}>
-        <div>
-            <span class="secondary-text">Плотность</span>
+        <div class="tile">
+            <input class="text-input border-green-500" placeholder="0" required
+                   name="${bidDetails.getSection().getId_section()}_p"
+                   value="${valP}" type="number" step="any"  ${readonlyTmp}>
+            <div>
+                <span class="secondary-text">Плотность</span>
+            </div>
         </div>
-    </div>
-    <div class="tile">
-        <input class="text-input border-green-500" placeholder="0" required
-               name="${bidDetails.getSection().getId_section()}_t"
-               value="${valT}" type="number" step="any"  ${readonlyTmp}>
-        <div>
-            <span class="secondary-text">Температура</span>
+        <div class="tile">
+            <input class="text-input border-green-500" placeholder="0" required
+                   name="${bidDetails.getSection().getId_section()}_t"
+                   value="${valT}" type="number" step="any"  ${readonlyTmp}>
+            <div>
+                <span class="secondary-text">Температура</span>
+            </div>
         </div>
-    </div>
-    <div class="tile">
-        <input class="text-input border-green-500" placeholder="0" required
-               name="${bidDetails.getSection().getId_section()}_mass"
-               value="${valM}" type="number" step="any"  ${readonlyTmp}>
-        <div>
-            <span class="secondary-text">Масса</span>
+        <div class="tile">
+            <input class="text-input border-green-500" placeholder="0" required
+                   name="${bidDetails.getSection().getId_section()}_mass"
+                   value="${valM}" type="number" step="any"  ${readonlyTmp}>
+            <div>
+                <span class="secondary-text">Масса</span>
+            </div>
         </div>
-    </div>
-    <br>
-    <c:choose>
-        <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze()!=null
+        <br>
+        <c:choose>
+            <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze()!=null
                                 && !bid.getBid_is_freeze().equals(\"0\")}">
-            <div class="tile">
-                <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
-                <input type="hidden" name="bidId" value="${bid.getId_bid()}">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
-            </div>
-        </c:when>
-        <c:when test="${bidDetails.isDone()}">
-            <div class="tile">
-                <input type="button" class="button raised bg-green-500 color-white"
-                       value="Доставлено">
-            </div>
-        </c:when>
-        <c:otherwise>
-            <div class="tile">
-            </div>
-        </c:otherwise>
-    </c:choose>
+                <div class="tile">
+                    <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
+                    <input type="hidden" name="bidId" value="${bid.getId_bid()}">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
+                </div>
+            </c:when>
+            <c:when test="${bidDetails.isDone()}">
+                <div class="tile">
+                    <input type="button" class="button raised bg-green-500 color-white"
+                           value="Доставлено">
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="tile">
+                </div>
+            </c:otherwise>
+        </c:choose>
     </div>
     <c:if test="${bid.getBid_is_freeze()!=null && !bid.getBid_is_freeze().equals(\"0\") && !bid.isDone()}">
         </form>

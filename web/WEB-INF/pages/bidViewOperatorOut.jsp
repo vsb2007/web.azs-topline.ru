@@ -10,7 +10,6 @@
         OperOut
     </div>
     <div class="section">
-            <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
         <c:if test="${bid.getBid_is_freeze() !=null}">
@@ -62,6 +61,5 @@
             </c:if>
         </c:if>
     </div>
-    <script src="js/bidCreate.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

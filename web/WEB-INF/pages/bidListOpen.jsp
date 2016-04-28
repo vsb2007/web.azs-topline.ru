@@ -33,25 +33,25 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     </form>
                     <sec:authorize access="hasRole('ROLE_BID_RED')">
-                    &nbsp;
+                        &nbsp;
                         <c:if test="${bid.isDone()}">
                             <c:set var="actoinUrl" value="bidClose"/>
                         </c:if>
                         <c:if test="${!bid.isDone()}">
                             <c:set var="actoinUrl" value="bidRed"/>
                         </c:if>
-                    <form action="${actoinUrl}" method="post">
-                        <input value="${bid.getId_bid()}" name="bidIdButton" id="bidIdButton${bid.getId_bid()}"
-                               type="hidden">
-                        <button class="button raised color-white bg-blue-500" type="submit" style="width: 10em;">
+                        <form action="${actoinUrl}" method="post">
+                            <input value="${bid.getId_bid()}" name="bidIdButton" id="bidIdButton${bid.getId_bid()}"
+                                   type="hidden">
+                            <button class="button raised color-white bg-blue-500" type="submit" style="width: 10em;">
                             <span class="item-text">Редактировать
 			                    <span class="secondary-text">Закрыть</span>
 		                    </span>
-                        </button>
-                            <%--<span class="item-text" style="font-size: small"> Машина: ${bid.getCar().getCar_name()}<br>
-                               Прицеп: ${bid.getTrailer().getTrailer_number()}</span> --%>
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    </form>
+                            </button>
+                                <%--<span class="item-text" style="font-size: small"> Машина: ${bid.getCar().getCar_name()}<br>
+                                   Прицеп: ${bid.getTrailer().getTrailer_number()}</span> --%>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        </form>
                     </sec:authorize>
                 </li>
             </c:forEach>
