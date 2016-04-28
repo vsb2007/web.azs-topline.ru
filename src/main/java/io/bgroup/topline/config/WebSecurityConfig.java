@@ -65,61 +65,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //http.csrf().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/index").permitAll()
-                .antMatchers("/").permitAll()
-                .and().formLogin().defaultSuccessUrl("/",true)
-                .and().logout().logoutUrl("/index")
-                .and().logout().logoutSuccessUrl("/index")
-
-        ;
-
-        /*http
-                .authorizeRequests()
-               .antMatchers("/protected/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/confidential/**").access("hasRole('ROLE_SUPERADMIN')")
-                //.and().formLogin().defaultSuccessUrl("/", false);
-                .and().formLogin().defaultSuccessUrl("/",true);
-*/
-/*
-          .antMatchers("/protected/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/confidential/**").access("hasRole('ROLE_SUPERADMIN')")
-                .antMatchers("/links/**").access("hasRole('ROLE_LOGIN')")
-                //.and().formLogin().defaultSuccessUrl("/", false);
-                .and().formLogin()
-                .loginPage("/index")
-                //.loginProcessingUrl("/login.do")
-                .defaultSuccessUrl("/")
-                .failureUrl("/index?err=1")
-                .usernameParameter("username")
-                .passwordParameter("password")
-
-                .and()
-                .logout()
-                .logoutRequestMatcher( new AntPathRequestMatcher( "/logout" ) )
-                .logoutSuccessUrl( "/index" )
-                .deleteCookies( "JSESSIONID" )
-                .invalidateHttpSession( true )
-                .and()
-                .sessionManagement()
-                .invalidSessionUrl( "/index" )
-                .maximumSessions( 1 )
-                //.and()
-                //.csrf().disable();
-        ;
-        */
-/*        http
-                .authorizeRequests()
-                .antMatchers("/index").anonymous()
-                .anyRequest().fullyAuthenticated()
+                .antMatchers("/css/**").permitAll()
+                .antMatchers("/images/**").permitAll()
+                .antMatchers("/js/**").permitAll()
+                .antMatchers("/demo-files/**").permitAll()
+                .antMatchers("/fonts/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/index")
-                .defaultSuccessUrl("/")
+                .loginPage("/login")
+                .permitAll()
                 .and()
-                .logout();
-*/
-
-
+                .logout()
+                .permitAll();
     }
 
 }
