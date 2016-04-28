@@ -98,3 +98,21 @@ function onTrailerSelect(trailer) {
     }
 }
 
+function sendFormForBidRed() {
+    var msg   = $('#bidRedUpdateForm').serialize();
+    $.ajax({
+        type: 'POST',
+        url: 'bidRedUpdate',
+        data: msg,
+        success: function(data) {
+            //$('.results').html(data);
+            document.getElementById("results").innerHTML = data;
+        },
+        error:  function(xhr, str){
+            //$('.results').html('Возникла ошибка: ' + xhr.responseCode);
+            document.getElementById("results").innerHTML = "Возникла ошибка: " + xhr.responseCode;
+        }
+    });
+    
+}
+

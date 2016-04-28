@@ -13,7 +13,7 @@
             <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
         Загрузка:<br>
         <c:if test="${bid.getBid_is_freeze() !=null}">
-            <form action="bidUpdate2" method="post">
+            <form action="javascript:void(null);" method="post" id="bidRedUpdateForm" onsubmit="sendFormForBidRed()">
                 <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
                        name="bidNumber" value="${bid.getName()}" readonly> <br>
                 <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
@@ -31,7 +31,9 @@
                 </c:if>
                 <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
                     <input type="text" class="text-input border-green-500" placeholder="Точка загрузки" required
-                           name="oilStorage" value="${bid.getOilStorageIn().getOilStorageName()}" readonly>
+                           name="oilStorageName" value="${bid.getOilStorageIn().getOilStorageName()}" readonly>
+                    <input type="hidden" required
+                           name="oilStorage" value="${bid.getOilStorageIn().getIdOilStorage()}" readonly>
                 </c:if><br>
                 <select class="dropdown-menu" id="driver" name="driver" onchange="">
                     <c:forEach items="${driversList}" var="driver">
@@ -62,7 +64,9 @@
                 <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
                     <c:if test="${bidDetailsCar!=null}">
                         <input type="text" class="text-input border-green-500" placeholder="Машина" required
-                               name="car" value="${bid.getCar().getCar_name()}" readonly> <br>
+                               value="${bid.getCar().getCar_name()}" readonly> <br>
+                        <input type="hidden" required
+                               name="car" value="${bid.getCar().getId_car()}" readonly> <br>
                     </c:if>
                     <c:if test="${bidDetailsCar==null}">
                         <select class="dropdown-menu" id="car" name="car" onchange="">
@@ -118,12 +122,14 @@
                         <%@ include file="bidRedCreatorSection.jsp" %>
                     </c:forEach>
                 </div>
-                <button class="button raised bg-blue-500 color-white">Сохранить изменения</button>
+                <button type="submit" class="button raised bg-blue-500 color-white">Сохранить изменения</button>
                 <input type="hidden" name="bidId" value="${bid.getId_bid()}">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
             </form>
+            <div id="results"></div>
         </c:if>
     </div>
     <script src="js/bidRed.js"></script>
+    <script src="js/jquery-2.2.3.min.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

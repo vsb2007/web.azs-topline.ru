@@ -482,7 +482,6 @@ public class Bid {
         if (sqlCar.equals("") && sqlTrailer.equals("")) return false;
         sql += " where id_bids='" + bid.getId_bid() + "'";
         if (dbMvc.getInsertResult(sql)) return false;
-
         return true;
     }
 
@@ -490,7 +489,6 @@ public class Bid {
         String sql = "";
         if (bidDetails == null) return sql;
         for (BidDetail bidDetail : bidDetails) {
-
             String strP = request.getParameter(bidDetail.getSection().getId_section() + "_p");
             String strT = request.getParameter(bidDetail.getSection().getId_section() + "_t");
             String volume = request.getParameter(bidDetail.getSection().getId_section() + "_volume");
@@ -515,4 +513,64 @@ public class Bid {
         String sql = "update bids set bid_date_close=now(), bid_is_close='1' where id_bids='" + bidId + "'";
         dbMvc.getInsertResult(sql);
     }
+
+    public String redBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (!siteUser.isUserHasRole(principal, "ROLE_BID_RED")) return "Нет прав на изменения";
+        String bidId = request.getParameter("bidId");
+        if (bidId == null) return "Нет данных по заявке";
+        Bid bid = getBid(bidId);
+        if (bid == null) return "Нет такой заявки";
+        String oilStorageInId = request.getParameter("oilStorage");
+        if (oilStorageInId == null || oilStorageInId.equals("-1")) return "нет данных о загрузке";
+        OilStorage oilStorageIn = oilStorageMvc.getOilStorage(oilStorageInId);
+        if (oilStorageIn == null) return "нет данных о таком месте загрузки";
+        String driverId = request.getParameter("driver");
+        if (driverId == null) return "нет данных о водителе";
+        Driver driver = driverMvc.getDriver(driverId);
+        if (driver == null) return "Водитель не найден";
+        String carId = request.getParameter("car");
+        if (carId == null || carId.equals("-1")) return "машина не указана";
+        Car car = carMvc.getCar(carId);
+        if (car == null) return "машина не найдена";
+        String trailerId = request.getParameter("trailerId");
+        if (trailerId == null) return "что-то не то с прицепом";
+        if (trailerId.equals("")) trailerId="-1";
+        Trailer trailer = trailerMvc.getTrailer(trailerId);
+        //if (trailer == null && !trailerId.equals("-1")) return "трейлер не найден";
+        String sql = "";
+        sql += "update bids set bid_date_last_update=now()";
+        sql += ", bid_storage_in_id='" + oilStorageIn.getIdOilStorage() + "'";
+        sql += ", bid_driver_id='" + driver.getIdDriver() + "'";
+        sql += ", bid_car_id='" + car.getId_car() + "'";
+        ArrayList<OilSections> carOilSections = car.getOilSections();
+        sql += addSqlForUpdateStringForBidRed(carOilSections, request);
+        if (trailer != null) {
+            sql += ", bid_trailer_id='" + trailer.getId_trailer() + "'";
+            ArrayList<OilSections> trailerOilSections = trailer.getOilSections();
+            sql += addSqlForUpdateStringForBidRed(trailerOilSections, request);
+        }
+        sql += " where id_bids=" + bid.getId_bid();
+        if (!dbMvc.getInsertResult(sql))
+            return "Данные сохранены";
+        return "неизвестная ошибка";
+    }
+
+    private String addSqlForUpdateStringForBidRed(ArrayList<OilSections> tmpOilSections, HttpServletRequest request) {
+        String sql = "";
+        if (tmpOilSections == null || request == null) return "";
+        for (OilSections oilSections : tmpOilSections) {
+            String oilTypeIdTmp = request.getParameter(oilSections.getId_section() + "_oilTypeId");
+            if (oilTypeIdTmp == null || oilTypeIdTmp.equals("-1")) continue;
+            String storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_storageOutId");
+            if (storageOutIdTmp == null || storageOutIdTmp.equals("-1")) continue;
+            //emptySectionFlag = false;
+            sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
+            sql += "='" + oilTypeIdTmp + "'";
+            sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
+            sql += "='" + storageOutIdTmp + "'";
+        }
+        return sql;
+    }
+
 }

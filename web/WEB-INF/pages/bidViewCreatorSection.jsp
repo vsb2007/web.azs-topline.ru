@@ -6,16 +6,20 @@
     <c:choose>
         <c:when test="${bidDetails.getDateOut()!=null}">
             <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
-            <c:set var="valT" value="${bidDetails.getTempOut()}" scope="application"/>
             <c:set var="valP" value="${bidDetails.getPlOut()}" scope="application"/>
             <c:set var="valV" value="${bidDetails.getVolumeOut()}" scope="application"/>
             <c:set var="valM" value="${bidDetails.getMassOut()}" scope="application"/>
         </c:when>
-        <c:otherwise>
-            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+        <c:when test="${bidDetails.getDateIn()!=null}">
             <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
             <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
             <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
+            <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+            <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
+            <c:set var="valV" value="${bidDetails.getSection().getVol()}" scope="application"/>
             <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
         </c:otherwise>
     </c:choose>

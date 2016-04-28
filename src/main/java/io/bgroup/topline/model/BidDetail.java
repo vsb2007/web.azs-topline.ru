@@ -151,6 +151,7 @@ public class BidDetail {
     }
 
     public ArrayList<BidDetail> getBidDetailList(String bidId, Object object) {
+        if (object == null) return null;
         ArrayList<OilSections> oilSectionsList = null;
         if (object instanceof Car) {
             oilSectionsList = ((Car) object).getOilSections();
@@ -278,10 +279,12 @@ public class BidDetail {
             if ((bid.getCreateUser().getName().equals(siteUser.getName()))
                     || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
                     || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetail.getDestination().getIdCompanyUnit()))
-                    || (siteUser.getPost()!=null && siteUser.getPost().getIdPost().equals("2"))
+                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost().equals("2"))
                     || (siteUser.getName().equals("admin"))
                     )
-                if (!bidDetail.isDone()) return false;
+                if (!bidDetail.isDone()) {
+                    return false;
+                }
         }
         return true;
     }

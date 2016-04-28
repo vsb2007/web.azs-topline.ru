@@ -8,10 +8,20 @@
     <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
                     && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
                     }">
-        <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
-        <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
-        <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
-        <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+        <c:choose>
+            <c:when test="${bidDetails.getDateIn()!=null}">
+                <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
+                <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
+                <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+                <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
+                <c:set var="valV" value="${bidDetails.getSection().getVol()}" scope="application"/>
+                <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+            </c:otherwise>
+        </c:choose>
     </c:if>
     <div class="grid-list">
         <div class="tile">

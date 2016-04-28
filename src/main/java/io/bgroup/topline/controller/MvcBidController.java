@@ -68,7 +68,6 @@ public class MvcBidController {
         model.addObject("bidsList", bidsArrayList);
         model.setViewName("bidListOpen");
         return model;
-
     }
 
     @RequestMapping(value = "bidlistopen")
@@ -96,7 +95,6 @@ public class MvcBidController {
         model.addObject("bidDetailsCar", bidDetailsCar);
         model.addObject("bidDetailsTrailer", bidDetailsTrailer);
         setViewNameForModel(model, siteUser, bid);
-
         return model;
     }
 
@@ -109,13 +107,11 @@ public class MvcBidController {
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
         boolean isCarSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsCar, bid, siteUser);
         boolean isTrailerSectionBidUp = bidDetailMvc.isSectionBidUp(bidDetailsTrailer, bid, siteUser);
-
         ArrayList<Car> carsList = carMvc.getCarsList();
         ArrayList<Driver> driversList = driverMvc.getDriverList();
         ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
         ArrayList<OilType> oilTypeList = oilTypeMvc.getOilTypesList();
         ArrayList<Trailer> trailersList = trailerMvc.getTrailersList();
-
         model.addObject("siteUser", siteUser);
         model.addObject("carsList", carsList);
         model.addObject("trailersList", trailersList);
@@ -128,7 +124,6 @@ public class MvcBidController {
         model.addObject("bidDetailsCar", bidDetailsCar);
         model.addObject("bidDetailsTrailer", bidDetailsTrailer);
         model.setViewName("bidRedCreator");
-
         return model;
     }
 
@@ -158,10 +153,8 @@ public class MvcBidController {
         model.addObject("bidDetailsCar", bidDetailsCar);
         model.addObject("bidDetailsTrailer", bidDetailsTrailer);
         setViewNameForModel(model, siteUser, bid);
-
         return model;
     }
-
 
     private void setViewNameForModel(ModelAndView model, SiteUser siteUser, Bid bid) {
         if (siteUser.getPost() == null || siteUser.getPost().getIdPost().equals("1")) {

@@ -35,7 +35,7 @@
                            value="${bidDetails.getOilType().getOilTypeName()}"
                            readonly>
                     <input type="hidden" class="text-input border-green-500"
-                           value="${oilType.getId_oilType()}"
+                           value="${bidDetails.getOilType().getId_oilType()}"
                            name="${bidDetails.getSection().getId_section()}_oilTypeId"
                            readonly>
                 </c:when>
