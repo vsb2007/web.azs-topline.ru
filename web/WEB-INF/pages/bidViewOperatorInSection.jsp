@@ -1,28 +1,22 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
-<c:if test="${(siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
-                    || (!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
-                    &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
-                    }">
+<c:if test="${siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())}">
     <c:set var="valT" value="" scope="application"/>
     <c:set var="valP" value="" scope="application"/>
-    <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
-                    && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
-                    }">
-        <c:choose>
-            <c:when test="${bidDetails.getDateIn()!=null}">
-                <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
-                <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
-                <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
-                <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
-            </c:when>
-            <c:otherwise>
-                <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
-                <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
-                <c:set var="valV" value="${bidDetails.getSection().getVol()}" scope="application"/>
-                <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
-            </c:otherwise>
-        </c:choose>
-    </c:if>
+    <c:choose>
+        <c:when test="${bidDetails.getDateIn()!=null && !bidDetails.getDateIn().equals(\"\")}">
+            <c:set var="valT" value="${bidDetails.getTempIn()}" scope="application"/>
+            <c:set var="valP" value="${bidDetails.getPlIn()}" scope="application"/>
+            <c:set var="valV" value="${bidDetails.getVolumeIn()}" scope="application"/>
+            <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="valT" value="" scope="application"/>
+            <c:set var="valP" value="" scope="application"/>
+            <c:set var="valV" value="${bidDetails.getSection().getVol()}" scope="application"/>
+            <c:set var="valM" value="" scope="application"/>
+        </c:otherwise>
+    </c:choose>
+
     <div class="grid-list">
         <div class="tile">
             <input type="text" class="text-input border-green-500"

@@ -561,7 +561,7 @@ public class Bid {
         sql += " where id_bids=" + bid.getId_bid();
         if (!dbMvc.getInsertResult(sql))
             return "Данные сохранены";
-        return "неизвестная ошибка";
+        return "неизвестная ошибка редактирования заявки";
     }
 
     private String addSqlForUpdateStringForBidRed(ArrayList<OilSections> tmpOilSections, HttpServletRequest request) {
@@ -569,14 +569,20 @@ public class Bid {
         if (tmpOilSections == null || request == null) return "";
         for (OilSections oilSections : tmpOilSections) {
             String oilTypeIdTmp = request.getParameter(oilSections.getId_section() + "_oilTypeId");
-            if (oilTypeIdTmp == null || oilTypeIdTmp.equals("-1")) continue;
             String storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_storageOutId");
-            if (storageOutIdTmp == null || storageOutIdTmp.equals("-1")) continue;
-            //emptySectionFlag = false;
-            sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
-            sql += "='" + oilTypeIdTmp + "'";
-            sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
-            sql += "='" + storageOutIdTmp + "'";
+            if (oilTypeIdTmp == null || oilTypeIdTmp.equals("-1") || storageOutIdTmp == null || storageOutIdTmp.equals("-1")){
+                sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
+                sql += "=null";
+                sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
+                sql += "=null";
+            }
+            else {
+                //emptySectionFlag = false;
+                sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
+                sql += "='" + oilTypeIdTmp + "'";
+                sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
+                sql += "='" + storageOutIdTmp + "'";
+            }
         }
         return sql;
     }

@@ -42,7 +42,7 @@
                 <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze().equals(\"0\")}">
                     <select class="dropdown-menu" id="${bidDetails.getSection().getId_section()}_oilTypeId"
                             name="${bidDetails.getSection().getId_section()}_oilTypeId">
-                        <option value=\"-1\">Пустая секция</option>
+                        <option value="-1">Пустая секция</option>
                         <c:forEach items="${oilTypeList}" var="oilType">
                             <c:choose>
                                 <c:when test="${bidDetails.getOilType().getId_oilType().equals(oilType.getId_oilType())}">
