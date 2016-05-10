@@ -49,7 +49,7 @@ public class OilStorage {
 
     public ArrayList<OilStorage> getOilStorageList() {
         ArrayList<OilStorage> oilStorageList = null;
-        String sql = "select * from company_unit where Block='0'";
+        String sql = "select * from company_unit where Block='0' order by company_unit_name desc";
         oilStorageList = getOilStorageFromDbSelect(sql);
         return oilStorageList;
     }

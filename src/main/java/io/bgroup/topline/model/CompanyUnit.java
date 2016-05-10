@@ -61,7 +61,7 @@ public class CompanyUnit {
 
     public ArrayList<CompanyUnit> getCompanyUnitList(String companyId) {
         ArrayList<CompanyUnit> companyUnitList = null;
-        String sql = "select * from company_unit where company_id = '" + companyId + "'";
+        String sql = "select * from company_unit where company_id = '" + companyId + "' order by company_unit_name";
         companyUnitList = getCompanyUnitFromDbSelect(sql);
         return companyUnitList;
     }
