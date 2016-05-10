@@ -160,5 +160,8 @@ public class MvcBidController {
             if (siteUser.getCompanyUnit() != null && !siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
                 model.setViewName("bidViewOperatorOut");
         }
+        else if (siteUser.getPost() != null && siteUser.getPost().getIdPost().equals("4")) {
+            model.setViewName("bidViewWatcher");
+        }
     }
 }

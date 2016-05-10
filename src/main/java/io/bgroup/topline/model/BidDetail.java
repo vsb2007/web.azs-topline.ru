@@ -279,6 +279,7 @@ public class BidDetail {
                     || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
                     || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetail.getDestination().getIdCompanyUnit()))
                     || (siteUser.getPost() != null && siteUser.getPost().getIdPost().equals("2"))
+                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost().equals("4"))
                     || (siteUser.getName().equals("admin"))
                     )
                 if (!bidDetail.isDone()) {

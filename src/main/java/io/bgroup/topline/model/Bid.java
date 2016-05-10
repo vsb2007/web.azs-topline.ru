@@ -321,6 +321,8 @@ public class Bid {
             sql = "select * from bids where bid_is_close='0'";
         } else if (siteUserTmp.getPost().getIdPost().equals("1")) { //  руководитель
             sql = "select * from bids where bid_is_close='0' and bid_create_user_id = '" + siteUserTmp.getId() + "'";
+        } else if (siteUserTmp.getPost().getIdPost().equals("4")) { //  наблюдатель
+            sql = "select * from bids where bid_is_close='0'";
         } else if (siteUserTmp.getPost().getIdPost().equals("2")) { //Водитель
             sql = "select * from bids where bid_is_close='0' and bid_driver_id = '" + siteUserTmp.getId() + "'";
         } else if (siteUserTmp.getPost().getIdPost().equals("3")) { //Оператор
@@ -570,13 +572,12 @@ public class Bid {
         for (OilSections oilSections : tmpOilSections) {
             String oilTypeIdTmp = request.getParameter(oilSections.getId_section() + "_oilTypeId");
             String storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_storageOutId");
-            if (oilTypeIdTmp == null || oilTypeIdTmp.equals("-1") || storageOutIdTmp == null || storageOutIdTmp.equals("-1")){
+            if (oilTypeIdTmp == null || oilTypeIdTmp.equals("-1") || storageOutIdTmp == null || storageOutIdTmp.equals("-1")) {
                 sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
                 sql += "=null";
                 sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
                 sql += "=null";
-            }
-            else {
+            } else {
                 //emptySectionFlag = false;
                 sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
                 sql += "='" + oilTypeIdTmp + "'";

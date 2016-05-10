@@ -7,7 +7,7 @@
 <sec:authorize access="hasRole('ROLE_BID_VIEW')">
     <div class="section">
             ${message}
-                Watcher
+                Driver
     </div>
 
     <div class="section">
@@ -22,8 +22,6 @@
                    name="driver" value="${bid.getDriver().getDriverFio()}" readonly> <br>
             <input type="text" class="text-input border-green-500" placeholder="Машина" required
                    name="car" value="${bid.getCar().getCar_name()}" readonly> <br>
-            <input type="text" class="text-input border-green-500" placeholder="Прицеп" required
-                   name="trailer" value="${bid.getTrailer().getTrailer_number()}" readonly> <br>
             <input type="text" class="text-input border-green-500" placeholder="Прицеп" required
                    name="trailer" value="${bid.getTrailer().getTrailer_number()}" readonly> <br>
             <br>
