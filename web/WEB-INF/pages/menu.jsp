@@ -9,8 +9,10 @@
     <ul class="menu">
 
         <li class="divider"></li>
-        <sec:authorize access="hasRole('ROLE_ADMIN')">
+        <sec:authorize access="hasRole('ROLE_USERS')">
             <li ripple><a href="users"><i class="icon-input"></i>Пользователи</a></li>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_COMPANY_LIST')">
             <li ripple><a href="company"><i class="icon-input"></i>Организации</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
