@@ -15,7 +15,7 @@
         <c:set var="readonlyTmp" value="" scope="application"/>
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
-                   name="bidNumber" value="${bid.getName()}" readonly> <br>
+                   name="bidNumber" value="${bid.getId_bid()}" readonly> <br>
             <input type="text" class="text-input border-green-500" placeholder="Точка загрузки" required
                    name="oilStorageIn" value="${bid.getOilStorageIn().getOilStorageName()}" readonly> <br>
             <input type="text" class="text-input border-green-500" placeholder="Водитель" required

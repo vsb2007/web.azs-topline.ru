@@ -196,7 +196,7 @@ public class Bid {
         if (siteUser == null) return "Error: Ошибка Авторизации";
         if (!siteUser.isUserHasRole(principal, "ROLE_BID_CREATE")) return "Error: не достаточно прав";
         //считываем основные параметры
-        String bidNumber = request.getParameter("bidNumber").toString();
+        //String bidNumber = request.getParameter("bidNumber").toString(); // отключил
         String oilStorageId = request.getParameter("oilStorage").toString();
         String driverId = request.getParameter("driver").toString();
         String carId = request.getParameter("car");
@@ -229,10 +229,12 @@ public class Bid {
             columns = strPlusCommaPlusValue(columns, "bid_create_user_id");
             values = strPlusCommaPlusValue(values, "'" + siteUser.getId() + "'");
         }
+        /*
         if (bidNumber != null) {
             columns = strPlusCommaPlusValue(columns, "bid_number");
             values = strPlusCommaPlusValue(values, "'" + bidNumber + "'");
         }
+        */
         {
             //дата создания, она же дата последнего апдейта
             columns = strPlusCommaPlusValue(columns, "bid_date_create");
@@ -276,12 +278,16 @@ public class Bid {
         if (emptySectionFlag) return "Error: секции пусты";
         sql += "(" + columns + ") values (" + values + ")";
         if (!dbMvc.getInsertResult(sql)) {
-            try {
-                if (bidNumber != null && !bidNumber.equals(""))
+            /*
+            уведомление по email пока не требуется
+             */
+         /*   try {
+
                     new SendEmail().sendMail(driver);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            */
             return "Заявка создана";
         } else return "Неизвестная ошибка добавления заявки";
     }
@@ -342,6 +348,7 @@ public class Bid {
         }
         if (sql == null) return null;
         ArrayList<Bid> bidsList = null;
+        sql += " order by id_bids";
         bidsList = getBidsFromDbSelect(sql);
         setDoneForBid(bidsList, siteUserTmp);
         return bidsList;

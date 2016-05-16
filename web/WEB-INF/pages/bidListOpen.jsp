@@ -26,7 +26,7 @@
                         <input value="${bid.getId_bid()}" name="bidIdButton" id="bidIdButton${bid.getId_bid()}"
                                type="hidden">
                         <button class="button raised color-white ${bgColor}" type="submit" style="width: 15em;">
-                            <span class="item-text">${bid.getName()}
+                            <span class="item-text">${bid.getId_bid()}
 			                    <span class="secondary-text">${bid.getCreateUser().getName()} ${bid.getDriver().getDriverFio()}</span>
 		                    </span>
                         </button>

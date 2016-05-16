@@ -8,9 +8,6 @@
     <div class="section">
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
             <form action="bidcreateform" method="post">
-                <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
-                       name="bidNumber"
-                       id="bidName"> <br>
                 <select class="dropdown-menu" id="oilStorage" name="oilStorage" onchange="">
                     <option value="-1">Пункт загрузки</option>
                     <c:forEach items="${oilStorageList}" var="oilStorage">
