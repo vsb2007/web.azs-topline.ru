@@ -9,17 +9,21 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 public class ExceptionHandlerController {
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e) {
-        return "login";// view name for 404 error
+        //return "login";// view name for 404 error
+        System.out.println("404 - 1"); // not login to this point
+        return "redirect:/index?logout";
     }
 
-   /* @ExceptionHandler(NoHandlerFoundException.class)
+    @ExceptionHandler(NoHandlerFoundException.class)
     public String handle(Exception ex) {
-        return "redirect:/404";
+        System.out.println("404 - 2"); // not login to this point
+        return "redirect:/index?logout";
     }
-
+    /*
     @RequestMapping(value = {"/404"})
     public String NotFoundPage() {
         return "login";
 
     }*/
+
 }

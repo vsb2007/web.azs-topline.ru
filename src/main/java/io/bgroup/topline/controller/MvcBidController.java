@@ -172,8 +172,8 @@ public class MvcBidController {
         return "redirect:index?logout";
     }
 
-    @RequestMapping(value = "/404")
+    @RequestMapping(value = "/**")
     public String pageNotFound() {
-        return "redirect:index?logout";
+        return "redirect:/index?logout";
     }
 }
