@@ -441,7 +441,7 @@ public class Bid {
                 } else bid.setBid_date_done(null);
             } else if (pair.getKey().equals("bid_date_create")) {
                 if (pair.getValue() != null) {
-                    bid.setBid_date_create((String) pair.getValue().toString());
+                    bid.setBid_date_create((String) pair.getValue().toString().split(" ")[0]);
                 } else bid.setBid_date_create(null);
             } else if (pair.getKey().equals("bid_date_last_update")) {
                 if (pair.getValue() != null) {

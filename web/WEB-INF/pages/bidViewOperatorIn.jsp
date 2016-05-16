@@ -33,7 +33,7 @@
                 <c:set var="submitButtonValue" value="Принять топливо" scope="application"/>
             </c:if>
             <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
-                   name="bidNumber" value="${bid.getId_bid()}" readonly> <br>
+                   name="bidNumber" value="Заявка №${bid.getId_bid()}" readonly> <br>
             <input type="text" class="text-input border-green-500" placeholder="Точка загрузки" required
                    name="oilStorageIn" value="${bid.getOilStorageIn().getOilStorageName()}" readonly> <br>
             <input type="text" class="text-input border-green-500" placeholder="Водитель" required

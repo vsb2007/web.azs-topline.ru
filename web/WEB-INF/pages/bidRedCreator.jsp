@@ -14,7 +14,7 @@
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <form action="javascript:void(null);" method="post" id="bidRedUpdateForm" onsubmit="sendFormForBidRed()">
                 <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
-                       name="bidNumber" value="${bid.getId_bid()}" readonly> <br>
+                       name="bidNumber" value="Заявка №${bid.getId_bid()}" readonly> <br>
                 <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
                     <select class="dropdown-menu" id="oilStorage" name="oilStorage" onchange="">
                         <c:forEach items="${oilStorageList}" var="oilStorage">

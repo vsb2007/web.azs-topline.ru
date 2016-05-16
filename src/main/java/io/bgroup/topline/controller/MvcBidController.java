@@ -66,7 +66,9 @@ public class MvcBidController {
     @RequestMapping(value = "bidlistopen")
     public ModelAndView bidlistopen(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        //long i = System.currentTimeMillis();
         ArrayList<Bid> bidsArrayList = bidMvc.getBidsList(principal);
+        //System.out.println(System.currentTimeMillis()-i);
         model.addObject("bidsList", bidsArrayList);
         model.setViewName("bidListOpen");
         return model;
