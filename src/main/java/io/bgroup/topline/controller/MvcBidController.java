@@ -166,4 +166,14 @@ public class MvcBidController {
             model.setViewName("bidViewWatcher");
         }
     }
+
+    // for 403 access denied page
+    @RequestMapping(value = "/403")
+    public String accessDenied() {
+        return "redirect:index?logout";
+    }
+    @RequestMapping(value = "/404")
+    public String pageNotFound() {
+        return "redirect:index?logout";
+    }
 }

@@ -7,7 +7,7 @@
 <sec:authorize access="hasRole('ROLE_BID_VIEW')">
     <div class="section">
             ${message}
-                Driver
+                Watcher
     </div>
 
     <div class="section">
@@ -28,11 +28,11 @@
             Доставка:<br>
             Секции на машине:<br>
             <c:forEach items="${bidDetailsCar}" var="bidDetails">
-                <%@ include file="bidViewDriverSection.jsp" %>
+                <%@ include file="bidViewWatcherSection.jsp" %>
             </c:forEach>
             Секции на прицепе:<br>
             <c:forEach items="${bidDetailsTrailer}" var="bidDetails">
-                <%@ include file="bidViewDriverSection.jsp" %>
+                <%@ include file="bidViewWatcherSection.jsp" %>
             </c:forEach>
         </c:if>
     </div>

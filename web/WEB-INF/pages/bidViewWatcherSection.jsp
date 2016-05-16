@@ -5,4 +5,8 @@
 <input type="text" class="text-input border-green-500"
        value="${bidDetails.getOilType().getOilTypeName()}" readonly>&nbsp;
 <input type="text" class="text-input border-green-500"
-       value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>&nbsp;<br>
+       value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>&nbsp;
+<input type="text" class="text-input border-green-500"
+       value="${bidDetails.getDateIn()}" placeholder="Время загрузки" readonly>&nbsp;
+<input type="text" class="text-input border-green-500"
+       value="${bidDetails.getDateOut()}" placeholder="Время отгрузки" readonly>&nbsp;<br>
