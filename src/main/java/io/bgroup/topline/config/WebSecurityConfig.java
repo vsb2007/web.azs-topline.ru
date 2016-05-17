@@ -43,25 +43,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authoritiesByUsernameQuery("SELECT username,role FROM user_roles WHERE username=?");
     }
 
-/*
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
-        auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN");
-        auth.inMemoryAuthentication().withUser("superadmin").password("superadmin").roles("SUPERADMIN");
-    }
-    */
+    /*
+        @Autowired
+        public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+            auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
+            auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN");
+            auth.inMemoryAuthentication().withUser("superadmin").password("superadmin").roles("SUPERADMIN");
+        }
+        */
     @Bean
     public PasswordEncoder passwordEncoder() {
-    return bCryptPasswordEncoder;
-}
+        return bCryptPasswordEncoder;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         CharacterEncodingFilter filter = new CharacterEncodingFilter();
         filter.setEncoding("UTF-8");
         filter.setForceEncoding(true);
-        http.addFilterBefore(filter,CsrfFilter.class);
+        http.addFilterBefore(filter, CsrfFilter.class);
         //http.csrf().disable();
         http
                 .authorizeRequests()
@@ -80,7 +80,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .exceptionHandling().accessDeniedPage("/403")
-
         ;
     }
 
