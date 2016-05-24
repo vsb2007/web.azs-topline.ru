@@ -21,6 +21,7 @@ import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.velocity.VelocityViewResolver;
 
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 
 @Configuration
 @EnableWebMvc

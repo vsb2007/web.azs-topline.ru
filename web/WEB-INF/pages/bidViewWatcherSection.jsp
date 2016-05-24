@@ -9,4 +9,4 @@
 <input type="text" class="text-input border-green-500"
        value="${bidDetails.getDateIn()}" placeholder="Время загрузки" readonly>&nbsp;
 <input type="text" class="text-input border-green-500"
-       value="${bidDetails.getDateOut()}" placeholder="Время отгрузки" readonly>&nbsp;<br>
+       value="${bidDetails.getDateOut()}" placeholder="Время слива" readonly>&nbsp;<br>
