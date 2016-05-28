@@ -7,10 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by VSB on 18.04.2016.
- * ToplineWeb.2.5
- */
 public class BidDetail {
     private OilSections section;
     private OilType oilType;

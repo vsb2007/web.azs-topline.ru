@@ -30,7 +30,7 @@
         </div>
         <div class="tile">
             <c:choose>
-                <c:when test="${bidDetails.isDone() || !bid.getBid_is_freeze().equals(\"0\")}">
+                <c:when test="${bidDetails.isDone() || bid.getBid_is_freeze()!=0}">
                     <input type="text" class="text-input border-green-500"
                            value="${bidDetails.getOilType().getOilTypeName()}"
                            readonly>
@@ -39,7 +39,7 @@
                            name="${bidDetails.getSection().getId_section()}_oilTypeId"
                            readonly>
                 </c:when>
-                <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze().equals(\"0\")}">
+                <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze()==0}">
                     <select class="dropdown-menu" id="${bidDetails.getSection().getId_section()}_oilTypeId"
                             name="${bidDetails.getSection().getId_section()}_oilTypeId">
                         <option value="-1">Пустая секция</option>

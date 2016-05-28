@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <c:if test="${(bid.getCreateUser().getName().equals(siteUser.getName()))
                     || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
-                    || (!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
+                    || (bid.getBid_is_freeze()!=0 && siteUser.getCompanyUnit()!=null
                     &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
                     || siteUser.getPost().getIdPost().equals(\"2\")
                     }">

@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +39,14 @@ public class SiteUser {
     Role roleMvc;
 
     public SiteUser() {
+    }
 
+    public String getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(String isDelete) {
+        this.isDelete = isDelete;
     }
 
     public ArrayList<Role> getRolesList() {
@@ -57,7 +66,8 @@ public class SiteUser {
     }
 
     public enum usersTableField {
-        id_user, username, password, user_fio, user_phone, user_email, enabled, user_is_delete
+        id_user, username, password, user_fio, user_phone, user_email, enabled, user_is_delete,
+        user_post_id, user_company_unit_id
     }
 
     public void setName(String name) {
@@ -140,8 +150,13 @@ public class SiteUser {
     private SiteUser findSiteUser(String name) {
         SiteUser findUser = null;
         String sql;
+        String sql2;
         List<Map<String, Object>> findUsersList = null;
+        //ResultSet findUsersList2 = null;
+
         if (name != null) {
+            ArrayList<Object> arrayList = new ArrayList<Object>();
+            arrayList.add(name);
             sql = "select * from users where username='" + name + "'";
             findUsersList = dbMvc.getSelectResult(sql);
         }
@@ -176,6 +191,57 @@ public class SiteUser {
             }
         }
         return findUser;
+    }
+
+    private SiteUser getSiteUserFromDbSelect(ResultSet findUsersSet) {
+        if (findUsersSet == null) return null;
+        SiteUser redUser = new SiteUser();
+        String idUser = null;
+        String userName = null;
+        String userEmail = null;
+        String userFio = null;
+        String userPhone = null;
+        String userEnabled = null;
+        String userPostId = null;
+        String userCompanyUnitId = null;
+        try {
+            if (findUsersSet.next()) {
+                idUser = findUsersSet.getString(usersTableField.id_user.toString());
+                userName = findUsersSet.getString(usersTableField.username.toString());
+                userEmail = findUsersSet.getString(usersTableField.user_email.toString());
+                userFio = findUsersSet.getString(usersTableField.user_fio.toString());
+                userPhone = findUsersSet.getString(usersTableField.user_phone.toString());
+                userEnabled = findUsersSet.getString(usersTableField.enabled.toString());
+                userPostId = findUsersSet.getString(usersTableField.user_post_id.toString());
+                userCompanyUnitId = findUsersSet.getString(usersTableField.user_company_unit_id.toString());
+
+                System.out.println("user " + idUser + " \n" +
+                        userName + "\n" +
+                        userEmail + "\n" +
+                        userFio + "\n" +
+                        userPhone + "\n" +
+                        userEnabled + "\n" +
+                        userPostId + "\n" +
+                        userCompanyUnitId);
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+/*
+        redUser.setId(idUser);
+        redUser.setName(userName);
+        redUser.setEmail(userEmail);
+        redUser.setFio(userFio);
+        redUser.setPhone(userPhone);
+        redUser.setIsEnable(userEnabled);
+        redUser.setPost(postMvc.getPost(userPostId));
+        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(userCompanyUnitId));
+
+        return redUser;
+        */
+        return null;
     }
 
     private SiteUser findUser(HttpServletRequest request) {
@@ -411,8 +477,7 @@ public class SiteUser {
         int userIdInt = -1;
         try {
             userIdInt = Integer.parseInt(userId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             userIdInt = -1;
         }
         String role = (String) request.getParameter("role").toString();
@@ -425,10 +490,10 @@ public class SiteUser {
             dbMvc.getInsertResult(sql);
             sql = "insert into user_roles (role,username) values ('" + role + "','" + siteUserTmp.getName() + "')";
             dbMvc.getInsertResult(sql);
-        }else if (operation.equals("remove")) {
+        } else if (operation.equals("remove")) {
             sql = "delete from user_roles where username = '" + siteUserTmp.getName() + "' and role = '" + role + "';";
             dbMvc.getInsertResult(sql);
-        }else return "что-то не так";
+        } else return "что-то не так";
 
         return "Ok";
     }

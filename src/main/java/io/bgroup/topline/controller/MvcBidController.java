@@ -78,6 +78,12 @@ public class MvcBidController {
     public ModelAndView bidView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         Bid bid = bidMvc.getBidForView(principal, request);
+        //if (bid.getBid_is_freeze().equals("true")){
+        if (bid.getBid_is_freeze() != 0) {
+            System.out.println("freeze\n");
+        } else {
+            System.out.println("not Freeze " + bid.getBid_is_freeze() + "\n");
+        }
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());

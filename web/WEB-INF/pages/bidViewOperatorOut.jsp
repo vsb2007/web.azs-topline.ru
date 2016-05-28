@@ -17,12 +17,12 @@
                 <c:if test="${(isCarSectionBidUp==false || bidDetailsCar==null || (isCarSectionBidUp==true && bidDetailsCar!=null && (isTrailerSectionBidUp==false && bidDetailsTrailer!=null)))
                         && (isTrailerSectionBidUp==false || bidDetailsTrailer==null || (isTrailerSectionBidUp==true && bidDetailsTrailer!=null && (isCarSectionBidUp==false && bidDetailsCar!=null)))}">
 
-                    <c:if test="${bid.getBid_is_freeze() !=null && !bid.getBid_is_freeze().equals(\"0\")}">
+                    <c:if test="${bid.getBid_is_freeze() !=null && bid.getBid_is_freeze()!=0}">
                         <form action="bidUpdate" method="post">
                     </c:if>
                 </c:if>
             </sec:authorize>
-            <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
+            <c:if test="${bid.getBid_is_freeze()!=0}">
                 <c:set var="freeze" value="out" scope="application"/>
                 <c:set var="submitButtonValue" value="Принять топливо" scope="application"/>
             </c:if>
@@ -37,7 +37,7 @@
             <input type="text" class="text-input border-green-500" placeholder="Прицеп" required
                    name="trailer" value="${bid.getTrailer().getTrailer_number()}" readonly> <br>
             <br>
-            <c:if test="${bid.getBid_is_freeze() !=null && !bid.getBid_is_freeze().equals(\"0\")}">
+            <c:if test="${bid.getBid_is_freeze() !=null && bid.getBid_is_freeze()!=0}">
                 Доставка:<br>
                 Секции на машине:<br>
                 <c:forEach items="${bidDetailsCar}" var="bidDetails">
@@ -53,7 +53,7 @@
                         <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
                         <input type="hidden" name="bidId" value="${bid.getId_bid()}">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
-                        <c:if test="${bid.getBid_is_freeze()!=null && !bid.getBid_is_freeze().equals(\"0\")}">
+                        <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()!=0}">
                             </form>
                         </c:if>
                     </c:if>

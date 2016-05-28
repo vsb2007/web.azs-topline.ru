@@ -12,7 +12,7 @@
     <div class="section">
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
-        <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
+        <c:if test="${bid.getBid_is_freeze()!=0 && siteUser.getCompanyUnit()!=null
                     && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
                     && !siteUser.getName().equals(\"admin\")
                     }">
@@ -21,15 +21,15 @@
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
                 <c:if test="${!readonlyTmp.equals(\"readonly\") && bid.getBid_is_freeze()!=null
-                                && bid.getBid_is_freeze().equals(\"0\")}">
+                                && bid.getBid_is_freeze()==0}">
                     <form action="bidUpdate" method="post">
                 </c:if>
             </sec:authorize>
-            <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
+            <c:if test="${bid.getBid_is_freeze()==0}">
                 <c:set var="freeze" value="in" scope="application"/>
                 <c:set var="submitButtonValue" value="Отпустить топливо" scope="application"/>
             </c:if>
-            <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
+            <c:if test="${bid.getBid_is_freeze()!=0}">
                 <c:set var="freeze" value="out" scope="application"/>
                 <c:set var="submitButtonValue" value="Принять топливо" scope="application"/>
             </c:if>
@@ -56,7 +56,7 @@
 
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
                 <c:if test="${!readonlyTmp.equals(\"readonly\") && bid.getBid_is_freeze()!=null
-                                && bid.getBid_is_freeze().equals(\"0\")}">
+                                && bid.getBid_is_freeze()==0}">
                     <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
                     <input type="hidden" name="bidId" value="${bid.getId_bid()}">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>

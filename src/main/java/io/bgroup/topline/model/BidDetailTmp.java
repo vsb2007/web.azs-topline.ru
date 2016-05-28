@@ -12,8 +12,6 @@ import java.util.Map;
  * ToplineWeb.2.5
  */
 public class BidDetailTmp {
-
-
     private String bid_car_sec_1_oilType_id;
     private String bid_car_sec_1_storageOut_id;
     private String bid_car_sec_2_oilType_id;

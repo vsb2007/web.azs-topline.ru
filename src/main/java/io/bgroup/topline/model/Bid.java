@@ -17,10 +17,11 @@ public class Bid {
     private Driver driver;
     private Car car;
     private Trailer trailer;
+    private String fileLink;
     //private ArrayList<BidDetail> bidDetailList;
 
     private String bid_date_freeze;
-    private String bid_is_freeze;
+    private int bid_is_freeze;
     private String bid_date_close;
     private String bid_is_close;
     private String bid_is_done;
@@ -103,11 +104,11 @@ public class Bid {
         this.bid_date_freeze = bid_date_freeze;
     }
 
-    public String getBid_is_freeze() {
+    public int getBid_is_freeze() {
         return bid_is_freeze;
     }
 
-    public void setBid_is_freeze(String bid_is_freeze) {
+    public void setBid_is_freeze(int bid_is_freeze) {
         this.bid_is_freeze = bid_is_freeze;
     }
 
@@ -421,8 +422,8 @@ public class Bid {
                 } else bid.setBid_date_freeze(null);
             } else if (pair.getKey().equals("bid_is_freeze")) {
                 if (pair.getValue() != null) {
-                    bid.setBid_is_freeze(pair.getValue().toString());
-                } else bid.setBid_is_freeze(null);
+                    bid.setBid_is_freeze((Integer) pair.getValue());
+                } else bid.setBid_is_freeze(0);
             } else if (pair.getKey().equals("bid_date_close")) {
                 if (pair.getValue() != null) {
                     bid.setBid_date_close(pair.getValue().toString());
@@ -487,7 +488,8 @@ public class Bid {
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
         String sql = "update bids set ";
         String suffix = "";
-        if (bid.getBid_is_freeze().equals("0")) {
+        //if (bid.getBid_is_freeze().equals("0")) {
+        if (bid.getBid_is_freeze() == 0) {
             suffix = "in";
             sql += "bid_date_freeze=now(), bid_is_freeze='1',";
         } else suffix = "out";

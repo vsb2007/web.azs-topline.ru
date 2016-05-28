@@ -15,7 +15,7 @@
             <form action="javascript:void(null);" method="post" id="bidRedUpdateForm" onsubmit="sendFormForBidRed()">
                 <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
                        name="bidNumber" value="Заявка №${bid.getId_bid()}" readonly> <br>
-                <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
+                <c:if test="${bid.getBid_is_freeze()==0}">
                     <select class="dropdown-menu" id="oilStorage" name="oilStorage" onchange="">
                         <c:forEach items="${oilStorageList}" var="oilStorage">
                             <c:if test="${oilStorage.getIdOilStorage().equals(bid.getOilStorageIn().getIdOilStorage())}">
@@ -28,7 +28,7 @@
                         </c:forEach>
                     </select>
                 </c:if>
-                <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
+                <c:if test="${bid.getBid_is_freeze()!=0}">
                     <input type="text" class="text-input border-green-500" placeholder="Точка загрузки" required
                            name="oilStorageName" value="${bid.getOilStorageIn().getOilStorageName()}" readonly>
                     <input type="hidden" required
@@ -46,7 +46,7 @@
                 </select><br>
                     <%-- машина --%>
                     <%-- Топливо НЕ отпущено --%>
-                <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
+                <c:if test="${bid.getBid_is_freeze()==0}">
                     <select class="dropdown-menu" id="car" name="car" onchange="onCarSelect(this)">
                         <option value="-1">Выбрать машину</option>
                         <c:forEach items="${carsList}" var="car">
@@ -60,7 +60,7 @@
                     </select><br>
                 </c:if>
                     <%-- Топливо отпущено --%>
-                <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
+                <c:if test="${bid.getBid_is_freeze()!=0}">
                     <c:if test="${bidDetailsCar!=null}">
                         <input type="text" class="text-input border-green-500" placeholder="Машина" required
                                value="${bid.getCar().getCar_name()}" readonly> <br>
@@ -83,7 +83,7 @@
                 </c:if>
                     <%-- прицеп --%>
                     <%-- Топливо НЕ отпущено --%>
-                <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
+                <c:if test="${bid.getBid_is_freeze()==0}">
                     <select class="dropdown-menu" id="trailerId" name="trailerId" onchange="onTrailerSelect(this)">
                         <option value="-1">Выбрать прицеп</option>
                         <c:forEach items="${trailersList}" var="trailer">
@@ -100,7 +100,7 @@
                     </select>
                 </c:if>
                     <%-- Топливо отпущено --%>
-                <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
+                <c:if test="${bid.getBid_is_freeze()!=0}">
                     <input type="text" class="text-input border-green-500" placeholder="Прицеп" required
                            name="trailer" value="${bid.getTrailer().getTrailer_number()}" readonly>
                     <input type="hidden" class="text-input border-green-500" placeholder="Прицеп" required

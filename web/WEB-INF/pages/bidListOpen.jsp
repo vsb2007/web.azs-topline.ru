@@ -12,10 +12,10 @@
     <div class="section">
         <ul class="list">
             <c:forEach items="${bidsList}" var="bid">
-                <c:if test="${bid.getBid_is_freeze() !=null && bid.getBid_is_freeze().equals(\"0\")}">
+                <c:if test="${bid.getBid_is_freeze() !=null && bid.getBid_is_freeze()==0}">
                     <c:set var="bgColor" value="bg-blue-500" scope="application"/>
                 </c:if>
-                <c:if test="${bid.getBid_is_freeze() !=null && !bid.getBid_is_freeze().equals(\"0\")}">
+                <c:if test="${bid.getBid_is_freeze() !=null && bid.getBid_is_freeze()!=0}">
                     <c:set var="bgColor" value="bg-red-500" scope="application"/>
                 </c:if>
                 <c:if test="${bid.isDone()}">

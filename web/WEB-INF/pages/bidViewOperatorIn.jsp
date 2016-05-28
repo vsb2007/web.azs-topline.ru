@@ -13,7 +13,7 @@
             <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
-        <c:if test="${!bid.getBid_is_freeze().equals(\"0\") && siteUser.getCompanyUnit()!=null
+        <c:if test="${bid.getBid_is_freeze()!=0 && siteUser.getCompanyUnit()!=null
                     && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
                     }">
             <c:set var="readonlyTmp" value="readonly" scope="application"/>
@@ -24,11 +24,11 @@
                     <form action="bidUpdate" method="post">
                 </c:if>
             </sec:authorize>
-            <c:if test="${bid.getBid_is_freeze().equals(\"0\")}">
+            <c:if test="${bid.getBid_is_freeze()==0}">
                 <c:set var="freeze" value="in" scope="application"/>
                 <c:set var="submitButtonValue" value="Отпустить топливо" scope="application"/>
             </c:if>
-            <c:if test="${!bid.getBid_is_freeze().equals(\"0\")}">
+            <c:if test="${bid.getBid_is_freeze()!=0}">
                 <c:set var="freeze" value="out" scope="application"/>
                 <c:set var="submitButtonValue" value="Принять топливо" scope="application"/>
             </c:if>
