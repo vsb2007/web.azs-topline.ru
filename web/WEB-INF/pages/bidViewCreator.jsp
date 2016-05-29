@@ -73,6 +73,6 @@
             </sec:authorize>
         </c:if>
     </div>
-    <script src="js/bidCreate.js"></script>
+    <script src="js/bidUpdate.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>
