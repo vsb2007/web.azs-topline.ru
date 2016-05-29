@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +52,8 @@ public class Bid {
     private DbModel dbMvc;
     @Autowired
     private BidDetail bidDetailMvc;
-
+    @Autowired
+    private MyConstant myConstantMvc;
 
     public SiteUser getCreateUser() {
         return createUser;
@@ -597,4 +599,14 @@ public class Bid {
         return sql;
     }
 
+    public boolean isPdfFileExist() {
+        String filename = "";
+        filename = myConstantMvc.getFileFolder() + myConstantMvc.getFilePrefix() + "_" + this.getId_bid()
+                + "_" + this.getBid_date_create().replace("-", "") + ".pdf";
+        File f = new File(filename);
+        if(f.exists() && !f.isDirectory()) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -1,6 +1,7 @@
 package io.bgroup.topline.controller;
 
 import io.bgroup.topline.model.*;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +11,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 @Controller
@@ -80,9 +85,13 @@ public class MvcBidController {
         Bid bid = bidMvc.getBidForView(principal, request);
         //if (bid.getBid_is_freeze().equals("true")){
         if (bid.getBid_is_freeze() != 0) {
-            System.out.println("freeze\n");
+            if (bid.isPdfFileExist()) {
+                model.addObject("pdfFile", 1);
+            } else {
+                model.addObject("pdfFile", 0);
+            }
         } else {
-            System.out.println("not Freeze " + bid.getBid_is_freeze() + "\n");
+            model.addObject("pdfFile", 0);
         }
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
@@ -181,5 +190,37 @@ public class MvcBidController {
     @RequestMapping(value = "/*")
     public String pageNotFound() {
         return "redirect:/index?logout";
+    }
+
+    @Autowired
+    private MyConstant myConstantMvc;
+
+    @RequestMapping(value = "downloadPdfFile")
+    public void getLogFile(HttpServletResponse response, UsernamePasswordAuthenticationToken principal, HttpServletRequest request) throws Exception {
+        if (request == null) return;
+        String bidId = request.getParameter("bidId");
+        if (bidId != null && !bidId.equals("")) ;
+        Bid bid = bidMvc.getBid(bidId);
+        if (bid == null) return;
+        String fileNamePath = "";
+        String fileName = "";
+        fileName = myConstantMvc.getFilePrefix() + "_" + bid.getId_bid()
+                + "_" + bid.getBid_date_create().replace("-", "") + ".pdf";
+        fileNamePath = myConstantMvc.getFileFolder() + fileName;
+        try {
+            File fileToDownload = new File(fileNamePath);
+            if(!fileToDownload.exists() || fileToDownload.isDirectory()) {
+                return;
+            }
+            InputStream inputStream = new FileInputStream(fileToDownload);
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+            inputStream.close();
+        } catch (Exception e) {
+            //LOGGER.debug("Request could not be completed at this moment. Please try again.");
+            e.printStackTrace();
+        }
     }
 }

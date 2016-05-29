@@ -92,6 +92,16 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return driverManagerDataSource;
     }
 
+    @Bean(name = "myConstant")
+    public MyConstant myConstant() {
+        String folder = this.environment.getProperty("pdf.folder");
+        String prefix = this.environment.getProperty("pdf.prefix");
+        MyConstant myConstant = new MyConstant();
+        myConstant.setFileFolder(folder);
+        myConstant.setFilePrefix(prefix);
+        return myConstant;
+    }
+
     @Bean(name = "siteUser")
     public SiteUser siteUser() {
         SiteUser siteUser = new SiteUser();
