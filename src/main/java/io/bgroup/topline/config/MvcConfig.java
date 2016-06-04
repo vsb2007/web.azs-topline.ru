@@ -114,6 +114,12 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return car;
     }
 
+    @Bean(name = "oilTypeStorage")
+    public OilTypeStorage oilTypeStorage() {
+        OilTypeStorage oilTypeStorage = new OilTypeStorage();
+        return oilTypeStorage;
+    }
+
     @Bean(name = "trailer")
     public Trailer trailer() {
         Trailer trailer = new Trailer();

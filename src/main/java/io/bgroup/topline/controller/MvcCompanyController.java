@@ -1,9 +1,6 @@
 package io.bgroup.topline.controller;
 
-import io.bgroup.topline.model.Company;
-import io.bgroup.topline.model.CompanyUnit;
-import io.bgroup.topline.model.Post;
-import io.bgroup.topline.model.SiteUser;
+import io.bgroup.topline.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +28,8 @@ public class MvcCompanyController {
     private Company companyMvc;
     @Autowired
     private CompanyUnit companyUnitMvc;
+    @Autowired
+    private OilType oilTypeMvc;
 
     @RequestMapping(value = "/company")
     public ModelAndView company(UsernamePasswordAuthenticationToken principal) {
@@ -81,7 +80,9 @@ public class MvcCompanyController {
     public ModelAndView companyUnitView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(request);
+        ArrayList<OilType> oilTypeArrayList = oilTypeMvc.getOilTypesList();
         model.addObject("companyUnit", companyUnit);
+        model.addObject("oilTypeList", oilTypeArrayList);
         model.setViewName("companyUnitView");
         return model;
     }
@@ -108,6 +109,22 @@ public class MvcCompanyController {
         model.addObject("company", company);
         model.addObject("companyUnitList", companyUnitList);
         model.setViewName("companyView");
+        return model;
+    }
+
+    @RequestMapping(value = "/companyUnitAddOilStorage")
+    public ModelAndView companyUnitAddOilStorage(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+
+        String error = companyUnitMvc.addCompanyUnitOilStorage(principal,request);
+
+        CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(request);
+        ArrayList<OilType> oilTypeArrayList = oilTypeMvc.getOilTypesList();
+        model.addObject("companyUnit", companyUnit);
+        model.addObject("addOilStorageMessage", error);
+        model.addObject("oilTypeList", oilTypeArrayList);
+
+        model.setViewName("companyUnitView");
         return model;
     }
 }

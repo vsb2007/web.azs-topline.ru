@@ -10,16 +10,16 @@ public class OilStorage {
     @Autowired
     private DbModel dbMvc;
 
-    private String idOilStorage;
+    private int idOilStorage;
     private String oilStorageName;
     private String oilStorageBlock;
     private String oilStorageIsAzs;
 
-    public String getIdOilStorage() {
+    public int getIdOilStorage() {
         return idOilStorage;
     }
 
-    private void setIdOilStorage(String idOilStorage) {
+    private void setIdOilStorage(int idOilStorage) {
         this.idOilStorage = idOilStorage;
     }
 
@@ -71,7 +71,7 @@ public class OilStorage {
         for (Map row : oilStorageListFromDb) {
             OilStorage oilStorage = new OilStorage();
             oilStorage.setOilStorageBlock((String) row.get("Block").toString());
-            oilStorage.setIdOilStorage((String) row.get("id_company_unit").toString());
+            oilStorage.setIdOilStorage((Integer) row.get("id_company_unit"));
             oilStorage.setOilStorageName((String) row.get("company_unit_name").toString());
             //oilStorage.setOilStorageIsAzs((String) row.get("IsAZS").toString());
             oilStorage.setOilStorageIsAzs(null);

@@ -245,7 +245,7 @@ public class Bid {
             columns = strPlusCommaPlusValue(columns, "bid_date_last_update");
             values = strPlusCommaPlusValue(values, "now()");
         }
-        if (oilStorage.getIdOilStorage() != null) {
+        if (oilStorage.getIdOilStorage() > 0) {
             columns = strPlusCommaPlusValue(columns, "bid_storage_in_id");
             values = strPlusCommaPlusValue(values, "'" + oilStorage.getIdOilStorage() + "'");
         }
@@ -335,8 +335,8 @@ public class Bid {
         } else if (siteUserTmp.getPost().getIdPost().equals("2")) { //Водитель
             sql = "select * from bids where bid_is_close='0' and bid_driver_id = '" + siteUserTmp.getId() + "'";
         } else if (siteUserTmp.getPost().getIdPost().equals("3")) { //Оператор
-            String companyUnitId = siteUserTmp.getCompanyUnit().getIdCompanyUnit();
-            if (companyUnitId == null) return null;
+            int companyUnitId = siteUserTmp.getCompanyUnit().getIdCompanyUnit();
+            if (companyUnitId <= 0) return null;
             sql = "select * from bids where bid_is_close='0' and (" +
                     "bid_storage_in_id = '" + companyUnitId + "' " +
                     "or bid_car_sec_1_storageOut_id = '" + companyUnitId + "' " +

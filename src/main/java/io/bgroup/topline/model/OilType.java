@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 public class OilType {
-    private String id_oilType;
+    private int id_oilType;
     private String oilTypeName;
-    private String oilTypeBlock;
+    private int oilTypeBlock;
 
     @Autowired
     private DbModel dbMvc;
@@ -19,12 +19,22 @@ public class OilType {
 
     public ArrayList<OilType> getOilTypesList() {
         ArrayList<OilType> oilTypesList = null;
-        String sql = "select * from nomenclature where block='0'";
+        String sql = "select * from nomenclature where block=0";
         oilTypesList = getOilTypesFromDbSelect(sql);
         return oilTypesList;
     }
-
+/*
     public OilType getOilType(String id_oilType) {
+        ArrayList<OilType> oilTypesList = null;
+        try {
+            return getOilType(Integer.parseInt(id_oilType));
+        }
+        catch (Exception e){
+            return null;
+        }
+    }
+*/
+    public OilType getOilType(int id_oilType) {
         ArrayList<OilType> oilTypesList = null;
         String sql = "select * from nomenclature where id_Nomenclature='" + id_oilType + "'";
         oilTypesList = getOilTypesFromDbSelect(sql);
@@ -40,8 +50,8 @@ public class OilType {
         ArrayList<OilType> oilTypeArrayList = null;
         for (Map row : oilTypesListFromDb) {
             OilType oilType = new OilType();
-            oilType.setOilTypeBlock((String) row.get("block").toString());
-            oilType.setId_oilType((String) row.get("id_Nomenclature").toString());
+            oilType.setOilTypeBlock((Integer) row.get("block"));
+            oilType.setId_oilType((Integer) row.get("id_Nomenclature"));
             oilType.setOilTypeName((String) row.get("Name").toString());
 
             if (oilTypeArrayList == null) oilTypeArrayList = new ArrayList<OilType>();
@@ -50,11 +60,11 @@ public class OilType {
         return oilTypeArrayList;
     }
 
-    public String getId_oilType() {
+    public int getId_oilType() {
         return id_oilType;
     }
 
-    private void setId_oilType(String id_oilType) {
+    private void setId_oilType(int id_oilType) {
         this.id_oilType = id_oilType;
     }
 
@@ -66,11 +76,11 @@ public class OilType {
         this.oilTypeName = oilTypeName;
     }
 
-    public String getOilTypeBlock() {
+    public int getOilTypeBlock() {
         return oilTypeBlock;
     }
 
-    private void setOilTypeBlock(String oilTypeBlock) {
+    private void setOilTypeBlock(int oilTypeBlock) {
         this.oilTypeBlock = oilTypeBlock;
     }
 }

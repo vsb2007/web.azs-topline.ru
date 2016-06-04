@@ -42,7 +42,7 @@
         <ul class="list">
             <c:forEach items="${companyUnitList}" var="companyUnit">
                 <li ripple>
-                    <form action="companyUnitView" method="get">
+                    <form action="companyUnitView" method="post">
                         <button class="button raised color-white bg-blue-500" value="${companyUnit.getIdCompanyUnit()}"
                                 name="buttonCompanyUnitRed" id="buttonCompanyUnitRed"
                                 style="width: 150px"

@@ -18,13 +18,28 @@ public class CompanyUnit {
     private DbModel dbMvc;
     @Autowired
     private Company companyMvc;
+    @Autowired
+    private OilTypeStorage oilTypeStorageMvc;
+    @Autowired
+    private SiteUser siteUserMvc;
+    @Autowired
+    private OilType oilTypeMvc;
 
-    private String idCompanyUnit;
+    private int idCompanyUnit;
     private String companyUnitName;
     private Company company;
     private String error;
+    private ArrayList<OilTypeStorage> oilTypeStorageArrayList;
 
     public CompanyUnit() {
+    }
+
+    public ArrayList<OilTypeStorage> getOilTypeStorageArrayList() {
+        return oilTypeStorageArrayList;
+    }
+
+    public void setOilTypeStorageArrayList(ArrayList<OilTypeStorage> oilTypeStorageArrayList) {
+        this.oilTypeStorageArrayList = oilTypeStorageArrayList;
     }
 
     public String getError() {
@@ -43,11 +58,11 @@ public class CompanyUnit {
         this.company = company;
     }
 
-    public String getIdCompanyUnit() {
+    public int getIdCompanyUnit() {
         return idCompanyUnit;
     }
 
-    private void setIdCompanyUnit(String idCompanyUnit) {
+    private void setIdCompanyUnit(int idCompanyUnit) {
         this.idCompanyUnit = idCompanyUnit;
     }
 
@@ -66,7 +81,7 @@ public class CompanyUnit {
         return companyUnitList;
     }
 
-    public CompanyUnit getCompanyUnit(String idCompanyUnit) {
+    public CompanyUnit getCompanyUnit(int idCompanyUnit) {
         ArrayList<CompanyUnit> companyUnitArrayList = null;
         String sql = "select * from company_unit where id_company_unit='" + idCompanyUnit + "'";
         companyUnitArrayList = getCompanyUnitFromDbSelect(sql);
@@ -82,9 +97,19 @@ public class CompanyUnit {
 
         for (Map row : companyUnitListFromDb) {
             CompanyUnit companyUnit = new CompanyUnit();
-            companyUnit.setIdCompanyUnit(row.get("id_company_unit").toString());
+            companyUnit.setIdCompanyUnit((Integer) row.get("id_company_unit"));
             companyUnit.setCompanyUnitName(row.get("company_unit_name").toString());
             companyUnit.setCompany(companyMvc.getCompany(row.get("company_id").toString()));
+            if (companyUnit != null && companyUnit.getIdCompanyUnit() > 0) {
+                ArrayList<OilTypeStorage> oilTypeStorageList = new ArrayList<OilTypeStorage>();
+                try {
+                    //Integer idCompanyUnit = Integer.parseInt(companyUnit.getIdCompanyUnit());
+                    Integer idCompanyUnit = companyUnit.getIdCompanyUnit();
+                    companyUnit.setOilTypeStorageArrayList(oilTypeStorageMvc.getOilTypeStorageList(idCompanyUnit));
+                } catch (Exception e) {
+                    companyUnit.setOilTypeStorageArrayList(null);
+                }
+            }
             if (companyUnitArrayList == null) companyUnitArrayList = new ArrayList<CompanyUnit>();
             companyUnitArrayList.add(companyUnit);
         }
@@ -115,9 +140,14 @@ public class CompanyUnit {
     public CompanyUnit getCompanyUnit(HttpServletRequest request) {
         CompanyUnit companyUnit = null;
         if (request == null) return null;
-        String compaUnitId = request.getParameter("companyUnitId").toString();
-        if (compaUnitId != null)
-            companyUnit = getCompanyUnit(compaUnitId);
+        int companyUnitId = -1;
+        try {
+            companyUnitId = Integer.parseInt(request.getParameter("companyUnitId").toString());
+        } catch (Exception e) {
+            companyUnitId = -1;
+        }
+        if (companyUnitId != -1)
+            companyUnit = getCompanyUnit(companyUnitId);
         return companyUnit;
     }
 
@@ -138,17 +168,36 @@ public class CompanyUnit {
         String companyUnitNameFromForm = request.getParameter("companyUnitName");
         String companyId = request.getParameter("companyId");
 
-        if (companyUnitNameFromForm == null){
+        if (companyUnitNameFromForm == null) {
             this.error = "ошибка request";
             return;
         }
         String sql;
 
-        sql = "INSERT INTO company_unit (company_unit_name,company_id) VALUES ('" + companyUnitNameFromForm + "','"+ companyId + "')";
+        sql = "INSERT INTO company_unit (company_unit_name,company_id) VALUES ('" + companyUnitNameFromForm + "','" + companyId + "')";
         boolean flag = dbMvc.getInsertResult(sql);
         if (!flag)
             this.error = "подразделение добавлено";
         else
-            this.error = "Подразделение не добавлена, ошибка!!!";
+            this.error = "Подразделение не добавлено, ошибка!!!";
+    }
+
+    public String addCompanyUnitOilStorage(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (!siteUser.isUserHasRole(principal, "ROLE_COMPANY_RED")) return "нет прав: 01";
+        int oilTypeId = -1;
+        int companyUnitId = -1;
+        try {
+            oilTypeId = Integer.parseInt(request.getParameter("oilType"));
+            companyUnitId = Integer.parseInt(request.getParameter("companyUnitId"));
+        } catch (Exception e) {
+            oilTypeId = -1;
+            return "не читаемый тип топлива или подразделения";
+        }
+        OilType oilType = oilTypeMvc.getOilType(oilTypeId);
+        CompanyUnit companyUnit = getCompanyUnit(companyUnitId);
+        if (oilType != null) return "all ok";
+
+        return "all ok 2";
     }
 }

@@ -82,7 +82,7 @@
                    onchange="onMassChange('${bidDetails.getSection().getId_section()}_volume',
                            '${bidDetails.getSection().getId_section()}_mass',
                            '${bidDetails.getSection().getId_section()}_p')"
-                ${readonlyTmp}>
+                readonly>
             <div>
                 <span class="secondary-text">Масса</span>
             </div>

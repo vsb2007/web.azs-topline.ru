@@ -432,7 +432,7 @@ public class SiteUser {
                     if (pair.getValue() == null) {
                         redUser.setCompanyUnit(null);
                     } else {
-                        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
+                        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit((Integer) pair.getValue()));
                     }
                 }
             }

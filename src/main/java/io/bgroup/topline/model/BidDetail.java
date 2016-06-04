@@ -174,23 +174,23 @@ public class BidDetail {
         String dateInTmp = null;
         String dateOutTmp = null;
         for (OilSections oilSection : oilSectionsList) {
-            String oilTypeId = null;
-            String destinationId = null;
+            int oilTypeId = -1;
+            int destinationId = -1;
             Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, Object> pair = iterator.next();
                 if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_oilType_id")) {
                     if (pair.getValue() != null) {
-                        oilTypeId = pair.getValue().toString();
-                    } else oilTypeId = null;
+                        oilTypeId = (Integer) pair.getValue();
+                    } else oilTypeId = -1;
                 } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_storageOut_id")) {
                     if (pair.getValue() != null) {
-                        destinationId = pair.getValue().toString();
-                    } else destinationId = null;
+                        destinationId = (Integer) pair.getValue();
+                    } else destinationId = -1;
                 } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_storageOut_id")) {
                     if (pair.getValue() != null) {
-                        destinationId = pair.getValue().toString();
-                    } else destinationId = null;
+                        destinationId = (Integer) pair.getValue();
+                    } else destinationId = -1;
                 } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_p_in")) {
                     if (pair.getValue() != null) {
                         pInTmp = pair.getValue().toString();
@@ -233,8 +233,8 @@ public class BidDetail {
                     } else dateOutTmp = null;
                 }
             }
-            if (oilTypeId == null) continue;
-            if (destinationId == null) continue;
+            if (oilTypeId == -1) continue;
+            if (destinationId == -1) continue;
             OilType oilTypeTmp = oilTypeMvc.getOilType(oilTypeId);
             CompanyUnit destinationTmp = companyUnitMvc.getCompanyUnit(destinationId);
             BidDetail bidDetail = new BidDetail();
@@ -272,8 +272,8 @@ public class BidDetail {
         if (siteUser == null) return false;
         for (BidDetail bidDetail : bidDetails) {
             if ((bid.getCreateUser().getName().equals(siteUser.getName()))
-                    || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
-                    || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetail.getDestination().getIdCompanyUnit()))
+                    || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bid.getOilStorageIn().getIdOilStorage())
+                    || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bidDetail.getDestination().getIdCompanyUnit())
                     || (siteUser.getPost() != null && siteUser.getPost().getIdPost().equals("2"))
                     || (siteUser.getPost() != null && siteUser.getPost().getIdPost().equals("4"))
                     || (siteUser.getName().equals("admin"))

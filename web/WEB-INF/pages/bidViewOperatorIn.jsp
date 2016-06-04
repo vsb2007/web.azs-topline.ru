@@ -71,6 +71,6 @@
         </c:if>
             <%-- </sec:authorize> --%>
     </div>
-    <script src="js/bidUpdate.js"></script>
+    <script src="js/bidUpdate01.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

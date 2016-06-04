@@ -3,7 +3,7 @@ function onVolumeChange(idVol, idMass, idP) {
     var p = document.getElementById(idP);
     var mass = document.getElementById(idMass);
     if (p == null || p.value == 0) return;
-    mass.value = (vol.value * p.value / 1000).toFixed(4);
+    mass.value = (vol.value * p.value / 1000).toFixed(3);
 }
 
 function onPChange(idVol, idMass, idP) {
@@ -13,7 +13,7 @@ function onPChange(idVol, idMass, idP) {
     if (p == null) return;
     if (p.value == 0) return;
     if (vol == null || vol.value == 0) return;
-    mass.value = (vol.value * p.value / 1000).toFixed(4);
+    mass.value = (vol.value * p.value / 1000).toFixed(3);
 }
 
 function onMassChange(idVol, idMass, idP) {

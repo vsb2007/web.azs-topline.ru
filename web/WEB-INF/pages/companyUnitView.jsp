@@ -6,14 +6,15 @@
 
 <sec:authorize access="hasRole('ROLE_COMPANY_RED')">
     <div class="section">
-        <form action="companyUnitRed" method="get">
+        <form action="companyUnitRed" method="post">
             <ul class="list">
                 <li ripple>
                 <span class="item-text">
                 <input type="text" class="text-input border-green-500" placeholder="Имя организации"
                        value="${companyUnit.getCompanyUnitName()}"
                        id="companyUnitName" name="companyUnitName">
-                    <input type="hidden" name="companyUnitId" id="companyUnitId" value="${companyUnit.getIdCompanyUnit()}">
+                    <input type="hidden" name="companyUnitId" id="companyUnitId"
+                           value="${companyUnit.getIdCompanyUnit()}">
                 <span class="secondary-text">
                 <label for="companyUnitName">Имя подразделения</label>
                 </span>
@@ -24,6 +25,20 @@
             <button class="button raised bg-blue-500 color-white">Редактировать</button>
         </form>
         <p class="text">${errorCompanyUnitRed}</p>
+    </div>
+    <div class="section">
+        <form action="companyUnitAddOilStorage" method="post">
+            <select class="dropdown-menu" id="" name="oilType" onchange="">
+                <option value="-1">Выберите тип топлива</option>
+                <c:forEach items="${oilTypeList}" var="oilType">
+                    <option value="${oilType.getId_oilType()}">${oilType.getOilTypeName()}</option>
+                </c:forEach>
+            </select><br>
+            <input type="hidden" name="companyUnitId" value="${companyUnit.getIdCompanyUnit()}"/>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <button class="button raised bg-blue-500 color-white">Поставить на контроль</button>
+        </form>
+        <p class="text">${addOilStorageMessage}</p>
     </div>
 </sec:authorize>
 <%@ include file="footer.jsp" %>
