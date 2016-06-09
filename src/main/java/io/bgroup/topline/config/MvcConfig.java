@@ -75,6 +75,11 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return new DbModel();
     }
 
+    @Bean(name = "DbJdbcModel")
+    public DbJdbcModel dbJdbcModel() {
+        return new DbJdbcModel();
+    }
+
     @Bean(name = "dataSource")
     public DriverManagerDataSource dataSource() {
         String jdbcHost = this.environment.getProperty("jdbc.host");

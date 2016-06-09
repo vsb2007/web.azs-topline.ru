@@ -40,5 +40,40 @@
         </form>
         <p class="text">${addOilStorageMessage}</p>
     </div>
+    <c:if test="${companyUnit.getOilTypeStorageArrayList()!=null && companyUnit.getOilTypeStorageArrayList().size()!=0}">
+        <div class="section">
+            <form action="" method="post">
+                <ul class="list">
+                    <c:forEach items="${companyUnit.getOilTypeStorageArrayList()}" var="storageList">
+                        <li ripple>
+                            <span class="item-text">
+                                    ${storageList.getOilType().getOilTypeName()}
+                            </span>
+                        <span class="item-text">
+                            <input type="text" class="text-input border-green-500" placeholder="Объем литров"
+                                   value="${storageList.getVolumeV()}"
+                                   name="oilStorageV">
+                            <span class="secondary-text">
+                                <label for="companyUnitName">литры</label>
+                            </span>
+                        </span>
+                        <span class="item-text">
+                                <input type="text" class="text-input border-green-500" placeholder="Масса"
+                                       value="${storageList.getVolumeM()}"
+                                       name="oilStorageM">
+                            <span class="secondary-text">
+                                <label for="companyUnitName">масса</label>
+                            </span>
+                        </span>
+                        </li>
+                    </c:forEach>
+                </ul>
+                <input type="hidden" name="oilStorageId" value="${storageList.getIdOilTypeStorage()}">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <button class="button raised bg-blue-500 color-white">Редактировать</button>
+            </form>
+            <p class="text">${errorCompanyUnitRed}</p>
+        </div>
+    </c:if>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

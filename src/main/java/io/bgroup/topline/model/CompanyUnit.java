@@ -196,8 +196,11 @@ public class CompanyUnit {
         }
         OilType oilType = oilTypeMvc.getOilType(oilTypeId);
         CompanyUnit companyUnit = getCompanyUnit(companyUnitId);
-        if (oilType != null) return "all ok";
+        if (oilType == null) return "не определен тип топлива";
+        if (companyUnit == null) return "подразделение не найдено";
 
-        return "all ok 2";
+        if (!oilTypeStorageMvc.addOilTypeStorage(companyUnit.getIdCompanyUnit(),oilType.getId_oilType())) return "ошибка создания харнилища";
+
+        return "контроль запущен";
     }
 }
