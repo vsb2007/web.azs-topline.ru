@@ -42,7 +42,7 @@
     </div>
     <c:if test="${companyUnit.getOilTypeStorageArrayList()!=null && companyUnit.getOilTypeStorageArrayList().size()!=0}">
         <div class="section">
-            <form action="" method="post">
+            <form action="updateOilTypeStorage" method="post">
                 <ul class="list">
                     <c:forEach items="${companyUnit.getOilTypeStorageArrayList()}" var="storageList">
                         <li ripple>
@@ -50,29 +50,41 @@
                                     ${storageList.getOilType().getOilTypeName()}
                             </span>
                         <span class="item-text">
-                            <input type="text" class="text-input border-green-500" placeholder="Объем литров"
+                            <input class="text-input border-green-500" placeholder="Объем литров"
                                    value="${storageList.getVolumeV()}"
-                                   name="oilStorageV">
+                                   type="number" step="any" required
+                                   name="oilStorageV_${storageList.getIdOilTypeStorage()}"
+                                   id="oilStorageV_${storageList.getIdOilTypeStorage()}">
                             <span class="secondary-text">
-                                <label for="companyUnitName">литры</label>
+                                <label for="oilStorageV_${storageList.getIdOilTypeStorage()}">литры</label>
                             </span>
+                            <input value="${storageList.getVolumeV()}"
+                                   type="hidden" step="any" required
+                                   name="oilStorageVOld_${storageList.getIdOilTypeStorage()}"
+                                   id="oilStorageVOld_${storageList.getIdOilTypeStorage()}">
                         </span>
                         <span class="item-text">
-                                <input type="text" class="text-input border-green-500" placeholder="Масса"
+                                <input class="text-input border-green-500" placeholder="Масса"
                                        value="${storageList.getVolumeM()}"
-                                       name="oilStorageM">
+                                       type="number" step="any" required
+                                       name="oilStorageM_${storageList.getIdOilTypeStorage()}"
+                                       id="oilStorageM_${storageList.getIdOilTypeStorage()}">
                             <span class="secondary-text">
-                                <label for="companyUnitName">масса</label>
+                                <label for="oilStorageM_${storageList.getIdOilTypeStorage()}">масса</label>
                             </span>
+                            <input value="${storageList.getVolumeM()}"
+                                   type="hidden" step="any" required
+                                   name="oilStorageMOld_${storageList.getIdOilTypeStorage()}"
+                                   id="oilStorageMOld_${storageList.getIdOilTypeStorage()}">
                         </span>
                         </li>
                     </c:forEach>
                 </ul>
-                <input type="hidden" name="oilStorageId" value="${storageList.getIdOilTypeStorage()}">
+                <input type="hidden" name="companyUnitId" value="${companyUnit.getIdCompanyUnit()}"/>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button class="button raised bg-blue-500 color-white">Редактировать</button>
             </form>
-            <p class="text">${errorCompanyUnitRed}</p>
+            <p class="text">${updateOilStorageMessage}</p>
         </div>
     </c:if>
 </sec:authorize>

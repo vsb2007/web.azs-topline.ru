@@ -30,8 +30,11 @@ public class MvcCompanyController {
     private CompanyUnit companyUnitMvc;
     @Autowired
     private OilType oilTypeMvc;
+    @Autowired
+    private OilTypeStorage oilTypeStorageMvc;
 
-    @RequestMapping(value = "/company")
+
+    @RequestMapping(value = "company")
     public ModelAndView company(UsernamePasswordAuthenticationToken principal) {
         ModelAndView model = new ModelAndView();
         ArrayList<Company> companyList = companyMvc.getCompanyList();
@@ -40,7 +43,7 @@ public class MvcCompanyController {
         return model;
     }
 
-    @RequestMapping(value = "/companyAdd")
+    @RequestMapping(value = "companyAdd")
     public ModelAndView companyAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         companyMvc.addCompany(principal, request);
@@ -51,7 +54,7 @@ public class MvcCompanyController {
         return model;
     }
 
-    @RequestMapping(value = "/companyRed")
+    @RequestMapping(value = "companyRed")
     public ModelAndView companyRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         companyMvc.redCompany(principal, request);
@@ -65,7 +68,7 @@ public class MvcCompanyController {
         return model;
     }
 
-    @RequestMapping(value = "/companyView")
+    @RequestMapping(value = "companyView")
     public ModelAndView companyView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         Company company = companyMvc.getCompany(request);
@@ -76,7 +79,7 @@ public class MvcCompanyController {
         return model;
     }
 
-    @RequestMapping(value = "/companyUnitView")
+    @RequestMapping(value = "companyUnitView")
     public ModelAndView companyUnitView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(request);
@@ -87,7 +90,7 @@ public class MvcCompanyController {
         return model;
     }
 
-    @RequestMapping(value = "/companyUnitRed")
+    @RequestMapping(value = "companyUnitRed")
     public ModelAndView companyUnitRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         companyUnitMvc.redCompanyUnit(principal, request);
@@ -98,7 +101,7 @@ public class MvcCompanyController {
         return model;
     }
 
-    @RequestMapping(value = "/companyUnitAdd")
+    @RequestMapping(value = "companyUnitAdd")
     public ModelAndView companyUnitAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         Company company = companyMvc.getCompany(request);
@@ -112,11 +115,11 @@ public class MvcCompanyController {
         return model;
     }
 
-    @RequestMapping(value = "/companyUnitAddOilStorage")
+    @RequestMapping(value = "companyUnitAddOilStorage")
     public ModelAndView companyUnitAddOilStorage(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
 
-        String error = companyUnitMvc.addCompanyUnitOilStorage(principal,request);
+        String error = companyUnitMvc.addCompanyUnitOilStorage(principal, request);
 
         CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(request);
         ArrayList<OilType> oilTypeArrayList = oilTypeMvc.getOilTypesList();
@@ -127,4 +130,31 @@ public class MvcCompanyController {
         model.setViewName("companyUnitView");
         return model;
     }
+
+    @RequestMapping(value = "updateOilTypeStorage")
+    public ModelAndView updateOilTypeStorage(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        String message;
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (siteUser != null && !siteUser.isUserHasRole(principal, "ROLE_COMPANY_RED")) message = "нет прав: 02";
+        else {
+            int companyUnitId = -1;
+            try {
+                companyUnitId = Integer.parseInt(request.getParameter("companyUnitId"));
+            } catch (Exception e) {
+                companyUnitId = -1;
+            }
+            CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(companyUnitId);
+            message = oilTypeStorageMvc.updateOilTypeStorage(siteUser, request, companyUnit);
+        }
+        CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(request);
+        ArrayList<OilType> oilTypeArrayList = oilTypeMvc.getOilTypesList();
+        model.addObject("companyUnit", companyUnit);
+        model.addObject("updateOilStorageMessage", message);
+        model.addObject("oilTypeList", oilTypeArrayList);
+
+        model.setViewName("companyUnitView");
+        return model;
+    }
+
 }

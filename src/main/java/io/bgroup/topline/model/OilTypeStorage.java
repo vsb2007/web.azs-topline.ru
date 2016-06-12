@@ -1,7 +1,9 @@
 package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +24,7 @@ public class OilTypeStorage {
     }
 
     public enum oilStorageFields {
-        id_oilStorage , companyUnitId, oilTypeId, volumeV, volumeM
+        id_oilStorage, companyUnitId, oilTypeId, volumeV, volumeM
     }
 
     public int getIdOilTypeStorage() {
@@ -59,8 +61,8 @@ public class OilTypeStorage {
 
     public ArrayList<OilTypeStorage> getOilTypeStorageList(int idCompanyUnit) {
         String sql = "select * from oilstorage where companyUnitId = ?";
-        Object[] args = new Object[1];
-        args[0] = idCompanyUnit;
+        ArrayList<Object> args = new ArrayList<Object>(1);
+        args.add(idCompanyUnit);
         List<Map<String, Object>> resultSql = dbMvc.getSelectResult(sql, args);
         if (resultSql == null) return null;
         ArrayList<OilTypeStorage> oilTypeStorageArrayList = null;
@@ -83,9 +85,8 @@ public class OilTypeStorage {
         if (idOilStorageObject instanceof Long) {
             oilTypeStorageIdLong = (Long) idOilStorageObject;
             oilTypeStorageId = oilTypeStorageIdLong.intValue();
-        }
-        else
-            oilTypeStorageId  = (Integer) idOilStorageObject;
+        } else
+            oilTypeStorageId = (Integer) idOilStorageObject;
         Integer companyUnitId = (Integer) row.get("companyUnitId");
         Integer oilTypeId = (Integer) row.get("oilTypeId");
         Double volumeV = (Double) row.get("volumeV");
@@ -101,12 +102,62 @@ public class OilTypeStorage {
     public boolean addOilTypeStorage(int idCompanyUnit, int idOilType) {
         String sql = "insert into oilstorage (companyUnitId,oilTypeId,volumeV,volumeM)" +
                 "values (?,?,?,?)";
-        Object[] args = new Object[4];
-        args[0] = idCompanyUnit;
-        args[1] = idOilType;
-        args[2] = 0;
-        args[3] = 0;
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(idCompanyUnit);
+        args.add(idOilType);
+        args.add(0);
+        args.add(0);
         boolean flag = dbMvc.getUpdateResult(sql, args);
         return flag;
+    }
+
+    public String updateOilTypeStorage(SiteUser siteUser, HttpServletRequest request, CompanyUnit companyUnit) {
+        if (siteUser == null || request == null) return "мало данных";
+        if (companyUnit == null) return "мало данных";
+        ArrayList<OilTypeStorage> oilTypeStorageArrayList = companyUnit.getOilTypeStorageArrayList();
+        if (oilTypeStorageArrayList == null) return "мало данных";
+        int oilTypeStorageSize = oilTypeStorageArrayList.size();
+        if (oilTypeStorageSize == 0) return "мало данных";
+
+        int idCompanyUnit = companyUnit.getIdCompanyUnit();
+        String sql = "insert into oilstorage (id_oilStorage,companyUnitId,oilTypeId,volumeV,volumeM) " +
+                "values ";
+        ArrayList<Object> args = new ArrayList<Object>();
+        boolean commaFlag = false;
+        for (OilTypeStorage oilTypeStorage : oilTypeStorageArrayList) {
+            int idOilTypeStorage = oilTypeStorage.getIdOilTypeStorage();
+            double volumeV = oilTypeStorage.getVolumeV();
+            double volumeM = oilTypeStorage.getVolumeM();
+            double volumeVOld;
+            double volumeMOld;
+            double volumeVNew;
+            double volumeMNew;
+            try {
+                volumeVOld = Double.parseDouble(request.getParameter("oilStorageVOld_" + idOilTypeStorage));
+                volumeMOld = Double.parseDouble(request.getParameter("oilStorageMOld_" + idOilTypeStorage));
+                volumeVNew = Double.parseDouble(request.getParameter("oilStorageV_" + idOilTypeStorage));
+                volumeMNew = Double.parseDouble(request.getParameter("oilStorageM_" + idOilTypeStorage));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "ошибка вводных данных";
+            }
+            if (volumeM != volumeMOld) return "данные успели измениться";
+            if (volumeV != volumeVOld) return "данные успели измениться";
+            if (commaFlag) {
+                sql += ",";
+            }
+            sql += "(?,?,?,?,?)";
+            commaFlag = true;
+            args.add(oilTypeStorage.getIdOilTypeStorage());
+            args.add(companyUnit.getIdCompanyUnit());
+            args.add(oilTypeStorage.getOilType().getId_oilType());
+            args.add(volumeVNew);
+            args.add(volumeMNew);
+        }
+        sql += " ON DUPLICATE KEY UPDATE " +
+                "oilstorage.volumeV = VALUES(volumeV),oilstorage.volumeM = VALUES(volumeM)";
+        boolean flag = dbMvc.getUpdateResult(sql, args);
+        if (flag) return "Данные обновлены";
+        return "не известная ошибка обновления";
     }
 }

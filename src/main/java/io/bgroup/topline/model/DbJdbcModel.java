@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,14 +26,17 @@ public class DbJdbcModel {
         this.error = error;
     }
 
-    public boolean getUpdateResult(String sql, Object[] args) {
-        int result = jdbcTemplateMvc.update(
-                sql,
-                args);
+    public boolean getUpdateResult(String sql, ArrayList<Object> args) {
+        try {
+            jdbcTemplateMvc.update(sql, args.toArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 
-    public List<Map<String, Object>> getSelectResult(String sql, Object[] args) {
-        return jdbcTemplateMvc.queryForList(sql, args);
+    public List<Map<String, Object>> getSelectResult(String sql, ArrayList<Object> args) {
+        return jdbcTemplateMvc.queryForList(sql, args.toArray());
     }
 }
