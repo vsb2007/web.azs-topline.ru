@@ -8,14 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by VSB on 08.04.2016.
- * ToplineWeb.2.5
- */
 public class CompanyUnit {
 
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
     @Autowired
     private Company companyMvc;
     @Autowired
@@ -173,7 +169,7 @@ public class CompanyUnit {
         String companyUnitId = request.getParameter("companyUnitId");
         String sql = "update company_unit set company_unit_name = '" + companyUnitName +
                 "' where id_company_unit = '" + companyUnitId + "'";
-        boolean flag = dbMvc.getInsertResult(sql);
+        boolean flag = dbMvc.getUpdateResult(sql);
         if (flag) {
             this.error = "Ошибка обновления имени";
         }
@@ -192,7 +188,7 @@ public class CompanyUnit {
         String sql;
 
         sql = "INSERT INTO company_unit (company_unit_name,company_id) VALUES ('" + companyUnitNameFromForm + "','" + companyId + "')";
-        boolean flag = dbMvc.getInsertResult(sql);
+        boolean flag = dbMvc.getUpdateResult(sql);
         if (!flag)
             this.error = "подразделение добавлено";
         else
