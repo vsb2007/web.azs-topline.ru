@@ -15,7 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
@@ -40,78 +42,43 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authoritiesByUsernameQuery("SELECT username,role FROM user_roles WHERE username=?");
     }
 
-/*
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
-        auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN");
-        auth.inMemoryAuthentication().withUser("superadmin").password("superadmin").roles("SUPERADMIN");
-    }
-    */
+    /*
+        @Autowired
+        public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+            auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
+            auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN");
+            auth.inMemoryAuthentication().withUser("superadmin").password("superadmin").roles("SUPERADMIN");
+        }
+        */
     @Bean
     public PasswordEncoder passwordEncoder() {
-    return bCryptPasswordEncoder;
-}
+        return bCryptPasswordEncoder;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceEncoding(true);
+        http.addFilterBefore(filter, CsrfFilter.class);
+        //http.csrf().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/index").permitAll()
-                .antMatchers("/").permitAll()
-                .and().formLogin().defaultSuccessUrl("/",true)
-                .and().logout().logoutUrl("/index")
-                .and().logout().logoutSuccessUrl("/index")
-
-        ;
-
-        /*http
-                .authorizeRequests()
-               .antMatchers("/protected/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/confidential/**").access("hasRole('ROLE_SUPERADMIN')")
-                //.and().formLogin().defaultSuccessUrl("/", false);
-                .and().formLogin().defaultSuccessUrl("/",true);
-*/
-/*
-          .antMatchers("/protected/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/confidential/**").access("hasRole('ROLE_SUPERADMIN')")
-                .antMatchers("/links/**").access("hasRole('ROLE_LOGIN')")
-                //.and().formLogin().defaultSuccessUrl("/", false);
-                .and().formLogin()
-                .loginPage("/index")
-                //.loginProcessingUrl("/login.do")
-                .defaultSuccessUrl("/")
-                .failureUrl("/index?err=1")
-                .usernameParameter("username")
-                .passwordParameter("password")
-
-                .and()
-                .logout()
-                .logoutRequestMatcher( new AntPathRequestMatcher( "/logout" ) )
-                .logoutSuccessUrl( "/index" )
-                .deleteCookies( "JSESSIONID" )
-                .invalidateHttpSession( true )
-                .and()
-                .sessionManagement()
-                .invalidSessionUrl( "/index" )
-                .maximumSessions( 1 )
-                //.and()
-                //.csrf().disable();
-        ;
-        */
-/*        http
-                .authorizeRequests()
-                .antMatchers("/index").anonymous()
-                .anyRequest().fullyAuthenticated()
+                .antMatchers("/css/**").permitAll()
+                .antMatchers("/images/**").permitAll()
+                .antMatchers("/js/**").permitAll()
+                .antMatchers("/demo-files/**").permitAll()
+                .antMatchers("/fonts/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/index")
-                .defaultSuccessUrl("/")
+                .loginPage("/login")
+                .permitAll()
                 .and()
-                .logout();
-*/
-
-
+                .logout()
+                .permitAll()
+                .and()
+                .exceptionHandling().accessDeniedPage("/403")
+        ;
     }
-
 }

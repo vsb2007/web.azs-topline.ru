@@ -6,16 +6,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.view.velocity.VelocityViewResolver;
 
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 
 @Configuration
@@ -31,6 +36,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
+        resolver.setContentType("text/html;charset=UTF-8");
         resolver.setPrefix("/WEB-INF/pages/");
         resolver.setSuffix(".jsp");
         return resolver;
@@ -47,9 +53,31 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/fonts/**").addResourceLocations("/WEB-INF/pages/fonts/").setCachePeriod(31556926);
     }
 
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/login").setViewName("index");
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    }
+
+    @Bean
+    public StringHttpMessageConverter stringHttpMessageConverter() {
+        //этот медот для кодировки не помог
+        return new StringHttpMessageConverter(Charset.forName("UTF-8"));
+    }
+
     @Bean(name = "jdbcTemplate")
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(this.dataSource());
+    }
+
+    @Bean(name = "dbModel")
+    public DbModel dbModel() {
+        return new DbModel();
+    }
+
+    @Bean(name = "DbJdbcModel")
+    public DbJdbcModel dbJdbcModel() {
+        return new DbJdbcModel();
     }
 
     @Bean(name = "dataSource")
@@ -69,10 +97,14 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return driverManagerDataSource;
     }
 
-    @Bean(name = "dbModel")
-    public DbModel dbModel() {
-        DbModel dbModel = new DbModel();
-        return dbModel;
+    @Bean(name = "myConstant")
+    public MyConstant myConstant() {
+        String folder = this.environment.getProperty("pdf.folder");
+        String prefix = this.environment.getProperty("pdf.prefix");
+        MyConstant myConstant = new MyConstant();
+        myConstant.setFileFolder(folder);
+        myConstant.setFilePrefix(prefix);
+        return myConstant;
     }
 
     @Bean(name = "siteUser")
@@ -85,6 +117,12 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public Car car() {
         Car car = new Car();
         return car;
+    }
+
+    @Bean(name = "oilTypeStorage")
+    public OilTypeStorage oilTypeStorage() {
+        OilTypeStorage oilTypeStorage = new OilTypeStorage();
+        return oilTypeStorage;
     }
 
     @Bean(name = "trailer")
@@ -139,6 +177,18 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public Bid bid() {
         Bid bid = new Bid();
         return bid;
+    }
+
+    @Bean(name = "bidDetail")
+    public BidDetail bidDetail() {
+        BidDetail bidDetail = new BidDetail();
+        return bidDetail;
+    }
+
+    @Bean(name = "role")
+    public Role role() {
+        Role role = new Role();
+        return role;
     }
 
 }

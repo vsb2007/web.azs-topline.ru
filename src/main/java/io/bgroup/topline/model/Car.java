@@ -2,10 +2,9 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class Car {
@@ -32,7 +31,6 @@ public class Car {
         return carsList;
     }
 
-
     public Car getCar(String id_car) {
 
         Car car = null;
@@ -48,59 +46,24 @@ public class Car {
     }
 
     private ArrayList<Car> getCarsFromDbSelect(String sql) {
-        ResultSet resultSet = null;
-        try {
-            resultSet = dbMvc.getSelectResult(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (resultSet == null) return null;
+        List<Map<String, Object>> carsListFromDb = null;
+        carsListFromDb = dbMvc.getSelectResult(sql);
+        if (carsListFromDb == null) return null;
         ArrayList<Car> carsList = null;
-        try {
-            while (resultSet.next()) {
-                Car car = new Car();
-                setCarFromResultSet(car, resultSet);
-                if (carsList == null) carsList = new ArrayList<Car>();
-                carsList.add(car);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Map row : carsListFromDb) {
+            Car car = new Car();
+            setCarFromMapRow(car, row);
+            if (carsList == null) carsList = new ArrayList<Car>();
+            carsList.add(car);
         }
         return carsList;
     }
 
-    private void setCarFromResultSet(Car car, ResultSet resultSet) {
-        try {
-            if (resultSet != null) {
-                String carId = resultSet.getString(DbModel.tableCars.id_car.toString());
-                String carBlock = resultSet.getString(DbModel.tableCars.car_block.toString());
-                String carNumber = resultSet.getString(DbModel.tableCars.car_number.toString());
-                String carName = resultSet.getString(DbModel.tableCars.car_name.toString());
-
-                car.setCar_block(carBlock);
-                car.setId_car(carId);
-                car.setCar_number(carNumber);
-                car.setCar_name(carName);
-                ArrayList<OilSections> oilSections = null;
-                for (int i = 1; i <= countOilSection; i++) {
-                    String car_sec = resultSet.getString("car_sec_" + i).toString();
-                    if (!car_sec.equals("0")) {
-                        if (oilSections == null) {
-                            oilSections = new ArrayList<OilSections>();
-                            car.setOilSections(oilSections);
-                        }
-                        oilSections.add(new OilSections("car_sec_" + i, car_sec));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        /*
-        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+    private void setCarFromMapRow(Car car, Map row) {
+       /* Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
         while (iterator.hasNext()) {
             break;
-        }
+        }*/
         car.setCar_block((String) row.get("car_block").toString());
         car.setId_car((String) row.get("id_car").toString());
         car.setCar_number((String) row.get("car_number").toString());
@@ -115,7 +78,7 @@ public class Car {
                 }
                 oilSections.add(new OilSections("car_sec_" + i, car_sec));
             }
-        }*/
+        }
     }
 
     public ArrayList<OilSections> getOilSections() {

@@ -1,10 +1,9 @@
 package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,24 +12,14 @@ public class Company {
     @Autowired
     private DbModel dbMvc;
     @Autowired
-    private CompanyUnit companyUnitMvc;
+    private SiteUser siteUserMvc;
 
     private String idCompany;
     private String companyName;
-    private ArrayList<CompanyUnit> companyUnitsList;
+    private String error;
 
-    public Company() {
-    }
-
-    private void setCompanyUnitsList(String idCompany) {
-        ArrayList<CompanyUnit> tmp = null;
-        CompanyUnit companyUnit = new CompanyUnit();
-        tmp = companyUnit.getCompanyUnitList(idCompany);
-        this.companyUnitsList = tmp;
-    }
-
-    public ArrayList<CompanyUnit> getCompanyUnitList() {
-        return companyUnitsList;
+    private void setError(String error) {
+        this.error = error;
     }
 
     public String getIdCompany() {
@@ -65,40 +54,18 @@ public class Company {
     }
 
     private ArrayList<Company> getCompanyFromDbSelect(String sql) {
-        ResultSet resultSet = null;
-        try {
-            resultSet = dbMvc.getSelectResult(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (resultSet == null) return null;
+        List<Map<String, Object>> companyListFromDb = null;
+        companyListFromDb = dbMvc.getSelectResult(sql);
+        if (companyListFromDb == null) return null;
         ArrayList<Company> companyArrayList = null;
-        try {
-            while (resultSet.next()) {
-                Company company = new Company();
-                setCompanyFromResultSet(company, resultSet);
-                if (companyArrayList == null) companyArrayList = new ArrayList<Company>();
-                companyArrayList.add(company);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Map row : companyListFromDb) {
+            Company company = new Company();
+            company.setIdCompany((String) row.get("id_company").toString());
+            company.setCompanyName((String) row.get("company_name").toString());
+            if (companyArrayList == null) companyArrayList = new ArrayList<Company>();
+            companyArrayList.add(company);
         }
         return companyArrayList;
-    }
-
-    private void setCompanyFromResultSet(Company company, ResultSet resultSet) {
-        try {
-            if (resultSet != null) {
-                String companyId = resultSet.getString(DbModel.tableCompany.id_company.toString());
-                String companyName = resultSet.getString(DbModel.tableCompany.company_name.toString());
-
-                company.setIdCompany(companyId);
-                company.setCompanyUnitsList(idCompany);
-                company.setCompanyName(companyName);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public String getCompanyForAjax(HttpServletRequest request) {
@@ -128,5 +95,48 @@ public class Company {
                 "                    </span></span>" +
                 "                </li>";
         return response;
+    }
+
+    public boolean addCompany(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUserTmp = siteUserMvc.findSiteUser(principal);
+        if (!siteUserTmp.isUserHasRole(principal, "ROLE_COMPANY_ADD")) return false;
+        String companyNameFromForm = request.getParameter("companyName");
+        if (companyNameFromForm == null) return false;
+        String sql;
+        sql = "select * from company where company_name='" + companyNameFromForm + "'";
+        List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql);
+        if (dbSelectResult != null && dbSelectResult.size() > 0) {
+            this.error = "Компания существует";
+            return false;
+        } else {
+            sql = "INSERT INTO company (company_name) VALUES ('" + companyNameFromForm + "')";
+            boolean flag = dbMvc.getInsertResult(sql);
+            if (!flag)
+                this.error = "Комания добавлена";
+            else
+                this.error = "Комания  не добавлена, ошибка!!!";
+        }
+        return true;
+    }
+
+    public Object getError() {
+        return error;
+    }
+
+    public Company getCompany(HttpServletRequest request) {
+        String companyId = request.getParameter("companyId");
+        return getCompany(companyId);
+    }
+
+    public void redCompany(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        String companyName = request.getParameter("companyName");
+        String companyId = request.getParameter("companyId");
+        String sql = "update company set company_name = '" + companyName +
+                "' where id_company = '" + companyId + "'";
+        boolean flag = dbMvc.getInsertResult(sql);
+        if (flag) {
+            this.error = "Ошибка обновления имени";
+        }
+        this.error = "Изменения сохранены";
     }
 }

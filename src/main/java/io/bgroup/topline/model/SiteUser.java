@@ -1,13 +1,11 @@
 package io.bgroup.topline.model;
 
-import org.omg.PortableInterceptor.USER_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.jstl.sql.Result;
 import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,23 +24,37 @@ public class SiteUser {
     private String id;
     private String error;
     private Post post;
-    private Company company;
     private CompanyUnit companyUnit;
+    private ArrayList<Role> rolesList;
 
     @Autowired
     private DbModel dbMvc;
-
     @Autowired
     PasswordEncoder passwordEncoderMvc;
     @Autowired
     Post postMvc;
     @Autowired
-    Company companyMvc;
-    @Autowired
     CompanyUnit companyUnitMvc;
+    @Autowired
+    Role roleMvc;
 
     public SiteUser() {
+    }
 
+    public String getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(String isDelete) {
+        this.isDelete = isDelete;
+    }
+
+    public ArrayList<Role> getRolesList() {
+        return rolesList;
+    }
+
+    public void setRolesList(ArrayList<Role> rolesList) {
+        this.rolesList = rolesList;
     }
 
     public String getError() {
@@ -54,7 +66,8 @@ public class SiteUser {
     }
 
     public enum usersTableField {
-        id_user, username, password, user_fio, user_phone, user_email, enabled, user_is_delete
+        id_user, username, password, user_fio, user_phone, user_email, enabled, user_is_delete,
+        user_post_id, user_company_unit_id
     }
 
     public void setName(String name) {
@@ -114,14 +127,6 @@ public class SiteUser {
         this.post = post;
     }
 
-    public Company getCompany() {
-        return company;
-    }
-
-    private void setCompany(Company company) {
-        this.company = company;
-    }
-
     public CompanyUnit getCompanyUnit() {
         return companyUnit;
     }
@@ -145,14 +150,15 @@ public class SiteUser {
     private SiteUser findSiteUser(String name) {
         SiteUser findUser = null;
         String sql;
-        ResultSet findUsersList = null;
+        String sql2;
+        List<Map<String, Object>> findUsersList = null;
+        //ResultSet findUsersList2 = null;
+
         if (name != null) {
+            ArrayList<Object> arrayList = new ArrayList<Object>();
+            arrayList.add(name);
             sql = "select * from users where username='" + name + "'";
-            try {
-                findUsersList = dbMvc.getSelectResult(sql);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            findUsersList = dbMvc.getSelectResult(sql);
         }
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
@@ -165,30 +171,15 @@ public class SiteUser {
     public SiteUser findSiteUser(int id_user) {
         SiteUser findUser = null;
         String sql;
-        ResultSet findUsersList = null;
+        List<Map<String, Object>> findUsersList = null;
         sql = "select * from users where id_user='" + id_user + "'";
-        try {
-            findUsersList = dbMvc.getSelectResult(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        findUsersList = dbMvc.getSelectResult(sql);
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
     }
 
-    private SiteUser getSiteUserFromDbSelect(ResultSet findUsers) {
+    private SiteUser getSiteUserFromDbSelect(List<Map<String, Object>> findUsers) {
         SiteUser findUser = null;
-        try {
-            boolean flag1 = false;
-            int count2 = 0;
-            if (findUsers.first() && findUsers.last()) {
-                findUser = new SiteUser();
-                setSiteUserFromResultSet(findUser, findUsers);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-/*
         if (findUsers != null && findUsers.size() == 1) {
             try {
                 Map row = findUsers.get(0);
@@ -198,43 +189,82 @@ public class SiteUser {
                 this.error = "Ошибка: " + e;
                 //System.out.println(error);
             }
-        }*/
+        }
         return findUser;
+    }
+
+    private SiteUser getSiteUserFromDbSelect(ResultSet findUsersSet) {
+        if (findUsersSet == null) return null;
+        SiteUser redUser = new SiteUser();
+        String idUser = null;
+        String userName = null;
+        String userEmail = null;
+        String userFio = null;
+        String userPhone = null;
+        String userEnabled = null;
+        String userPostId = null;
+        String userCompanyUnitId = null;
+        try {
+            if (findUsersSet.next()) {
+                idUser = findUsersSet.getString(usersTableField.id_user.toString());
+                userName = findUsersSet.getString(usersTableField.username.toString());
+                userEmail = findUsersSet.getString(usersTableField.user_email.toString());
+                userFio = findUsersSet.getString(usersTableField.user_fio.toString());
+                userPhone = findUsersSet.getString(usersTableField.user_phone.toString());
+                userEnabled = findUsersSet.getString(usersTableField.enabled.toString());
+                userPostId = findUsersSet.getString(usersTableField.user_post_id.toString());
+                userCompanyUnitId = findUsersSet.getString(usersTableField.user_company_unit_id.toString());
+
+                System.out.println("user " + idUser + " \n" +
+                        userName + "\n" +
+                        userEmail + "\n" +
+                        userFio + "\n" +
+                        userPhone + "\n" +
+                        userEnabled + "\n" +
+                        userPostId + "\n" +
+                        userCompanyUnitId);
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+/*
+        redUser.setId(idUser);
+        redUser.setName(userName);
+        redUser.setEmail(userEmail);
+        redUser.setFio(userFio);
+        redUser.setPhone(userPhone);
+        redUser.setIsEnable(userEnabled);
+        redUser.setPost(postMvc.getPost(userPostId));
+        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(userCompanyUnitId));
+
+        return redUser;
+        */
+        return null;
     }
 
     private SiteUser findUser(HttpServletRequest request) {
         String userNameFromButtonValue = request.getParameter("buttonuserred");
         String sql;
         SiteUser redUser = null;
-
         if (userNameFromButtonValue != null && !userNameFromButtonValue.equals("")) {
             redUser = findSiteUser(userNameFromButtonValue);
             return redUser;
         }
-
         String userIdFromForm = request.getParameter("user-red-id-label");
         sql = "select * from users where id_user='" + userIdFromForm + "'";
-
-        ResultSet findUsersList = null;
-        try {
-            findUsersList = dbMvc.getSelectResult(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        List<Map<String, Object>> findUsersList = dbMvc.getSelectResult(sql);
         redUser = getSiteUserFromDbSelect(findUsersList);
         return redUser;
     }
 
     public SiteUser findRedSiteUser(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         if (!isUserHasRole(principal, "ROLE_USERS_RED")) return null;
-
         String userFindValue = request.getParameter("user-find-label");
         String userRedFormValue = request.getParameter("red_form");
         String userDelValue = request.getParameter("user-delete-id-label");
-
         SiteUser redUser = null;
-
         if (userFindValue != null && userFindValue.equals("1")) {
             redUser = findUser(request);
         } else if (userRedFormValue != null && userRedFormValue.equals("1")) {
@@ -248,8 +278,6 @@ public class SiteUser {
 
     private String updateUserMessage(SiteUser redUser, HttpServletRequest request) {
         try {
-
-
             String userNameFromForm = request.getParameter("user-name-label");
             String userPasswordFromForm = request.getParameter("user-password-label");
             String userFioFromForm = request.getParameter("user-fio-label");
@@ -261,7 +289,6 @@ public class SiteUser {
             String userCompanyIdFromForm = request.getParameter("companyId");
             String userCompanyUnitIdFromForm = request.getParameter("companyUnitId");
             String sql;
-
             if (userNameFromForm != null
                     && !redUser.getName().equals(userNameFromForm)
                     && !userNameFromForm.equals("")) {
@@ -280,12 +307,6 @@ public class SiteUser {
                 }
             }
             if (userFioFromForm != null) {
-                // (!!!) не понятно, почему приходит в левой кодировке
-            /*try {
-                userFioFromForm = new String(request.getParameter("user-fio-label").getBytes("CP1252"), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }*/
                 sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
                 boolean flag = dbMvc.getInsertResult(sql);
                 if (flag) {
@@ -365,78 +386,23 @@ public class SiteUser {
         if (!isUserHasRole(principal, "ROLE_USERS")) return null;
         String sql;
         sql = "select * from users where username!='admin' and user_is_delete=0";
-        ResultSet listDbUser = null;
-        try {
-            listDbUser = dbMvc.getSelectResult(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<Map<String, Object>> listDbUser = dbMvc.getSelectResult(sql);
         if (listDbUser == null) {
             return null;
         }
-        ArrayList<SiteUser> siteUserArrayList = new ArrayList<SiteUser>();
-        try {
-            while (listDbUser.next()) {
-                SiteUser tmpSiteUser = new SiteUser();
-                setSiteUserFromResultSet(tmpSiteUser, listDbUser);
-                siteUserArrayList.add(tmpSiteUser);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ArrayList<SiteUser> siteUserArrayList = new ArrayList<SiteUser>(listDbUser.size());
+        for (Map row : listDbUser) {
+            SiteUser tmpSiteUser = new SiteUser();
+            setSiteUserFromMapRow(tmpSiteUser, row);
+            siteUserArrayList.add(tmpSiteUser);
         }
         return siteUserArrayList;
     }
 
-    //private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
-    private void setSiteUserFromResultSet(SiteUser redUser, ResultSet resultSet) {
-        //Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
+    private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
+        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
         try {
-            if (resultSet != null) {
-                String userName = resultSet.getString(DbModel.tableUsers.username.toString());
-                String userFio = resultSet.getString(DbModel.tableUsers.user_fio.toString());
-                String userPhone = resultSet.getString(DbModel.tableUsers.user_phone.toString());
-                String userEmail = resultSet.getString(DbModel.tableUsers.user_email.toString());
-                String userEnable = resultSet.getString(DbModel.tableUsers.enabled.toString());
-                String userIsDelete = resultSet.getString(DbModel.tableUsers.user_is_delete.toString());
-                String userId = resultSet.getString(DbModel.tableUsers.id_user.toString());
-                String userPostId = resultSet.getString(DbModel.tableUsers.user_post_id.toString());
-                String userCompanyId = resultSet.getString(DbModel.tableUsers.user_company_id.toString());
-                String userCompanyUnitId = resultSet.getString(DbModel.tableUsers.user_company_unit_id.toString());
-
-                Post post;
-                Company company;
-                CompanyUnit companyUnit;
-
-                if (id != null) {
-                    redUser.setId(id);
-                }
-                if (userName!=null) {
-                    redUser.setName(userName);
-                }
-                if (userEmail!=null) {
-                        redUser.setEmail(userEmail);
-                }
-                if (userFio!=null) {
-                    redUser.setFio(userFio);
-                }
-                if (userPhone!=null) {
-                    redUser.setPhone(userPhone);
-                }
-                if (userEnable.equals("1")) {
-                    redUser.setIsEnable("true");
-                }
-                if (userPostId !=null) {
-                    redUser.setPost(postMvc.getPost(userPostId));
-                }
-                if (userCompanyId!=null) {
-                    redUser.setCompany(companyMvc.getCompany(userCompanyId));
-                }
-                if (userCompanyUnitId!=null) {
-                    redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(userCompanyUnitId));
-                }
-            }
-
-        /*while (iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 Map.Entry<String, Object> pair = iterator.next();
                 if (pair.getKey().equals("id_user")) {
                     redUser.setId(pair.getValue().toString());
@@ -463,30 +429,16 @@ public class SiteUser {
                         redUser.setPost(null);
                     else redUser.setPost(postMvc.getPost(pair.getValue().toString()));
                 } else if (pair.getKey().equals("user_company_unit_id")) {
-                    if (pair.getValue() == null)
+                    if (pair.getValue() == null) {
                         redUser.setCompanyUnit(null);
-                    else {
-                        String companyUnitId = pair.getValue().toString();
-                        if (companyUnitId.equals("-1")) redUser.setCompanyUnit(null);
-                        else
-                            redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit(pair.getValue().toString()));
+                    } else {
+                        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit((Integer) pair.getValue()));
                     }
                 }
-                // Да! я знаю, что этот метод не обязателен и его можно получить из метода чуть выше
-                else if (pair.getKey().equals("user_company_id")) {
-                    if (pair.getValue() == null)
-                        redUser.setCompany(null);
-                    else redUser.setCompany(companyMvc.getCompany(pair.getValue().toString()));
-                }
-        }*/
-        } catch (
-                Exception e
-                )
-
-        {
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
@@ -494,25 +446,13 @@ public class SiteUser {
         String userNameFromFormUserAdd = request.getParameter("username");
         String sql;
         sql = "select * from users where username='" + userNameFromFormUserAdd + "'";
-        ResultSet dbSelectResult = null;
-        try {
-            dbSelectResult = dbMvc.getSelectResult(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        SiteUser tmpSiteUser = new SiteUser();
-        setSiteUserFromResultSet(tmpSiteUser, dbSelectResult);
-        if (tmpSiteUser != null && tmpSiteUser.getName().equals(userNameFromFormUserAdd)) {
+        List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql);
+        if (dbSelectResult != null && dbSelectResult.size() > 0) {
             this.error = "Пользователь существует";
             return false;
         } else {
             sql = "INSERT INTO users (username) VALUES ('" + userNameFromFormUserAdd + "')";
-            boolean flag = false;
-            try {
-                flag = dbMvc.getInsertResult(sql);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            boolean flag = dbMvc.getInsertResult(sql);
             if (!flag)
                 this.error = "Пользователь добавлен";
             else
@@ -528,5 +468,33 @@ public class SiteUser {
             }
         }
         return false;
+    }
+
+    public String saveRoleForUserForAjax(HttpServletRequest request, UsernamePasswordAuthenticationToken principal) {
+        String response = "Error";
+        if (!isUserHasRole(principal, "ROLE_USERS_RED")) return "Нет прав на редактирование";
+        String userId = (String) request.getParameter("userId").toString();
+        int userIdInt = -1;
+        try {
+            userIdInt = Integer.parseInt(userId);
+        } catch (Exception e) {
+            userIdInt = -1;
+        }
+        String role = (String) request.getParameter("role").toString();
+        String operation = (String) request.getParameter("operation").toString();
+        String sql = null;
+        SiteUser siteUserTmp = findSiteUser(userIdInt);
+        if (siteUserTmp == null || siteUserTmp.getName() == null) return "не верные параметры";
+        if (operation.equals("add")) {
+            sql = "delete from user_roles where username = '" + siteUserTmp.getName() + "' and role = '" + role + "'";
+            dbMvc.getInsertResult(sql);
+            sql = "insert into user_roles (role,username) values ('" + role + "','" + siteUserTmp.getName() + "')";
+            dbMvc.getInsertResult(sql);
+        } else if (operation.equals("remove")) {
+            sql = "delete from user_roles where username = '" + siteUserTmp.getName() + "' and role = '" + role + "';";
+            dbMvc.getInsertResult(sql);
+        } else return "что-то не так";
+
+        return "Ok";
     }
 }

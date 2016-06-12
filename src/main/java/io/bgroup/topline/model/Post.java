@@ -2,8 +2,6 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,37 +49,17 @@ public class Post {
     }
 
     private ArrayList<Post> getPostFromDbSelect(String sql) {
-        ResultSet resultSet = null;
-        try {
-            resultSet = dbMvc.getSelectResult(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (resultSet == null) return null;
+        List<Map<String, Object>> postListFromDb = null;
+        postListFromDb = dbMvc.getSelectResult(sql);
+        if (postListFromDb == null) return null;
         ArrayList<Post> postArrayList = null;
-        try {
-            while (resultSet.next()) {
-                Post post = new Post();
-                setPostFromResultSet(post, resultSet);
-                if (postArrayList == null) postArrayList = new ArrayList<Post>();
-                postArrayList.add(post);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Map row : postListFromDb) {
+            Post post = new Post();
+            post.setIdPost((String) row.get("id_post").toString());
+            post.setPostName((String) row.get("post_name").toString());
+            if (postArrayList == null) postArrayList = new ArrayList<Post>();
+            postArrayList.add(post);
         }
         return postArrayList;
-    }
-
-    private void setPostFromResultSet(Post post, ResultSet resultSet) {
-        try {
-            if (resultSet != null) {
-                String postId = resultSet.getString(DbModel.tablePost.id_post.toString());
-                String postName = resultSet.getString(DbModel.tablePost.post_name.toString());
-                if (postId!=null) post.setIdPost(postId);
-                if (postName!=null) post.setPostName(postName);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

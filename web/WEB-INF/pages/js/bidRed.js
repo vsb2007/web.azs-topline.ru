@@ -19,7 +19,7 @@ function onCarSelect(car) {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             if (car.value != -1) {
                 document.getElementById("divCarSectionId").innerHTML = xmlhttp.responseText;
-                getTrailerOnGetCarSection(car);
+                //getTrailerOnGetCarSection(car);
             }
         }
     }
@@ -96,5 +96,23 @@ function onTrailerSelect(trailer) {
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send("idTrailer=" + trailer.value + "&" + token.name + "=" + token.value);
     }
+}
+
+function sendFormForBidRed() {
+    var msg   = $('#bidRedUpdateForm').serialize();
+    $.ajax({
+        type: 'POST',
+        url: 'bidRedUpdate',
+        data: msg,
+        success: function(data) {
+            //$('.results').html(data);
+            document.getElementById("results").innerHTML = data;
+        },
+        error:  function(xhr, str){
+            //$('.results').html('Возникла ошибка: ' + xhr.responseCode);
+            document.getElementById("results").innerHTML = "Возникла ошибка: " + xhr.responseCode;
+        }
+    });
+    
 }
 

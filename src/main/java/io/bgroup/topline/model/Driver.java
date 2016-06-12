@@ -2,8 +2,6 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,12 +9,23 @@ import java.util.Map;
 public class Driver {
     @Autowired
     private DbModel dbMvc;
+    @Autowired
+    private SiteUser siteUserMvc;
 
     private String idDriver;
     private String driverFio;
     private String driverPhone;
     private String driverEmail;
     private String driverBlock;
+    private SiteUser driver;
+
+    public SiteUser getDriver() {
+        return driver;
+    }
+
+    private void setDriver(SiteUser driver) {
+        this.driver = driver;
+    }
 
     public String getIdDriver() {
         return idDriver;
@@ -60,58 +69,47 @@ public class Driver {
 
     public ArrayList<Driver> getDriverList() {
         ArrayList<Driver> driverList = null;
-        String sql = "select * from drivers where drivers_block='0'";
+        String sql = "select * from users where enabled='1' and user_post_id='2'";
         driverList = getDriverFromDbSelect(sql);
         return driverList;
     }
 
     public Driver getDriver(String idDriver) {
         ArrayList<Driver> driverList = null;
-        String sql = "select * from drivers where id_drivers='" + idDriver + "'";
+        String sql = "select * from users where id_user='" + idDriver + "'";
         driverList = getDriverFromDbSelect(sql);
         if (driverList == null || driverList.size() == 0) return null;
         return driverList.get(0);
     }
 
     private ArrayList<Driver> getDriverFromDbSelect(String sql) {
-        ResultSet resultSet = null;
-        try {
-            resultSet = dbMvc.getSelectResult(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (resultSet == null) return null;
+        List<Map<String, Object>> driverListFromDb = null;
+        driverListFromDb = dbMvc.getSelectResult(sql);
+        if (driverListFromDb == null) return null;
         ArrayList<Driver> driverList = null;
-        try {
-            while (resultSet.next()) {
-                Driver driver = new Driver();
-                setDriverFromResultSet(driver,resultSet);
-                if (driverList == null) driverList = new ArrayList<Driver>();
-                driverList.add(driver);
+        for (Map row : driverListFromDb) {
+            Driver driver = new Driver();
+            driver.setIdDriver((String) row.get("id_user").toString());
+            if (driver.getIdDriver()!=null) {
+                int userId = -1;
+                try {
+                    userId = Integer.parseInt(driver.getIdDriver());
+                }
+                catch (Exception e){
+                    userId = -1;
+                }
+                driver.setDriver(siteUserMvc.findSiteUser(userId));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            if (driver.getDriver()!=null){
+                driver.setDriverBlock(driver.getDriver().getIsEnable());
+                driver.setDriverEmail(driver.getDriver().getEmail());
+                driver.setDriverPhone(driver.getDriver().getPhone());
+                driver.setDriverFio(driver.getDriver().getFio());
+            }
+
+            if (driverList == null) driverList = new ArrayList<Driver>();
+            driverList.add(driver);
         }
         return driverList;
-    }
-    private void setDriverFromResultSet(Driver driver, ResultSet resultSet){
-        try {
-            if (resultSet != null) {
-                String driverId = resultSet.getString(DbModel.tableDrivers.id_drivers.toString());
-                String driverBlock = resultSet.getString(DbModel.tableDrivers.drivers_block.toString());
-                String driverEmail = resultSet.getString(DbModel.tableDrivers.drivers_email.toString());
-                String driverPhone = resultSet.getString(DbModel.tableDrivers.drivers_phone.toString());
-                String driverFio = resultSet.getString(DbModel.tableDrivers.drivers_fio.toString());
-
-                driver.setDriverBlock(driverBlock);
-                driver.setDriverEmail(driverEmail);
-                driver.setDriverPhone(driverPhone);
-                driver.setDriverFio(driverFio);
-                driver.setIdDriver(driverId);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 }
