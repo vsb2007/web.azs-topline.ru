@@ -8,76 +8,52 @@ import java.util.Map;
 
 public class OilStorage {
     @Autowired
-    private DbModel dbMvc;
+    private CompanyUnit companyUnitMvc;
 
-    private int idOilStorage;
-    private String oilStorageName;
-    private String oilStorageBlock;
-    private String oilStorageIsAzs;
+    private CompanyUnit companyUnit;
 
-    public int getIdOilStorage() {
-        return idOilStorage;
+    public CompanyUnit getCompanyUnit() {
+        return companyUnit;
     }
 
-    private void setIdOilStorage(int idOilStorage) {
-        this.idOilStorage = idOilStorage;
+    private void setCompanyUnit(CompanyUnit companyUnit) {
+        this.companyUnit = companyUnit;
+    }
+
+    public int getIdOilStorage() {
+        if (companyUnit != null)
+            return companyUnit.getIdCompanyUnit();
+        else return -1;
     }
 
     public String getOilStorageName() {
-        return oilStorageName;
-    }
-
-    private void setOilStorageName(String oilStorageName) {
-        this.oilStorageName = oilStorageName;
-    }
-
-    public String getOilStorageBlock() {
-        return oilStorageBlock;
-    }
-
-    private void setOilStorageBlock(String oilStorageBlock) {
-        this.oilStorageBlock = oilStorageBlock;
-    }
-
-    public String getOilStorageIsAzs() {
-        return oilStorageIsAzs;
-    }
-
-    private void setOilStorageIsAzs(String oilStorageIsAzs) {
-        this.oilStorageIsAzs = oilStorageIsAzs;
+        if (companyUnit != null)
+            return companyUnit.getCompanyUnitName();
+        else return null;
     }
 
     public ArrayList<OilStorage> getOilStorageList() {
-        ArrayList<OilStorage> oilStorageList = null;
-        String sql = "select * from company_unit where Block='0' order by company_unit_name desc";
-        oilStorageList = getOilStorageFromDbSelect(sql);
-        return oilStorageList;
-    }
-
-    public OilStorage getOilStorage(String idOilStorage) {
-        ArrayList<OilStorage> oilStorageList = null;
-        String sql = "select * from company_unit where id_company_unit = '" + idOilStorage + "'";
-        oilStorageList = getOilStorageFromDbSelect(sql);
-        if (oilStorageList == null || oilStorageList.size() == 0) return null;
-        return oilStorageList.get(0);
-    }
-
-    private ArrayList<OilStorage> getOilStorageFromDbSelect(String sql) {
-        List<Map<String, Object>> oilStorageListFromDb = null;
-        oilStorageListFromDb = dbMvc.getSelectResult(sql);
-        if (oilStorageListFromDb == null) return null;
-
-        ArrayList<OilStorage> oilStorageArrayList = null;
-        for (Map row : oilStorageListFromDb) {
+        ArrayList<CompanyUnit> companyUnitArrayList = companyUnitMvc.getCompanyUnitList();
+        ArrayList<OilStorage> oilStorageArrayList = new ArrayList<OilStorage>();
+        for (CompanyUnit companyUnit : companyUnitArrayList) {
             OilStorage oilStorage = new OilStorage();
-            oilStorage.setOilStorageBlock((String) row.get("Block").toString());
-            oilStorage.setIdOilStorage((Integer) row.get("id_company_unit"));
-            oilStorage.setOilStorageName((String) row.get("company_unit_name").toString());
-            //oilStorage.setOilStorageIsAzs((String) row.get("IsAZS").toString());
-            oilStorage.setOilStorageIsAzs(null);
-            if (oilStorageArrayList == null) oilStorageArrayList = new ArrayList<OilStorage>();
+            oilStorage.setCompanyUnit(companyUnit);
             oilStorageArrayList.add(oilStorage);
         }
         return oilStorageArrayList;
+    }
+
+    public OilStorage getOilStorage(String idOilStorage) {
+        try {
+            return getOilStorage(Integer.parseInt(idOilStorage));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public OilStorage getOilStorage(int idOilStorage) {
+        OilStorage oilStorage = new OilStorage();
+        oilStorage.setCompanyUnit(companyUnitMvc.getCompanyUnit(idOilStorage));
+        return oilStorage;
     }
 }

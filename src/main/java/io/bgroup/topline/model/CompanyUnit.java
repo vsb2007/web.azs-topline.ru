@@ -29,9 +29,18 @@ public class CompanyUnit {
     private String companyUnitName;
     private Company company;
     private String error;
+    private boolean isBlock;
     private ArrayList<OilTypeStorage> oilTypeStorageArrayList;
 
     public CompanyUnit() {
+    }
+
+    public boolean isBlock() {
+        return isBlock;
+    }
+
+    public void setBlock(boolean block) {
+        isBlock = block;
     }
 
     public ArrayList<OilTypeStorage> getOilTypeStorageArrayList() {
@@ -100,6 +109,14 @@ public class CompanyUnit {
             companyUnit.setIdCompanyUnit((Integer) row.get("id_company_unit"));
             companyUnit.setCompanyUnitName(row.get("company_unit_name").toString());
             companyUnit.setCompany(companyMvc.getCompany(row.get("company_id").toString()));
+            int block = -1;
+            try {
+                block = (Integer) row.get("company_unit_name");
+            } catch (Exception e) {
+                block = -1;
+            }
+            if (block == 1) companyUnit.setBlock(true);
+            else companyUnit.setBlock(false);
             if (companyUnit != null && companyUnit.getIdCompanyUnit() > 0) {
                 ArrayList<OilTypeStorage> oilTypeStorageList = new ArrayList<OilTypeStorage>();
                 try {
@@ -199,9 +216,16 @@ public class CompanyUnit {
         if (oilType == null) return "не определен тип топлива";
         if (companyUnit == null) return "подразделение не найдено";
 
-        if (!oilTypeStorageMvc.addOilTypeStorage(companyUnit.getIdCompanyUnit(),oilType.getId_oilType())) return "ошибка создания харнилища";
+        if (!oilTypeStorageMvc.addOilTypeStorage(companyUnit.getIdCompanyUnit(), oilType.getId_oilType()))
+            return "ошибка создания харнилища";
 
         return "контроль запущен";
     }
 
+    public ArrayList<CompanyUnit> getCompanyUnitList() {
+        ArrayList<CompanyUnit> companyUnitArrayList = null;
+        String sql = "select * from company_unit where Block='0' order by company_unit_name desc";
+        companyUnitArrayList = getCompanyUnitFromDbSelect(sql);
+        return companyUnitArrayList;
+    }
 }

@@ -36,7 +36,21 @@ public class DbJdbcModel {
         return true;
     }
 
+    public boolean getUpdateResult(String sql) {
+        try {
+            jdbcTemplateMvc.update(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public List<Map<String, Object>> getSelectResult(String sql, ArrayList<Object> args) {
         return jdbcTemplateMvc.queryForList(sql, args.toArray());
+    }
+
+    public List<Map<String, Object>> getSelectResult(String sql) {
+        return jdbcTemplateMvc.queryForList(sql);
     }
 }

@@ -64,7 +64,7 @@
                 </c:if>
                 <br>
                 <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()!=0 && pdfFile!=null && pdfFile==1}">
-                    <form action="/downloadPdfFile" method="post">
+                    <form action="downloadPdfFile" method="post">
                         <button class="button raised bg-blue-500 color-white">Скачать Накладную</button>
                         <input type="hidden" name="bidId" value="${bid.getId_bid()}">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token2"/>
@@ -72,6 +72,9 @@
                 </c:if>
             </sec:authorize>
         </c:if>
+    </div>
+    <div class="section">
+        <%@ include file="oilTypeStorageControl.jsp" %>
     </div>
     <script src="js/bidUpdate01.js"></script>
 </sec:authorize>
