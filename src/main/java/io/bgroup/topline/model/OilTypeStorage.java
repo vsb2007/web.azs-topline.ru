@@ -119,8 +119,8 @@ public class OilTypeStorage {
         int oilTypeStorageSize = oilTypeStorageArrayList.size();
         if (oilTypeStorageSize == 0) return "мало данных";
 
-        int idCompanyUnit = companyUnit.getIdCompanyUnit();
-        String sql = "insert into oilstorage (id_oilStorage,companyUnitId,oilTypeId,volumeV,volumeM) " +
+        //String sql = "insert into oilstorage (id_oilStorage,companyUnitId,oilTypeId,volumeV,volumeM) " +
+        String sql = "insert into oilstorage (id_oilStorage,volumeV,volumeM) " +
                 "values ";
         ArrayList<Object> args = new ArrayList<Object>();
         boolean commaFlag = false;
@@ -146,11 +146,12 @@ public class OilTypeStorage {
             if (commaFlag) {
                 sql += ",";
             }
-            sql += "(?,?,?,?,?)";
-            commaFlag = true;
+            //sql += "(?,?,?,?,?)";
+            sql += "(?,?,?)";
+            if (!commaFlag) commaFlag = true;
             args.add(oilTypeStorage.getIdOilTypeStorage());
-            args.add(companyUnit.getIdCompanyUnit());
-            args.add(oilTypeStorage.getOilType().getId_oilType());
+            //args.add(companyUnit.getIdCompanyUnit());
+            //args.add(oilTypeStorage.getOilType().getId_oilType());
             args.add(volumeVNew);
             args.add(volumeMNew);
         }
