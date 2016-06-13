@@ -62,4 +62,14 @@ public class MvcBidAjaxController {
         }
         return responseBody;
     }
+
+    @RequestMapping(value = "bidCheckUpdate", produces = {"text/plain; charset=UTF-8"})
+    @ResponseBody
+    public String bidCheckUpdate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        String responseBody = "Error";
+        if (request != null) {
+            responseBody = bidMvc.checkUpdate(principal, request);
+        }
+        return responseBody;
+    }
 }

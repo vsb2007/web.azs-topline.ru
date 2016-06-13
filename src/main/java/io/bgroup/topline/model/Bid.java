@@ -604,9 +604,26 @@ public class Bid {
         filename = myConstantMvc.getFileFolder() + myConstantMvc.getFilePrefix() + "_" + this.getId_bid()
                 + "_" + this.getBid_date_create().replace("-", "") + ".pdf";
         File f = new File(filename);
-        if(f.exists() && !f.isDirectory()) {
+        if (f.exists() && !f.isDirectory()) {
             return true;
         }
         return false;
+    }
+
+    public String checkUpdate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (!siteUser.isUserHasRole(principal, "ROLE_BID_UPDATE")) return "-1";
+
+        Bid bid = null;
+        String bidId = (String) request.getParameter("bidId").toString();
+        if (bidId == null) return "мало данных";
+        bid = getBid(bidId);
+        if (bid == null) return "заявка не найдена";
+
+        if (bid.getOilStorageIn() == null) return "не найден отправитель";
+        if (bid.getOilStorageIn().getCompanyUnit() == null) return "не найден отправитель";
+        if (bid.getOilStorageIn().getCompanyUnit().getOilTypeStorageArrayList() == null) return "1";
+
+        return "разбираем дальше";
     }
 }
