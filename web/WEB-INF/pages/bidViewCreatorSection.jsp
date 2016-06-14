@@ -61,13 +61,8 @@
                    value="${valV}" type="number" step="any"
                    onchange="onVolumeChange('${bidDetails.getSection().getId_section()}_volume',
                            '${bidDetails.getSection().getId_section()}_mass',
-                           '${bidDetails.getSection().getId_section()}_p',
-                           '${bidDetails.getOilType().getId_oilType()}')"
+                           '${bidDetails.getSection().getId_section()}_p')"
                 ${readonlyTmp}>
-            <input type="hidden" readonly
-                   id="${bidDetails.getSection().getId_section()}_volumeOld"
-                   value="${valV}" type="number" step="any"
-            >
             <div>
                 <span class="secondary-text">Литры</span>
             </div>
@@ -79,8 +74,7 @@
                    value="${valP}" type="number" step="any"
                    onchange="onPChange('${bidDetails.getSection().getId_section()}_volume',
                            '${bidDetails.getSection().getId_section()}_mass',
-                           '${bidDetails.getSection().getId_section()}_p',
-                           '${bidDetails.getOilType().getId_oilType()}')"
+                           '${bidDetails.getSection().getId_section()}_p')"
                 ${readonlyTmp}>
             <div>
                 <span class="secondary-text">Плотность</span>
@@ -101,13 +95,8 @@
                    value="${valM}" type="number" step="any"
                    onchange="onMassChange('${bidDetails.getSection().getId_section()}_volume',
                            '${bidDetails.getSection().getId_section()}_mass',
-                           '${bidDetails.getSection().getId_section()}_p',
-                           '${bidDetails.getOilType().getId_oilType()}')"
+                           '${bidDetails.getSection().getId_section()}_p')"
                 ${readonlyTmp}>
-            <input type="hidden" readonly
-                   id="${bidDetails.getSection().getId_section()}_massOld"
-                   value="${valM}" type="number" step="any"
-                   >
             <div>
                 <span class="secondary-text">Масса</span>
             </div>

@@ -1,4 +1,4 @@
-function onVolumeChange(idVol, idMass, idP, idOilType) {
+function onVolumeChange(idVol, idMass, idP) {
     document.getElementById("submitButton").setAttribute("disabled","disabled");
     var vol = document.getElementById(idVol);
     var p = document.getElementById(idP);
@@ -7,7 +7,7 @@ function onVolumeChange(idVol, idMass, idP, idOilType) {
     mass.value = (vol.value * p.value / 1000).toFixed(3);
 }
 
-function onPChange(idVol, idMass, idP, idOilType) {
+function onPChange(idVol, idMass, idP) {
     document.getElementById("submitButton").setAttribute("disabled","disabled");
     var vol = document.getElementById(idVol);
     var p = document.getElementById(idP);
@@ -22,7 +22,7 @@ function onPChange(idVol, idMass, idP, idOilType) {
     mass.value = (vol.value * p.value / 1000).toFixed(3);
 }
 
-function onMassChange(idVol, idMass, idP, idOilType) {
+function onMassChange(idVol, idMass, idP) {
     document.getElementById("submitButton").setAttribute("disabled","disabled");
     var vol = document.getElementById(idVol);
     var p = document.getElementById(idP);
@@ -49,7 +49,7 @@ function checkForm() {
                 document.getElementById("submitButton").removeAttribute("disabled");
             }
             if (data != 1) {
-                document.getElementById("control").innerHTML = "Ошибка в доступных объемах: " + data;
+                document.getElementById("control").innerHTML = "Ошибка: " + data;
                 document.getElementById("submitButton").setAttribute("disabled","disabled");
             }
         },

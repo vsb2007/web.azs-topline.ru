@@ -21,7 +21,7 @@
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
                 <c:if test="${!readonlyTmp.equals(\"readonly\")}">
-                    <form action="bidUpdate" method="post">
+                    <form action="bidUpdate" method="post" id="bidUpdateForm">
                 </c:if>
             </sec:authorize>
             <c:if test="${bid.getBid_is_freeze()==0}">
@@ -54,7 +54,11 @@
             </c:forEach>
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
                 <c:if test="${!readonlyTmp.equals(\"readonly\")}">
-                    <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
+                    <button class="button raised bg-blue-500 color-white" type="button" onclick="checkForm()">Проверить
+                        данные
+                    </button>
+                    <button class="button raised bg-blue-500 color-white" disabled="disabled"
+                            id="submitButton">${submitButtonValue}</button>
                     <input type="hidden" name="bidId" value="${bid.getId_bid()}">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
                     </form>
@@ -71,6 +75,10 @@
         </c:if>
             <%-- </sec:authorize> --%>
     </div>
+    <div class="section">
+        <%@ include file="oilTypeStorageControl.jsp" %>
+    </div>
     <script src="js/bidUpdate01.js"></script>
+    <script src="js/jquery-2.2.3.min.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

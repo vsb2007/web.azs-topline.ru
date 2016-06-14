@@ -5,10 +5,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class Bid {
     private String id_bid;
@@ -613,17 +611,66 @@ public class Bid {
     public String checkUpdate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         if (!siteUser.isUserHasRole(principal, "ROLE_BID_UPDATE")) return "-1";
-
         Bid bid = null;
         String bidId = (String) request.getParameter("bidId").toString();
         if (bidId == null) return "мало данных";
         bid = getBid(bidId);
         if (bid == null) return "заявка не найдена";
-
         if (bid.getOilStorageIn() == null) return "не найден отправитель";
         if (bid.getOilStorageIn().getCompanyUnit() == null) return "не найден отправитель";
         if (bid.getOilStorageIn().getCompanyUnit().getOilTypeStorageArrayList() == null) return "1";
+        OilStorage oilStorageIn = bid.getOilStorageIn();
+        Car car = bid.getCar();
+        if (car == null) return "машина не найдена";
+        Trailer trailer = bid.getTrailer();
+        ArrayList<OilSections> carOilSections = car.getOilSections();
+        ArrayList<OilSections> trailerOilSections = trailer.getOilSections();
+        ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
+        ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
+        String checkFlag = null;
+        checkFlag = checkForOilTypeStorage(bidDetailsCar, bidDetailsTrailer, request, oilStorageIn);
+        if (checkFlag == null)
+            return "неизвестная ошибка проверки остатков";
+        else return checkFlag;
+    }
 
-        return "разбираем дальше";
+    private String checkForOilTypeStorage(ArrayList<BidDetail> bidDetailsCar, ArrayList<BidDetail> bidDetailsTrailer,
+                                          HttpServletRequest request, OilStorage oilStorageIn) {
+        if (bidDetailsCar == null && bidDetailsTrailer == null) return "не найдены секции";
+        if (request == null) return "мало данных";
+        ArrayList<OilTypeStorage> oilTypeStorageArrayList = oilStorageIn.getCompanyUnit().getOilTypeStorageArrayList();
+        //ArrayList<Object> arrayV = new ArrayList<Object>();
+        HashMap<String, Double> arrayV = new HashMap<String, Double>();
+        HashMap<String, Double> arrayM = new HashMap<String, Double>();
+        for (OilTypeStorage oilTypeStorage : oilTypeStorageArrayList) {
+            int idOilType = oilTypeStorage.getOilType().getId_oilType();
+            arrayM.put(idOilType + "", oilTypeStorage.getVolumeM());
+            arrayV.put(idOilType + "", oilTypeStorage.getVolumeV());
+        }
+        String message = getCheckForbidDetail(bidDetailsCar, arrayV, arrayM, request);
+        if (message.equals("1"))
+            message = getCheckForbidDetail(bidDetailsTrailer, arrayV, arrayM, request);
+        return message;
+    }
+
+    private String getCheckForbidDetail(ArrayList<BidDetail> bidDetails, HashMap<String, Double> arrayV, HashMap<String, Double> arrayM, HttpServletRequest request) {
+        if (bidDetails == null) return "1";
+        for (BidDetail bidDetail : bidDetails) {
+            String idOilTypeString = bidDetail.getOilType().getId_oilType() + "";
+            if (!arrayV.containsKey(idOilTypeString)) continue;
+            double volV = 0;
+            double volM = 0;
+            try {
+                volV = Double.parseDouble(request.getParameter(bidDetail.getSection().getId_section() + "_volume"));
+                volM = Double.parseDouble(request.getParameter(bidDetail.getSection().getId_section() + "_mass"));
+            } catch (Exception e) {
+                return "мало данных";
+            }
+            arrayV.put(idOilTypeString, arrayV.get(idOilTypeString) - volV);
+            arrayM.put(idOilTypeString, arrayM.get(idOilTypeString) - volM);
+            if (arrayV.get(idOilTypeString) < 0 || arrayM.get(idOilTypeString) < 0)
+                return "Не достаточно топлива: " + bidDetail.getOilType().getOilTypeName();
+        }
+        return "1";
     }
 }
