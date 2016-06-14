@@ -32,7 +32,6 @@ public class Bid {
     private String error;
     private boolean emptySectionFlag = true;
 
-
     @Autowired
     private SiteUser siteUserMvc;
     @Autowired
