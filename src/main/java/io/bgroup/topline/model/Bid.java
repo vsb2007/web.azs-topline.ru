@@ -574,10 +574,6 @@ public class Bid {
 
     private boolean updateOilTypeStorageControl(int operation, CompanyUnit companyUnit, ArrayList<BidDetail> bidDetailsCar,
                                                 ArrayList<BidDetail> bidDetailsTrailer, HttpServletRequest request) {
-
-        if (companyUnit == null) {
-
-        }
         ArrayList<OilTypeStorage> oilTypeStorageArrayList = companyUnit.getOilTypeStorageArrayList();
         HashMap<String, Double> arrayV = new HashMap<String, Double>();
         HashMap<String, Double> arrayM = new HashMap<String, Double>();
@@ -610,7 +606,6 @@ public class Bid {
             if (commaFlag) {
                 sql += ",";
             }
-            //sql += "(?,?,?,?,?)";
             sql += "(?,?,?)";
             if (!commaFlag) commaFlag = true;
             args.add(oilTypeStorage.getIdOilTypeStorage());
