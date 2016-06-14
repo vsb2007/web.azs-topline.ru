@@ -17,7 +17,6 @@ public class Bid {
     private Car car;
     private Trailer trailer;
     private String fileLink;
-    //private ArrayList<BidDetail> bidDetailList;
 
     private String bid_date_freeze;
     private int bid_is_freeze;
@@ -505,8 +504,6 @@ public class Bid {
         if (sqlCar.equals("") && sqlTrailer.equals("")) return false;
         sql += " where id_bids='" + bid.getId_bid() + "'";
 
-
-
         /*
         изменения в контроль остатков
          */
@@ -571,7 +568,6 @@ public class Bid {
         return companyUnit;
     }
 
-
     private boolean updateOilTypeStorageControl(int operation, CompanyUnit companyUnit, ArrayList<BidDetail> bidDetailsCar,
                                                 ArrayList<BidDetail> bidDetailsTrailer, HttpServletRequest request) {
         ArrayList<OilTypeStorage> oilTypeStorageArrayList = companyUnit.getOilTypeStorageArrayList();
@@ -599,7 +595,6 @@ public class Bid {
             }
             volumeVNew = arrayV.get(oilTypeStorage.getOilType().getId_oilType() + "");
             volumeMNew = arrayM.get(oilTypeStorage.getOilType().getId_oilType() + "");
-
             /* округляем */
             volumeVNew = (double) ((int) Math.round(volumeVNew * 100)) / 100;
             volumeMNew = (double) ((int) Math.round(volumeMNew * 1000)) / 1000;
