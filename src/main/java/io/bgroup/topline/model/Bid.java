@@ -49,9 +49,13 @@ public class Bid {
     @Autowired
     private DbModel dbMvc;
     @Autowired
+    private DbJdbcModel dbJdbcMvc;
+    @Autowired
     private BidDetail bidDetailMvc;
     @Autowired
     private MyConstant myConstantMvc;
+    @Autowired
+    private CompanyUnit companyUnitMvc;
 
     public SiteUser getCreateUser() {
         return createUser;
@@ -479,11 +483,11 @@ public class Bid {
         if (bidId == null) return null;
         bid = getBid(bidId);
         if (bid == null) return null;
-        if (!updateBidDbFields(bid, request)) return null;
+        if (!updateBidDbFields(bid, request, siteUser)) return null;
         return getBid(bidId);
     }
 
-    private boolean updateBidDbFields(Bid bid, HttpServletRequest request) {
+    private boolean updateBidDbFields(Bid bid, HttpServletRequest request, SiteUser siteUser) {
         ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
         String sql = "update bids set ";
@@ -500,8 +504,123 @@ public class Bid {
         if (sqlCar.equals("") && !sqlTrailer.equals("")) sql += sqlTrailer;
         if (sqlCar.equals("") && sqlTrailer.equals("")) return false;
         sql += " where id_bids='" + bid.getId_bid() + "'";
-        if (dbMvc.getInsertResult(sql)) return false;
+
+
+
+        /*
+        изменения в контроль остатков
+         */
+        boolean flag = false;
+        if (bid.getBid_is_freeze() == 0) {
+            /* загрузка*/
+            OilStorage oilStorageIn = bid.getOilStorageIn();
+            if (oilStorageIn == null) return false;
+            CompanyUnit companyUnit = oilStorageIn.getCompanyUnit();
+
+            if (companyUnit.getOilTypeStorageArrayList() != null) {
+                flag = updateOilTypeStorageControl(1, companyUnit, bidDetailsCar, bidDetailsTrailer, request);
+            } else flag = true;
+        } else {
+            /*
+            слив
+             */
+            CompanyUnit companyUnit = findCompanyUnitFromRequestOnOilOut(request, bidDetailsCar, bidDetailsTrailer);
+            if (companyUnit == null) {
+                return false;
+            }
+            if (companyUnit.getOilTypeStorageArrayList() != null) {
+                flag = updateOilTypeStorageControl(0, companyUnit, bidDetailsCar, bidDetailsTrailer, request);
+            } else {
+                flag = true;
+            }
+        }
+        /*
+        закончили изменения в контроль остатков
+         */
+        if (flag) {
+            if (dbMvc.getInsertResult(sql)) return false;
+        } else return false;
         return true;
+    }
+
+    private CompanyUnit findCompanyUnitFromRequestOnOilOut(HttpServletRequest request, ArrayList<BidDetail> bidDetailsCar,
+                                                           ArrayList<BidDetail> bidDetailsTrailer) {
+        if (request == null) return null;
+        if (bidDetailsCar == null && bidDetailsTrailer == null) return null;
+        String destinationId = null;
+        if (bidDetailsCar != null) {
+            for (BidDetail bidDetail : bidDetailsCar) {
+                destinationId = request.getParameter(bidDetail.getSection().getId_section() + "_destination");
+                if (destinationId != null) break;
+            }
+        }
+        if (bidDetailsTrailer != null && destinationId == null) {
+            for (BidDetail bidDetail : bidDetailsTrailer) {
+                destinationId = request.getParameter(bidDetail.getSection().getId_section() + "_destination");
+                if (destinationId != null) break;
+            }
+        }
+        if (destinationId == null) return null;
+        int id = -1;
+        try {
+            id = Integer.parseInt(destinationId);
+        } catch (Exception e) {
+            id = -1;
+        }
+        CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(id);
+        return companyUnit;
+    }
+
+
+    private boolean updateOilTypeStorageControl(int operation, CompanyUnit companyUnit, ArrayList<BidDetail> bidDetailsCar,
+                                                ArrayList<BidDetail> bidDetailsTrailer, HttpServletRequest request) {
+
+        if (companyUnit == null) {
+
+        }
+        ArrayList<OilTypeStorage> oilTypeStorageArrayList = companyUnit.getOilTypeStorageArrayList();
+        HashMap<String, Double> arrayV = new HashMap<String, Double>();
+        HashMap<String, Double> arrayM = new HashMap<String, Double>();
+        for (OilTypeStorage oilTypeStorage : oilTypeStorageArrayList) {
+            int idOilType = oilTypeStorage.getOilType().getId_oilType();
+            arrayM.put(idOilType + "", oilTypeStorage.getVolumeM());
+            arrayV.put(idOilType + "", oilTypeStorage.getVolumeV());
+        }
+        String message = getCheckForbidDetail(operation, bidDetailsCar, arrayV, arrayM, request);
+        if (message.equals("1"))
+            message = getCheckForbidDetail(operation, bidDetailsTrailer, arrayV, arrayM, request);
+        if (!message.equals("1")) return false;
+        String sql = "insert into oilstorage (id_oilStorage,volumeV,volumeM) " +
+                "values ";
+        ArrayList<Object> args = new ArrayList<Object>();
+        boolean commaFlag = false;
+        for (OilTypeStorage oilTypeStorage : oilTypeStorageArrayList) {
+            double volumeVNew;
+            double volumeMNew;
+            if (!arrayV.containsKey(oilTypeStorage.getOilType().getId_oilType() + "")
+                    || !arrayM.containsKey(oilTypeStorage.getOilType().getId_oilType() + "")) {
+                continue;
+            }
+            volumeVNew = arrayV.get(oilTypeStorage.getOilType().getId_oilType() + "");
+            volumeMNew = arrayM.get(oilTypeStorage.getOilType().getId_oilType() + "");
+
+            /* округляем */
+            volumeVNew = (double) ((int) Math.round(volumeVNew * 100)) / 100;
+            volumeMNew = (double) ((int) Math.round(volumeMNew * 1000)) / 1000;
+            if (commaFlag) {
+                sql += ",";
+            }
+            //sql += "(?,?,?,?,?)";
+            sql += "(?,?,?)";
+            if (!commaFlag) commaFlag = true;
+            args.add(oilTypeStorage.getIdOilTypeStorage());
+            args.add(volumeVNew);
+            args.add(volumeMNew);
+        }
+        sql += " ON DUPLICATE KEY UPDATE " +
+                "oilstorage.volumeV = VALUES(volumeV),oilstorage.volumeM = VALUES(volumeM)";
+        boolean flag = dbJdbcMvc.getUpdateResult(sql, args);
+        return flag;
     }
 
     private String addSqlForUpdateString(ArrayList<BidDetail> bidDetails, String suffix, HttpServletRequest request) {
@@ -619,14 +738,13 @@ public class Bid {
         if (bid.getOilStorageIn() == null) return "не найден отправитель";
         if (bid.getOilStorageIn().getCompanyUnit() == null) return "не найден отправитель";
         if (bid.getOilStorageIn().getCompanyUnit().getOilTypeStorageArrayList() == null) return "1";
+
         OilStorage oilStorageIn = bid.getOilStorageIn();
         Car car = bid.getCar();
         if (car == null) return "машина не найдена";
         Trailer trailer = bid.getTrailer();
-        ArrayList<OilSections> carOilSections = car.getOilSections();
-        ArrayList<OilSections> trailerOilSections = trailer.getOilSections();
-        ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
-        ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
+        ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), car);
+        ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), trailer);
         String checkFlag = null;
         checkFlag = checkForOilTypeStorage(bidDetailsCar, bidDetailsTrailer, request, oilStorageIn);
         if (checkFlag == null)
@@ -647,13 +765,14 @@ public class Bid {
             arrayM.put(idOilType + "", oilTypeStorage.getVolumeM());
             arrayV.put(idOilType + "", oilTypeStorage.getVolumeV());
         }
-        String message = getCheckForbidDetail(bidDetailsCar, arrayV, arrayM, request);
+        String message = getCheckForbidDetail(1, bidDetailsCar, arrayV, arrayM, request);
         if (message.equals("1"))
-            message = getCheckForbidDetail(bidDetailsTrailer, arrayV, arrayM, request);
+            message = getCheckForbidDetail(1, bidDetailsTrailer, arrayV, arrayM, request);
         return message;
     }
 
-    private String getCheckForbidDetail(ArrayList<BidDetail> bidDetails, HashMap<String, Double> arrayV, HashMap<String, Double> arrayM, HttpServletRequest request) {
+    private String getCheckForbidDetail(int operation, ArrayList<BidDetail> bidDetails,
+                                        HashMap<String, Double> arrayV, HashMap<String, Double> arrayM, HttpServletRequest request) {
         if (bidDetails == null) return "1";
         for (BidDetail bidDetail : bidDetails) {
             String idOilTypeString = bidDetail.getOilType().getId_oilType() + "";
@@ -661,13 +780,24 @@ public class Bid {
             double volV = 0;
             double volM = 0;
             try {
-                volV = Double.parseDouble(request.getParameter(bidDetail.getSection().getId_section() + "_volume"));
-                volM = Double.parseDouble(request.getParameter(bidDetail.getSection().getId_section() + "_mass"));
+                String volume = request.getParameter(bidDetail.getSection().getId_section() + "_volume");
+                String strM = request.getParameter(bidDetail.getSection().getId_section() + "_mass");
+                if (volume == null || strM == null) {
+                    continue;
+                }
+                volV = Double.parseDouble(volume);
+                volM = Double.parseDouble(strM);
             } catch (Exception e) {
                 return "мало данных";
             }
-            arrayV.put(idOilTypeString, arrayV.get(idOilTypeString) - volV);
-            arrayM.put(idOilTypeString, arrayM.get(idOilTypeString) - volM);
+            if (operation == 1) {
+                arrayV.put(idOilTypeString, arrayV.get(idOilTypeString) - volV);
+                arrayM.put(idOilTypeString, arrayM.get(idOilTypeString) - volM);
+            }
+            if (operation == 0) {
+                arrayV.put(idOilTypeString, arrayV.get(idOilTypeString) + volV);
+                arrayM.put(idOilTypeString, arrayM.get(idOilTypeString) + volM);
+            }
             if (arrayV.get(idOilTypeString) < 0 || arrayM.get(idOilTypeString) < 0)
                 return "Не достаточно топлива: " + bidDetail.getOilType().getOilTypeName();
         }

@@ -174,10 +174,9 @@ public class MvcBidController {
         } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost().equals("3")) {
             if (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bid.getOilStorageIn().getIdOilStorage())
                 model.setViewName("bidViewOperatorIn");
-            if (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() != bid.getOilStorageIn().getIdOilStorage()){
+            if (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() != bid.getOilStorageIn().getIdOilStorage()) {
                 model.setViewName("bidViewOperatorOut");
             }
-
         } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost().equals("4")) {
             model.setViewName("bidViewWatcher");
         }

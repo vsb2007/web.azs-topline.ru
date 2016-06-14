@@ -77,9 +77,11 @@
             </sec:authorize>
         </c:if>
     </div>
-    <div class="section">
-        <%@ include file="oilTypeStorageControl.jsp" %>
-    </div>
+    <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()==0}">
+        <div class="section">
+            <%@ include file="oilTypeStorageControl.jsp" %>
+        </div>
+    </c:if>
     <script src="js/bidUpdate01.js"></script>
     <script src="js/jquery-2.2.3.min.js"></script>
 </sec:authorize>

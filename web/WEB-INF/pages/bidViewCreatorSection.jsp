@@ -50,6 +50,7 @@
         <div class="tile">
             <input type="text" class="text-input border-green-500"
                    value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
+            <input type="hidden" name="${bidDetails.getSection().getId_section()}_destination" value="${bidDetails.getDestination().getIdCompanyUnit()}">
             <div>
                 <span class="secondary-text">Назначение</span>
             </div>
