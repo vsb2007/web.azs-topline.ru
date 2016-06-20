@@ -12,16 +12,16 @@ import java.util.Map;
  */
 public class Post {
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
 
-    private String idPost;
+    private int idPost;
     private String postName;
 
-    public String getIdPost() {
+    public int getIdPost() {
         return idPost;
     }
 
-    private void setIdPost(String idPost) {
+    private void setIdPost(int idPost) {
         this.idPost = idPost;
     }
 
@@ -36,26 +36,28 @@ public class Post {
     public ArrayList<Post> getPostList() {
         ArrayList<Post> postList = null;
         String sql = "select * from post";
-        postList = getPostFromDbSelect(sql);
+        postList = getPostFromDbSelect(sql,null);
         return postList;
     }
 
     public Post getPost(String idPost) {
         ArrayList<Post> postArrayList = null;
-        String sql = "select * from post where id_post='" + idPost + "'";
-        postArrayList = getPostFromDbSelect(sql);
+        String sql = "select * from post where id_post=?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(idPost);
+        postArrayList = getPostFromDbSelect(sql,args);
         if (postArrayList == null || postArrayList.size() == 0) return null;
         return postArrayList.get(0);
     }
 
-    private ArrayList<Post> getPostFromDbSelect(String sql) {
+    private ArrayList<Post> getPostFromDbSelect(String sql,ArrayList<Object> args ) {
         List<Map<String, Object>> postListFromDb = null;
-        postListFromDb = dbMvc.getSelectResult(sql);
+        postListFromDb = dbMvc.getSelectResult(sql,args);
         if (postListFromDb == null) return null;
         ArrayList<Post> postArrayList = null;
         for (Map row : postListFromDb) {
             Post post = new Post();
-            post.setIdPost((String) row.get("id_post").toString());
+            post.setIdPost((Integer) row.get("id_post"));
             post.setPostName((String) row.get("post_name").toString());
             if (postArrayList == null) postArrayList = new ArrayList<Post>();
             postArrayList.add(post);

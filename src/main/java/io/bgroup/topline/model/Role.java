@@ -15,7 +15,7 @@ public class Role {
     private int hasRole;
 
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
 
     public int getHasRole() {
         return hasRole;
@@ -44,26 +44,28 @@ public class Role {
     public ArrayList<Role> getRoleList() {
         String sql = null;
         sql = "select * from user_roles where username='admin'";
-        ArrayList<Role> rolesUrlsList = getUserRolesFromDbSelect(sql);
+        ArrayList<Role> rolesUrlsList = getUserRolesFromDbSelect(sql,null);
         return rolesUrlsList;
     }
 
     public ArrayList<Role> getRoleListByUser(String siteUserName) {
         if (siteUserName == null) return null;
-        String sql = "SELECT * FROM \n" +
-                "user_roles\n" +
-                "left join\n" +
-                "(select role as role2 from user_roles where username = '" + siteUserName + "') \n" +
-                "ss on ss.role2 = user_roles.role\n" +
-                "where user_roles.username = 'admin'" +
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "SELECT * FROM " +
+                "user_roles " +
+                "left join " +
+                "(select role as role2 from user_roles where username = ?) " +
+                "ss on ss.role2 = user_roles.role " +
+                "where user_roles.username = 'admin' " +
                 "order by user_roles.role";
-        ArrayList<Role> rolesUrlsList = getUserRolesFromDbSelect(sql);
+        args.add(siteUserName);
+        ArrayList<Role> rolesUrlsList = getUserRolesFromDbSelect(sql,args);
         return rolesUrlsList;
     }
 
-    private ArrayList<Role> getUserRolesFromDbSelect(String sql) {
+    private ArrayList<Role> getUserRolesFromDbSelect(String sql,ArrayList<Object> args) {
         List<Map<String, Object>> roleListFromDb = null;
-        roleListFromDb = dbMvc.getSelectResult(sql);
+        roleListFromDb = dbMvc.getSelectResult(sql,args);
         if (roleListFromDb == null) return null;
         ArrayList<Role> roleList = null;
         for (Map row : roleListFromDb) {

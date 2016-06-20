@@ -16,7 +16,7 @@ public class Trailer {
     private ArrayList<OilSections> oilSections;
 
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
     @Autowired
     private OilType oilTypeMvc;
     @Autowired
@@ -75,26 +75,28 @@ public class Trailer {
     public ArrayList<Trailer> getTrailersList() {
         ArrayList<Trailer> trailersList = null;
         String sql = "select * from trailer where trailer_block='0'";
-        trailersList = getTrailersFromDbSelect(sql);
+        trailersList = getTrailersFromDbSelect(sql,null);
         return trailersList;
     }
 
     public Trailer getTrailer(String id_trailer) {
         Trailer trailer = null;
-        String sql = "select * from trailer where id_trailer=" + id_trailer;
-        trailer = getTrailerFromDbSelect(sql);
+        String sql = "select * from trailer where id_trailer=?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(id_trailer);
+        trailer = getTrailerFromDbSelect(sql,args);
         return trailer;
     }
 
-    private Trailer getTrailerFromDbSelect(String sql) {
-        ArrayList<Trailer> trailerList = getTrailersFromDbSelect(sql);
+    private Trailer getTrailerFromDbSelect(String sql,ArrayList<Object> args ) {
+        ArrayList<Trailer> trailerList = getTrailersFromDbSelect(sql,args);
         if (trailerList == null) return null;
         return trailerList.get(0);
     }
 
-    private ArrayList<Trailer> getTrailersFromDbSelect(String sql) {
+    private ArrayList<Trailer> getTrailersFromDbSelect(String sql,ArrayList<Object> args ) {
         List<Map<String, Object>> trailersListFromDb = null;
-        trailersListFromDb = dbMvc.getSelectResult(sql);
+        trailersListFromDb = dbMvc.getSelectResult(sql,args);
         if (trailersListFromDb == null) return null;
         ArrayList<Trailer> trailerList = null;
         for (Map row : trailersListFromDb) {

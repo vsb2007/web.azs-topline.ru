@@ -28,7 +28,7 @@ public class SiteUser {
     private ArrayList<Role> rolesList;
 
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
     @Autowired
     PasswordEncoder passwordEncoderMvc;
     @Autowired
@@ -157,8 +157,10 @@ public class SiteUser {
         if (name != null) {
             ArrayList<Object> arrayList = new ArrayList<Object>();
             arrayList.add(name);
-            sql = "select * from users where username='" + name + "'";
-            findUsersList = dbMvc.getSelectResult(sql);
+            sql = "select * from users where username=?";
+            ArrayList<Object> args = new ArrayList<Object>();
+            args.add(name);
+            findUsersList = dbMvc.getSelectResult(sql,args);
         }
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
@@ -172,8 +174,10 @@ public class SiteUser {
         SiteUser findUser = null;
         String sql;
         List<Map<String, Object>> findUsersList = null;
-        sql = "select * from users where id_user='" + id_user + "'";
-        findUsersList = dbMvc.getSelectResult(sql);
+        sql = "select * from users where id_user=?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(id_user);
+        findUsersList = dbMvc.getSelectResult(sql,args);
         findUser = getSiteUserFromDbSelect(findUsersList);
         return findUser;
     }
@@ -253,8 +257,10 @@ public class SiteUser {
             return redUser;
         }
         String userIdFromForm = request.getParameter("user-red-id-label");
-        sql = "select * from users where id_user='" + userIdFromForm + "'";
-        List<Map<String, Object>> findUsersList = dbMvc.getSelectResult(sql);
+        sql = "select * from users where id_user=?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(userIdFromForm);
+        List<Map<String, Object>> findUsersList = dbMvc.getSelectResult(sql,args);
         redUser = getSiteUserFromDbSelect(findUsersList);
         return redUser;
     }
@@ -292,87 +298,119 @@ public class SiteUser {
             if (userNameFromForm != null
                     && !redUser.getName().equals(userNameFromForm)
                     && !userNameFromForm.equals("")) {
-                sql = "update users set username='" + userNameFromForm + "' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set username=? where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userNameFromForm);
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления имени";
                 }
             }
             if (userPasswordFromForm != null && !userPasswordFromForm.equals("")) {
                 String password = passwordEncoderMvc.encode(userPasswordFromForm);
-                sql = "update users set password='" + password + "' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set password=? where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(password);
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления пароля";
                 }
             }
             if (userFioFromForm != null) {
-                sql = "update users set user_fio='" + userFioFromForm + "' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set user_fio=? where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userFioFromForm);
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления ФИО";
                 }
             }
             if (userPhoneFromForm != null) {
-                sql = "update users set user_phone='" + userPhoneFromForm + "' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set user_phone=? where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userPhoneFromForm);
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления телефона";
                 }
             }
             if (userEmailFromForm != null) {
-                sql = "update users set user_email='" + userEmailFromForm + "' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set user_email=? where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userEmailFromForm);
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления email";
                 }
             }
             if (userPostIdFromForm != null) {
-                sql = "update users set user_post_id='" + userPostIdFromForm + "' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set user_post_id=? where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userPostIdFromForm);
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления PostId";
                 }
             }
             if (userCompanyIdFromForm != null) {
-                sql = "update users set user_company_id='" + userCompanyIdFromForm + "' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set user_company_id=? where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userCompanyIdFromForm);
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления CompanyId";
                 }
             } else {
-                sql = "update users set user_company_id='-1' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set user_company_id='-1' where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления CompanyId -1";
                 }
             }
             if (userCompanyUnitIdFromForm != null) {
-                sql = "update users set user_company_unit_id='" + userCompanyUnitIdFromForm + "' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set user_company_unit_id=? where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userCompanyUnitIdFromForm);
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления CompanyUnitId";
                 }
             } else {
-                sql = "update users set user_company_unit_id='-1' where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set user_company_unit_id='-1' where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления CompanyUnitId -1";
                 }
             }
             if (userActiveFlagFromForm != null) {
                 if (userActiveFlagFromForm.equals("0")) {
-                    sql = "update users set enabled=true where id_user=" + userIdFromForm;
-                    boolean flag = dbMvc.getInsertResult(sql);
-                    if (flag) {
+                    sql = "update users set enabled=true where id_user=?";
+                    ArrayList<Object> args = new ArrayList<Object>();
+                    args.add(userIdFromForm);
+                    boolean flag = dbMvc.getUpdateResult(sql,args);
+                    if (!flag) {
                         return "Ошибка обновления блокировки";
                     }
                 }
             }
             if (userActiveFlagFromForm == null || !userActiveFlagFromForm.equals("0")) {
-                sql = "update users set enabled=false where id_user=" + userIdFromForm;
-                boolean flag = dbMvc.getInsertResult(sql);
-                if (flag) {
+                sql = "update users set enabled=false where id_user=?";
+                ArrayList<Object> args = new ArrayList<Object>();
+                args.add(userIdFromForm);
+                boolean flag = dbMvc.getUpdateResult(sql,args);
+                if (!flag) {
                     return "Ошибка обновления блокировки";
                 }
             }
@@ -386,7 +424,7 @@ public class SiteUser {
         if (!isUserHasRole(principal, "ROLE_USERS")) return null;
         String sql;
         sql = "select * from users where username!='admin' and user_is_delete=0";
-        List<Map<String, Object>> listDbUser = dbMvc.getSelectResult(sql);
+        List<Map<String, Object>> listDbUser = dbMvc.getSelectResult(sql,null);
         if (listDbUser == null) {
             return null;
         }
@@ -445,15 +483,17 @@ public class SiteUser {
         if (!isUserHasRole(principal, "ROLE_USERS_ADD")) return false;
         String userNameFromFormUserAdd = request.getParameter("username");
         String sql;
-        sql = "select * from users where username='" + userNameFromFormUserAdd + "'";
-        List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql);
+        sql = "select * from users where username=?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(userNameFromFormUserAdd);
+        List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql,args);
         if (dbSelectResult != null && dbSelectResult.size() > 0) {
             this.error = "Пользователь существует";
             return false;
         } else {
-            sql = "INSERT INTO users (username) VALUES ('" + userNameFromFormUserAdd + "')";
-            boolean flag = dbMvc.getInsertResult(sql);
-            if (!flag)
+            sql = "INSERT INTO users (username) VALUES (?)";
+            boolean flag = dbMvc.getUpdateResult(sql,args);
+            if (flag)
                 this.error = "Пользователь добавлен";
             else
                 this.error = "Пользователь не добавлен, ошибка!!!";
@@ -484,15 +524,18 @@ public class SiteUser {
         String operation = (String) request.getParameter("operation").toString();
         String sql = null;
         SiteUser siteUserTmp = findSiteUser(userIdInt);
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(role);
+        args.add(siteUserTmp.getName());
         if (siteUserTmp == null || siteUserTmp.getName() == null) return "не верные параметры";
         if (operation.equals("add")) {
-            sql = "delete from user_roles where username = '" + siteUserTmp.getName() + "' and role = '" + role + "'";
-            dbMvc.getInsertResult(sql);
-            sql = "insert into user_roles (role,username) values ('" + role + "','" + siteUserTmp.getName() + "')";
-            dbMvc.getInsertResult(sql);
+            sql = "delete from user_roles where role = ? and username = ?";
+            dbMvc.getUpdateResult(sql,args);
+            sql = "insert into user_roles (role,username) values (?,?)";
+            dbMvc.getUpdateResult(sql,args);
         } else if (operation.equals("remove")) {
-            sql = "delete from user_roles where username = '" + siteUserTmp.getName() + "' and role = '" + role + "';";
-            dbMvc.getInsertResult(sql);
+            sql = "delete from user_roles where role = ? and username = ?";
+            dbMvc.getUpdateResult(sql,args);
         } else return "что-то не так";
 
         return "Ok";

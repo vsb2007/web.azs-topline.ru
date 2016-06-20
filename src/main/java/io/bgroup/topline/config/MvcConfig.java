@@ -70,11 +70,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return new JdbcTemplate(this.dataSource());
     }
 
-    @Bean(name = "dbModel")
-    public DbModel dbModel() {
-        return new DbModel();
-    }
-
     @Bean(name = "DbJdbcModel")
     public DbJdbcModel dbJdbcModel() {
         return new DbJdbcModel();

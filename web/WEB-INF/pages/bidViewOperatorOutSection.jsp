@@ -3,7 +3,7 @@
                     || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
                     || (bid.getBid_is_freeze() && siteUser.getCompanyUnit()!=null
                     &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
-                    || siteUser.getPost().getIdPost().equals(\"2\")
+                    || siteUser.getPost().getIdPost()==2)
                     }">
     <c:choose>
         <c:when test="${bidDetails.getDateOut()!=null}">

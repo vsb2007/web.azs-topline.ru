@@ -12,7 +12,7 @@ public class OilType {
     private int oilTypeBlock;
 
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
 
     public OilType() {
     }
@@ -20,7 +20,7 @@ public class OilType {
     public ArrayList<OilType> getOilTypesList() {
         ArrayList<OilType> oilTypesList = null;
         String sql = "select * from nomenclature where block=0";
-        oilTypesList = getOilTypesFromDbSelect(sql);
+        oilTypesList = getOilTypesFromDbSelect(sql,null);
         return oilTypesList;
     }
 /*
@@ -36,15 +36,17 @@ public class OilType {
 */
     public OilType getOilType(int id_oilType) {
         ArrayList<OilType> oilTypesList = null;
-        String sql = "select * from nomenclature where id_Nomenclature='" + id_oilType + "'";
-        oilTypesList = getOilTypesFromDbSelect(sql);
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "select * from nomenclature where id_Nomenclature=?";
+        args.add(id_oilType);
+        oilTypesList = getOilTypesFromDbSelect(sql,args);
         if (oilTypesList == null || oilTypesList.size() != 1) return null;
         return oilTypesList.get(0);
     }
 
-    private ArrayList<OilType> getOilTypesFromDbSelect(String sql) {
+    private ArrayList<OilType> getOilTypesFromDbSelect(String sql,ArrayList<Object> args) {
         List<Map<String, Object>> oilTypesListFromDb = null;
-        oilTypesListFromDb = dbMvc.getSelectResult(sql);
+        oilTypesListFromDb = dbMvc.getSelectResult(sql,args);
         if (oilTypesListFromDb == null) return null;
 
         ArrayList<OilType> oilTypeArrayList = null;
