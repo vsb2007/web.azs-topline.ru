@@ -143,16 +143,10 @@ public class SiteUser {
         this.isEnable = isEnable;
     }
 
-    public boolean getPermissionsAccess(String page) {
-        return true;
-    }
-
     private SiteUser findSiteUser(String name) {
         SiteUser findUser = null;
         String sql;
-        String sql2;
         List<Map<String, Object>> findUsersList = null;
-        //ResultSet findUsersList2 = null;
 
         if (name != null) {
             ArrayList<Object> arrayList = new ArrayList<Object>();
