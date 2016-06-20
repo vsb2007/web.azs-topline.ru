@@ -9,7 +9,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public class Bid {
-    private String id_bid;
+    private int id_bid;
     private SiteUser createUser;
     private String name;
     private OilStorage oilStorageIn;
@@ -17,12 +17,13 @@ public class Bid {
     private Car car;
     private Trailer trailer;
     private String fileLink;
+    private boolean driverCanUpdate;
 
     private String bid_date_freeze;
-    private int bid_is_freeze;
+    private boolean bid_is_freeze;
     private String bid_date_close;
-    private String bid_is_close;
-    private String bid_is_done;
+    private boolean bid_is_close;
+    private boolean bid_is_done;
     private String bid_date_done;
     private String bid_date_create;
     private String bid_date_last_update;
@@ -82,6 +83,14 @@ public class Bid {
     public Bid() {
     }
 
+    public boolean isDriverCanUpdate() {
+        return driverCanUpdate;
+    }
+
+    public void setDriverCanUpdate(boolean driverCanUpdate) {
+        this.driverCanUpdate = driverCanUpdate;
+    }
+
     public String getBid_date_create() {
         return bid_date_create;
     }
@@ -106,11 +115,11 @@ public class Bid {
         this.bid_date_freeze = bid_date_freeze;
     }
 
-    public int getBid_is_freeze() {
+    public boolean getBid_is_freeze() {
         return bid_is_freeze;
     }
 
-    public void setBid_is_freeze(int bid_is_freeze) {
+    public void setBid_is_freeze(boolean bid_is_freeze) {
         this.bid_is_freeze = bid_is_freeze;
     }
 
@@ -122,19 +131,19 @@ public class Bid {
         this.bid_date_close = bid_date_close;
     }
 
-    public String getBid_is_close() {
+    public boolean getBid_is_close() {
         return bid_is_close;
     }
 
-    public void setBid_is_close(String bid_is_close) {
+    public void setBid_is_close(boolean bid_is_close) {
         this.bid_is_close = bid_is_close;
     }
 
-    public String getBid_is_done() {
+    public boolean getBid_is_done() {
         return bid_is_done;
     }
 
-    public void setBid_is_done(String bid_is_done) {
+    public void setBid_is_done(boolean bid_is_done) {
         this.bid_is_done = bid_is_done;
     }
 
@@ -146,11 +155,11 @@ public class Bid {
         this.bid_date_done = bid_date_done;
     }
 
-    public String getId_bid() {
+    public int getId_bid() {
         return id_bid;
     }
 
-    private void setId_bid(String id_bid) {
+    private void setId_bid(int id_bid) {
         this.id_bid = id_bid;
     }
 
@@ -392,8 +401,8 @@ public class Bid {
             Map.Entry<String, Object> pair = iterator.next();
             if (pair.getKey().equals("id_bids")) {
                 if (pair.getValue() != null) {
-                    bid.setId_bid(pair.getValue().toString());
-                } else bid.setId_bid(null);
+                    bid.setId_bid((Integer) pair.getValue());
+                } else bid.setId_bid(-1);
             } else if (pair.getKey().equals("bid_create_user_id")) {
                 if (pair.getValue() != null) {
                     bid.setCreateUser(siteUserMvc.findSiteUser((Integer) pair.getValue()));
@@ -424,20 +433,29 @@ public class Bid {
                 } else bid.setBid_date_freeze(null);
             } else if (pair.getKey().equals("bid_is_freeze")) {
                 if (pair.getValue() != null) {
-                    bid.setBid_is_freeze((Integer) pair.getValue());
-                } else bid.setBid_is_freeze(0);
+                    int isFreezeField = (Integer) pair.getValue();
+                    if (isFreezeField == 1)
+                        bid.setBid_is_freeze(true);
+                    else bid.setBid_is_freeze(false);
+                } else bid.setBid_is_freeze(false);
             } else if (pair.getKey().equals("bid_date_close")) {
                 if (pair.getValue() != null) {
                     bid.setBid_date_close(pair.getValue().toString());
                 } else bid.setBid_date_close(null);
             } else if (pair.getKey().equals("bid_is_close")) {
                 if (pair.getValue() != null) {
-                    bid.setBid_is_close(pair.getValue().toString());
-                } else bid.setBid_is_close(null);
+                    int isCloseField = (Integer) pair.getValue();
+                    if (isCloseField == 1)
+                        bid.setBid_is_close(true);
+                    else bid.setBid_is_close(false);
+                } else bid.setBid_is_close(false);
             } else if (pair.getKey().equals("bid_is_done")) {
                 if (pair.getValue() != null) {
-                    bid.setBid_is_done(pair.getValue().toString());
-                } else bid.setBid_is_done(null);
+                    int isDoneField = (Integer) pair.getValue();
+                    if (isDoneField == 1)
+                        bid.setBid_is_done(true);
+                    else bid.setBid_is_done(false);
+                } else bid.setBid_is_done(false);
             } else if (pair.getKey().equals("bid_date_done")) {
                 if (pair.getValue() != null) {
                     bid.setBid_date_done(pair.getValue().toString());
@@ -450,6 +468,13 @@ public class Bid {
                 if (pair.getValue() != null) {
                     bid.setBid_date_last_update((String) pair.getValue().toString());
                 } else bid.setBid_date_last_update(null);
+            } else if (pair.getKey().equals("bid_driverCanUpdate")) {
+                if (pair.getValue() != null) {
+                    int driverCanUpdateField = (Integer) pair.getValue();
+                    if (driverCanUpdateField == 1)
+                        bid.setDriverCanUpdate(true);
+                    else bid.setDriverCanUpdate(false);
+                } else bid.setDriverCanUpdate(false);
             }
         }
     }
@@ -491,7 +516,7 @@ public class Bid {
         String sql = "update bids set ";
         String suffix = "";
         //if (bid.getBid_is_freeze().equals("0")) {
-        if (bid.getBid_is_freeze() == 0) {
+        if (!bid.getBid_is_freeze()) {
             suffix = "in";
             sql += "bid_date_freeze=now(), bid_is_freeze='1',";
         } else suffix = "out";
@@ -507,7 +532,7 @@ public class Bid {
         изменения в контроль остатков
          */
         boolean flag = false;
-        if (bid.getBid_is_freeze() == 0) {
+        if (bid.getBid_is_freeze()) {
             /* загрузка*/
             OilStorage oilStorageIn = bid.getOilStorageIn();
             if (oilStorageIn == null) return false;
@@ -533,6 +558,7 @@ public class Bid {
         /*
         закончили изменения в контроль остатков
          */
+        System.out.println(sql);
         if (flag) {
             if (dbMvc.getInsertResult(sql)) return false;
         } else return false;

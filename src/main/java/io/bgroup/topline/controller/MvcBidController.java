@@ -84,7 +84,7 @@ public class MvcBidController {
         ModelAndView model = new ModelAndView();
         Bid bid = bidMvc.getBidForView(principal, request);
         //if (bid.getBid_is_freeze().equals("true")){
-        if (bid.getBid_is_freeze() != 0) {
+        if (bid.getBid_is_freeze()) {
             if (bid.isPdfFileExist()) {
                 model.addObject("pdfFile", 1);
             } else {

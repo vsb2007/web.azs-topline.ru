@@ -23,7 +23,7 @@
             <c:set var="valM" value="${bidDetails.getMassIn()}" scope="application"/>
         </c:otherwise>
     </c:choose>
-    <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()!=0 && !bid.isDone()}">
+    <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze() && !bid.isDone()}">
         <form action="bidUpdate" method="post">
         <input type="hidden" required name="bidNumber" value="${bid.getName()}" readonly>
         <input type="hidden" required name="oilStorageIn" value="${bid.getOilStorageIn().getOilStorageName()}" readonly>
@@ -105,7 +105,7 @@
         <br>
         <c:choose>
             <c:when test="${!bidDetails.isDone() && bid.getBid_is_freeze()!=null
-                                && bid.getBid_is_freeze()!=0}">
+                                && bid.getBid_is_freeze()}">
                 <div class="tile">
                     <button class="button raised bg-blue-500 color-white">${submitButtonValue}</button>
                     <input type="hidden" name="bidId" value="${bid.getId_bid()}">
@@ -124,7 +124,7 @@
             </c:otherwise>
         </c:choose>
     </div>
-    <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()!=0 && !bid.isDone()}">
+    <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze() && !bid.isDone()}">
         </form>
     </c:if>
 </c:if>

@@ -12,7 +12,7 @@
     <div class="section">
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
-        <c:if test="${bid.getBid_is_freeze()!=0 && siteUser.getCompanyUnit()!=null
+        <c:if test="${bid.getBid_is_freeze() && siteUser.getCompanyUnit()!=null
                     && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
                     && !siteUser.getName().equals(\"admin\")
                     }">
@@ -21,15 +21,15 @@
         <c:if test="${bid.getBid_is_freeze() !=null}">
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
                 <c:if test="${!readonlyTmp.equals(\"readonly\") && bid.getBid_is_freeze()!=null
-                                && bid.getBid_is_freeze()==0}">
+                                && !bid.getBid_is_freeze()}">
                     <form action="bidUpdate" method="post" id="bidUpdateForm">
                 </c:if>
             </sec:authorize>
-            <c:if test="${bid.getBid_is_freeze()==0}">
+            <c:if test="${!bid.getBid_is_freeze()}">
                 <c:set var="freeze" value="in" scope="application"/>
                 <c:set var="submitButtonValue" value="Отпустить топливо" scope="application"/>
             </c:if>
-            <c:if test="${bid.getBid_is_freeze()!=0}">
+            <c:if test="${bid.getBid_is_freeze()}">
                 <c:set var="freeze" value="out" scope="application"/>
                 <c:set var="submitButtonValue" value="Принять топливо" scope="application"/>
             </c:if>
@@ -56,7 +56,7 @@
 
             <sec:authorize access="hasRole('ROLE_BID_UPDATE')">
                 <c:if test="${!readonlyTmp.equals(\"readonly\") && bid.getBid_is_freeze()!=null
-                                && bid.getBid_is_freeze()==0}">
+                                && !bid.getBid_is_freeze()}">
                     <button class="button raised bg-blue-500 color-white" type="button" onclick="checkForm()">Проверить
                         данные
                     </button>
@@ -67,7 +67,7 @@
                     </form>
                 </c:if>
                 <br>
-                <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()!=0 && pdfFile!=null && pdfFile==1}">
+                <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze() && pdfFile!=null && pdfFile==1}">
                     <form action="downloadPdfFile" method="post">
                         <button class="button raised bg-blue-500 color-white">Скачать Накладную</button>
                         <input type="hidden" name="bidId" value="${bid.getId_bid()}">
@@ -77,7 +77,7 @@
             </sec:authorize>
         </c:if>
     </div>
-    <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()==0}">
+    <c:if test="${bid.getBid_is_freeze()!=null && !bid.getBid_is_freeze()}">
         <div class="section">
             <%@ include file="oilTypeStorageControl.jsp" %>
         </div>

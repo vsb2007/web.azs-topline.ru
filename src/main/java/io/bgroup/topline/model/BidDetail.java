@@ -146,7 +146,7 @@ public class BidDetail {
         this.dateOut = dateOut;
     }
 
-    public ArrayList<BidDetail> getBidDetailList(String bidId, Object object) {
+    public ArrayList<BidDetail> getBidDetailList(int bidId, Object object) {
         if (object == null) return null;
         ArrayList<OilSections> oilSectionsList = null;
         if (object instanceof Car) {

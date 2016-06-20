@@ -13,7 +13,7 @@
             <%-- <sec:authorize access="!hasRole('ROLE_BID_RED')"> --%>
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
-        <c:if test="${bid.getBid_is_freeze()!=0 && siteUser.getCompanyUnit()!=null
+        <c:if test="${bid.getBid_is_freeze() && siteUser.getCompanyUnit()!=null
                     && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
                     }">
             <c:set var="readonlyTmp" value="readonly" scope="application"/>
@@ -24,11 +24,11 @@
                     <form action="bidUpdate" method="post" id="bidUpdateForm">
                 </c:if>
             </sec:authorize>
-            <c:if test="${bid.getBid_is_freeze()==0}">
+            <c:if test="${!bid.getBid_is_freeze()}">
                 <c:set var="freeze" value="in" scope="application"/>
                 <c:set var="submitButtonValue" value="Отпустить топливо" scope="application"/>
             </c:if>
-            <c:if test="${bid.getBid_is_freeze()!=0}">
+            <c:if test="${bid.getBid_is_freeze()}">
                 <c:set var="freeze" value="out" scope="application"/>
                 <c:set var="submitButtonValue" value="Принять топливо" scope="application"/>
             </c:if>
@@ -64,7 +64,7 @@
                     </form>
                 </c:if>
                 <br>
-                <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()!=0 && pdfFile!=null && pdfFile==1}">
+                <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze() && pdfFile!=null && pdfFile==1}">
                     <form action="/downloadPdfFile" method="post">
                         <button class="button raised bg-blue-500 color-white">Скачать Накладную</button>
                         <input type="hidden" name="bidId" value="${bid.getId_bid()}">
@@ -75,7 +75,7 @@
         </c:if>
             <%-- </sec:authorize> --%>
     </div>
-    <c:if test="${bid.getBid_is_freeze()!=null && bid.getBid_is_freeze()==0}">
+    <c:if test="${bid.getBid_is_freeze()!=null && !bid.getBid_is_freeze()}">
         <div class="section">
             <%@ include file="oilTypeStorageControl.jsp" %>
         </div>
