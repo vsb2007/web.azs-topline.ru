@@ -17,8 +17,8 @@ public class Bid {
     private Car car;
     private Trailer trailer;
     private String fileLink;
-    private boolean driverCanUpdate;
 
+    private boolean driverCanUpdate;
     private String bid_date_freeze;
     private boolean bid_is_freeze;
     private String bid_date_close;
@@ -46,7 +46,7 @@ public class Bid {
     @Autowired
     private Trailer trailerMvc;
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
     @Autowired
     private DbJdbcModel dbJdbcMvc;
     @Autowired
@@ -234,12 +234,14 @@ public class Bid {
             }
         }
         String sql = "insert into bids ";
+        ArrayList<Object> args = new ArrayList<Object>();
         String columns = "";
         String values = "";
 
         if (siteUser != null) {
             columns = strPlusCommaPlusValue(columns, "bid_create_user_id");
-            values = strPlusCommaPlusValue(values, "'" + siteUser.getId() + "'");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(siteUser.getId());
         }
         /*
         if (bidNumber != null) {
@@ -256,21 +258,24 @@ public class Bid {
         }
         if (oilStorage.getIdOilStorage() > 0) {
             columns = strPlusCommaPlusValue(columns, "bid_storage_in_id");
-            values = strPlusCommaPlusValue(values, "'" + oilStorage.getIdOilStorage() + "'");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(oilStorage.getIdOilStorage());
         }
         if (driver.getIdDriver() != null) {
             columns = strPlusCommaPlusValue(columns, "bid_driver_id");
-            values = strPlusCommaPlusValue(values, "'" + driver.getIdDriver() + "'");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(driver.getIdDriver());
         }
         if (car.getId_car() != null) {
             columns = strPlusCommaPlusValue(columns, "bid_car_id");
-            values = strPlusCommaPlusValue(values, "'" + car.getId_car() + "'");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(car.getId_car());
         }
         if (carOilSections != null && carOilSections.size() != 0) {
             String[] columnAndValue = new String[2];
             columnAndValue[0] = columns;
             columnAndValue[1] = values;
-            addColumnsAndValuesForSections(columnAndValue, carOilSections, request);
+            addColumnsAndValuesForSections(columnAndValue, carOilSections, request,args);
             columns = columnAndValue[0];
             values = columnAndValue[1];
         }
@@ -278,18 +283,19 @@ public class Bid {
         if (trailerOilSections != null && trailerOilSections.size() != 0) {
             if (trailer != null) {
                 columns = strPlusCommaPlusValue(columns, "bid_trailer_id");
-                values = strPlusCommaPlusValue(values, "'" + trailer.getId_trailer() + "'");
+                values = strPlusCommaPlusValue(values, "?");
+                args.add(trailer.getId_trailer());
             }
             String[] columnAndValue = new String[2];
             columnAndValue[0] = columns;
             columnAndValue[1] = values;
-            addColumnsAndValuesForSections(columnAndValue, trailerOilSections, request);
+            addColumnsAndValuesForSections(columnAndValue, trailerOilSections, request,args);
             columns = columnAndValue[0];
             values = columnAndValue[1];
         }
         if (emptySectionFlag) return "Error: секции пусты";
         sql += "(" + columns + ") values (" + values + ")";
-        if (!dbMvc.getInsertResult(sql)) {
+        if (dbMvc.getUpdateResult(sql,args)) {
             /*
             уведомление по email пока не требуется
              */
@@ -311,7 +317,7 @@ public class Bid {
         return strTmp;
     }
 
-    private void addColumnsAndValuesForSections(String[] columnAndValue, ArrayList<OilSections> tmpOilSections, HttpServletRequest request) {
+    private void addColumnsAndValuesForSections(String[] columnAndValue, ArrayList<OilSections> tmpOilSections, HttpServletRequest request, ArrayList<Object> args) {
         String columns = columnAndValue[0];
         String values = columnAndValue[1];
         for (OilSections oilSections : tmpOilSections) {
@@ -321,9 +327,11 @@ public class Bid {
             if (storageOutIdTmp.equals("-1")) continue;
             emptySectionFlag = false;
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_oilType_id");
-            values = strPlusCommaPlusValue(values, "'" + oilTypeIdTmp + "'");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(oilTypeIdTmp);
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_storageOut_id");
-            values = strPlusCommaPlusValue(values, "'" + storageOutIdTmp + "'");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(storageOutIdTmp);
         }
         columnAndValue[0] = columns;
         columnAndValue[1] = values;
@@ -335,33 +343,51 @@ public class Bid {
         if (siteUserTmp == null) return null;
         String sql = null;
         if (siteUserTmp.getPost() == null && !siteUserTmp.getName().equals("admin")) return null;
+        ArrayList<Object> args = new ArrayList<Object>();
         if (siteUserTmp.getName().equals("admin")) { //  admin
-            sql = "select * from bids where bid_is_close='0'";
+            sql = "select * from bids where bid_is_close=?";
+            args.add("0");
         } else if (siteUserTmp.getPost().getIdPost().equals("1")) { //  руководитель
-            sql = "select * from bids where bid_is_close='0' and bid_create_user_id = '" + siteUserTmp.getId() + "'";
+            sql = "select * from bids where bid_is_close=? and bid_create_user_id = ?";
+            args.add("0");
+            args.add(siteUserTmp.getId());
         } else if (siteUserTmp.getPost().getIdPost().equals("4")) { //  наблюдатель
-            sql = "select * from bids where bid_is_close='0'";
+            sql = "select * from bids where bid_is_close=?";
+            args.add("0");
         } else if (siteUserTmp.getPost().getIdPost().equals("2")) { //Водитель
-            sql = "select * from bids where bid_is_close='0' and bid_driver_id = '" + siteUserTmp.getId() + "'";
+            sql = "select * from bids where bid_is_close = ? and bid_driver_id = ?";
+            args.add("0");
+            args.add(siteUserTmp.getId());
         } else if (siteUserTmp.getPost().getIdPost().equals("3")) { //Оператор
             int companyUnitId = siteUserTmp.getCompanyUnit().getIdCompanyUnit();
             if (companyUnitId <= 0) return null;
-            sql = "select * from bids where bid_is_close='0' and (" +
-                    "bid_storage_in_id = '" + companyUnitId + "' " +
-                    "or bid_car_sec_1_storageOut_id = '" + companyUnitId + "' " +
-                    "or bid_car_sec_2_storageOut_id = '" + companyUnitId + "' " +
-                    "or bid_car_sec_3_storageOut_id = '" + companyUnitId + "' " +
-                    "or bid_trailer_sec_1_storageOut_id = '" + companyUnitId + "' " +
-                    "or bid_trailer_sec_2_storageOut_id = '" + companyUnitId + "' " +
-                    "or bid_trailer_sec_3_storageOut_id = '" + companyUnitId + "' " +
-                    "or bid_trailer_sec_4_storageOut_id = '" + companyUnitId + "' " +
-                    "or bid_trailer_sec_5_storageOut_id = '" + companyUnitId + "' " +
-                    "or bid_trailer_sec_6_storageOut_id = '" + companyUnitId + "' )";
+            sql = "select * from bids where bid_is_close=? and (" +
+                    "bid_storage_in_id = ? " +
+                    "or bid_car_sec_1_storageOut_id = ? " +
+                    "or bid_car_sec_2_storageOut_id = ? " +
+                    "or bid_car_sec_3_storageOut_id = ? " +
+                    "or bid_trailer_sec_1_storageOut_id = ? " +
+                    "or bid_trailer_sec_2_storageOut_id = ? " +
+                    "or bid_trailer_sec_3_storageOut_id = ? " +
+                    "or bid_trailer_sec_4_storageOut_id = ? " +
+                    "or bid_trailer_sec_5_storageOut_id = ? " +
+                    "or bid_trailer_sec_6_storageOut_id = ? )";
+            args.add("0");
+            args.add(companyUnitId);
+            args.add(companyUnitId);
+            args.add(companyUnitId);
+            args.add(companyUnitId);
+            args.add(companyUnitId);
+            args.add(companyUnitId);
+            args.add(companyUnitId);
+            args.add(companyUnitId);
+            args.add(companyUnitId);
+            args.add(companyUnitId);
         }
         if (sql == null) return null;
         ArrayList<Bid> bidsList = null;
         sql += " order by id_bids";
-        bidsList = getBidsFromDbSelect(sql);
+        bidsList = getBidsFromDbSelect(sql, args);
         setDoneForBid(bidsList, siteUserTmp);
         return bidsList;
     }
@@ -380,9 +406,9 @@ public class Bid {
         }
     }
 
-    private ArrayList<Bid> getBidsFromDbSelect(String sql) {
+    private ArrayList<Bid> getBidsFromDbSelect(String sql, ArrayList<Object> args) {
         List<Map<String, Object>> bidsListFromDb = null;
-        bidsListFromDb = dbMvc.getSelectResult(sql);
+        bidsListFromDb = dbMvc.getSelectResult(sql, args);
         if (bidsListFromDb == null) return null;
         ArrayList<Bid> bidsList = null;
         for (Map row : bidsListFromDb) {
@@ -489,10 +515,12 @@ public class Bid {
 
     public Bid getBid(String bidId) {
         if (bidId == null) return null;
-        String sql = "select * from bids where id_bids='" + bidId + "'";
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "select * from bids where id_bids = ?";
+        args.add(bidId);
         if (sql == null) return null;
         ArrayList<Bid> bidsList = null;
-        bidsList = getBidsFromDbSelect(sql);
+        bidsList = getBidsFromDbSelect(sql, args);
         if (bidsList == null || bidsList.size() != 1) return null;
         Bid bid = bidsList.get(0);
         return bid;
@@ -513,21 +541,25 @@ public class Bid {
     private boolean updateBidDbFields(Bid bid, HttpServletRequest request, SiteUser siteUser) {
         ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
-        String sql = "update bids set ";
+        String sql = "update bids set bid_date_last_update=now(),";
         String suffix = "";
         //if (bid.getBid_is_freeze().equals("0")) {
+        ArrayList<Object> args = new ArrayList<Object>();
         if (!bid.getBid_is_freeze()) {
             suffix = "in";
             sql += "bid_date_freeze=now(), bid_is_freeze='1',";
-        } else suffix = "out";
-        String sqlCar = addSqlForUpdateString(bidDetailsCar, suffix, request);
-        String sqlTrailer = addSqlForUpdateString(bidDetailsTrailer, suffix, request);
+        } else {
+            suffix = "out";
+        }
+        String sqlCar = addSqlForUpdateString(bidDetailsCar, suffix, request, args);
+        String sqlTrailer = addSqlForUpdateString(bidDetailsTrailer, suffix, request, args);
         if (!sqlCar.equals("")) sql += sqlCar;
         if (!sqlCar.equals("") && !sqlTrailer.equals("")) sql += "," + sqlTrailer;
         if (sqlCar.equals("") && !sqlTrailer.equals("")) sql += sqlTrailer;
         if (sqlCar.equals("") && sqlTrailer.equals("")) return false;
-        sql += " where id_bids='" + bid.getId_bid() + "'";
+        sql += " where id_bids=?";
 
+        args.add(bid.getId_bid());
         /*
         изменения в контроль остатков
          */
@@ -558,9 +590,9 @@ public class Bid {
         /*
         закончили изменения в контроль остатков
          */
-        System.out.println(sql);
+        //System.out.println(sql);
         if (flag) {
-            if (dbMvc.getInsertResult(sql)) return false;
+            if (!dbMvc.getUpdateResult(sql,args)) return false;
         } else return false;
         return true;
     }
@@ -638,7 +670,7 @@ public class Bid {
         return flag;
     }
 
-    private String addSqlForUpdateString(ArrayList<BidDetail> bidDetails, String suffix, HttpServletRequest request) {
+    private String addSqlForUpdateString(ArrayList<BidDetail> bidDetails, String suffix, HttpServletRequest request, ArrayList<Object> args) {
         String sql = "";
         if (bidDetails == null) return sql;
         for (BidDetail bidDetail : bidDetails) {
@@ -649,10 +681,14 @@ public class Bid {
             if (volume != null && strM != null && strP != null && strT != null) {
                 if (!sql.equals("")) sql += ",";
                 sql += "bid_" + bidDetail.getSection().getId_section() + "_date_" + suffix + "=now(),";
-                sql += "bid_" + bidDetail.getSection().getId_section() + "_volume_" + suffix + "='" + volume + "',";
-                sql += "bid_" + bidDetail.getSection().getId_section() + "_p_" + suffix + "='" + strP + "',";
-                sql += "bid_" + bidDetail.getSection().getId_section() + "_t_" + suffix + "='" + strT + "',";
-                sql += "bid_" + bidDetail.getSection().getId_section() + "_mass_" + suffix + "='" + strM + "'";
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_volume_" + suffix + "=?,";
+                args.add(volume);
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_p_" + suffix + "=?,";
+                args.add(strP);
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_t_" + suffix + "=?,";
+                args.add(strT);
+                sql += "bid_" + bidDetail.getSection().getId_section() + "_mass_" + suffix + "=?";
+                args.add(strM);
             }
         }
         return sql;
@@ -662,9 +698,11 @@ public class Bid {
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         if (!siteUser.isUserHasRole(principal, "ROLE_BID_RED")) return;
         String bidId = request.getParameter("bidIdButton");
+        ArrayList<Object> args = new ArrayList<Object>();
         if (bidId == null) return;
-        String sql = "update bids set bid_date_close=now(), bid_is_close='1' where id_bids='" + bidId + "'";
-        dbMvc.getInsertResult(sql);
+        String sql = "update bids set bid_date_close=now(), bid_is_close='1' where id_bids=?";
+        args.add(bidId);
+        dbMvc.getUpdateResult(sql,args);
     }
 
     public String redBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
@@ -692,24 +730,29 @@ public class Bid {
         Trailer trailer = trailerMvc.getTrailer(trailerId);
         //if (trailer == null && !trailerId.equals("-1")) return "трейлер не найден";
         String sql = "";
+        ArrayList<Object> args = new ArrayList<Object>();
         sql += "update bids set bid_date_last_update=now()";
-        sql += ", bid_storage_in_id='" + oilStorageIn.getIdOilStorage() + "'";
-        sql += ", bid_driver_id='" + driver.getIdDriver() + "'";
-        sql += ", bid_car_id='" + car.getId_car() + "'";
+        sql += ", bid_storage_in_id=?";
+        args.add(oilStorageIn.getIdOilStorage());
+        sql += ", bid_driver_id=?";
+        args.add(driver.getIdDriver());
+        sql += ", bid_car_id='?";
+        args.add(car.getId_car());
         ArrayList<OilSections> carOilSections = car.getOilSections();
-        sql += addSqlForUpdateStringForBidRed(carOilSections, request);
+        sql += addSqlForUpdateStringForBidRed(carOilSections, request,args);
         if (trailer != null) {
-            sql += ", bid_trailer_id='" + trailer.getId_trailer() + "'";
+            sql += ", bid_trailer_id=?";
+            args.add(trailer.getId_trailer());
             ArrayList<OilSections> trailerOilSections = trailer.getOilSections();
-            sql += addSqlForUpdateStringForBidRed(trailerOilSections, request);
+            sql += addSqlForUpdateStringForBidRed(trailerOilSections, request,args);
         }
         sql += " where id_bids=" + bid.getId_bid();
-        if (!dbMvc.getInsertResult(sql))
+        if (dbMvc.getUpdateResult(sql,args))
             return "Данные сохранены";
         return "неизвестная ошибка редактирования заявки";
     }
 
-    private String addSqlForUpdateStringForBidRed(ArrayList<OilSections> tmpOilSections, HttpServletRequest request) {
+    private String addSqlForUpdateStringForBidRed(ArrayList<OilSections> tmpOilSections, HttpServletRequest request,ArrayList<Object> args) {
         String sql = "";
         if (tmpOilSections == null || request == null) return "";
         for (OilSections oilSections : tmpOilSections) {
@@ -723,9 +766,11 @@ public class Bid {
             } else {
                 //emptySectionFlag = false;
                 sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
-                sql += "='" + oilTypeIdTmp + "'";
+                sql += "=?";
+                args.add(oilTypeIdTmp);
                 sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
-                sql += "='" + storageOutIdTmp + "'";
+                sql += "=?";
+                args.add(storageOutIdTmp);
             }
         }
         return sql;

@@ -167,9 +167,11 @@ public class CompanyUnit {
     public void redCompanyUnit(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         String companyUnitName = request.getParameter("companyUnitName");
         String companyUnitId = request.getParameter("companyUnitId");
-        String sql = "update company_unit set company_unit_name = '" + companyUnitName +
-                "' where id_company_unit = '" + companyUnitId + "'";
-        boolean flag = dbMvc.getUpdateResult(sql);
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "update company_unit set company_unit_name = ? where id_company_unit = ?";
+        args.add(companyUnitName);
+        args.add(companyUnitId);
+        boolean flag = dbMvc.getUpdateResult(sql,args);
         if (flag) {
             this.error = "Ошибка обновления имени";
         }
@@ -186,9 +188,11 @@ public class CompanyUnit {
             return;
         }
         String sql;
-
-        sql = "INSERT INTO company_unit (company_unit_name,company_id) VALUES ('" + companyUnitNameFromForm + "','" + companyId + "')";
-        boolean flag = dbMvc.getUpdateResult(sql);
+        ArrayList<Object> args = new ArrayList<Object>();
+        sql = "INSERT INTO company_unit (company_unit_name,company_id) VALUES (?,?)";
+        args.add(companyUnitNameFromForm);
+        args.add(companyId);
+        boolean flag = dbMvc.getUpdateResult(sql,args);
         if (!flag)
             this.error = "подразделение добавлено";
         else

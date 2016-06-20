@@ -36,7 +36,7 @@ public class DbJdbcModel {
         return true;
     }
 
-    public boolean getUpdateResult(String sql) {
+    private boolean getUpdateResult(String sql) {
         try {
             jdbcTemplateMvc.update(sql);
         } catch (Exception e) {
