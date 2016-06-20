@@ -80,6 +80,17 @@ public class Trailer {
     }
 
     public Trailer getTrailer(String id_trailer) {
+        if (id_trailer == null) return null;
+        int id = -1;
+        try {
+            id = Integer.parseInt(id_trailer);
+        } catch (Exception e) {
+            return null;
+        }
+        return getTrailer(id);
+    }
+
+    public Trailer getTrailer(int id_trailer) {
         Trailer trailer = null;
         String sql = "select * from trailer where id_trailer=?";
         ArrayList<Object> args = new ArrayList<Object>();

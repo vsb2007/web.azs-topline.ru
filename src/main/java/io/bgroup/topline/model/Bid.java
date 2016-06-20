@@ -1,6 +1,7 @@
 package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.acls.model.ObjectIdentityGenerator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
@@ -345,18 +346,18 @@ public class Bid {
         if (siteUserTmp.getName().equals("admin")) { //  admin
             sql = "select * from bids where bid_is_close=?";
             args.add("0");
-        } else if (siteUserTmp.getPost().getIdPost()==1) { //  руководитель
+        } else if (siteUserTmp.getPost().getIdPost() == 1) { //  руководитель
             sql = "select * from bids where bid_is_close=? and bid_create_user_id = ?";
             args.add("0");
             args.add(siteUserTmp.getId());
-        } else if (siteUserTmp.getPost().getIdPost()==4) { //  наблюдатель
+        } else if (siteUserTmp.getPost().getIdPost() == 4) { //  наблюдатель
             sql = "select * from bids where bid_is_close=?";
             args.add("0");
-        } else if (siteUserTmp.getPost().getIdPost()==2) { //Водитель
+        } else if (siteUserTmp.getPost().getIdPost() == 2) { //Водитель
             sql = "select * from bids where bid_is_close = ? and bid_driver_id = ?";
             args.add("0");
             args.add(siteUserTmp.getId());
-        } else if (siteUserTmp.getPost().getIdPost()==3) { //Оператор
+        } else if (siteUserTmp.getPost().getIdPost() == 3) { //Оператор
             int companyUnitId = siteUserTmp.getCompanyUnit().getIdCompanyUnit();
             if (companyUnitId <= 0) return null;
             sql = "select * from bids where bid_is_close=? and (" +
@@ -420,6 +421,56 @@ public class Bid {
 
     private void setBidFromMapRow(Bid bid, Map row) {
         if (bid == null || row == null) return;
+        bid.setId_bid((Integer) row.get("id_bids"));
+        bid.setCreateUser(siteUserMvc.findSiteUser((Integer) row.get("bid_create_user_id")));
+        bid.setName((String) row.get("bid_number"));
+        bid.setOilStorageIn(oilStorageMvc.getOilStorage((Integer) row.get("bid_storage_in_id")));
+        bid.setDriver(driverMvc.getDriver((Integer) row.get("bid_driver_id")));
+        bid.setCar(carMvc.getCar((Integer) row.get("bid_car_id")));
+        bid.setTrailer(trailerMvc.getTrailer((Integer) row.get("bid_trailer_id")));
+        Object dateFreeze = null;
+        dateFreeze = row.get("bid_date_freeze");
+        if (dateFreeze != null)
+            bid.setBid_date_freeze((String) dateFreeze.toString());
+        else bid.setBid_date_freeze(null);
+        int isFreezeField = (Integer) row.get("bid_is_freeze");
+        if (isFreezeField == 1)
+            bid.setBid_is_freeze(true);
+        else bid.setBid_is_freeze(false);
+        Object dateClose = null;
+        dateClose = row.get("bid_date_close");
+        if (dateClose != null)
+            bid.setBid_date_close((String) dateClose.toString());
+        else bid.setBid_date_close(null);
+        int isCloseField = (Integer) row.get("bid_is_close");
+        if (isCloseField == 1)
+            bid.setBid_is_close(true);
+        else bid.setBid_is_close(false);
+        int isDoneField = (Integer) row.get("bid_is_done");
+        if (isDoneField == 1)
+            bid.setBid_is_done(true);
+        else bid.setBid_is_done(false);
+        Object dateDone = null;
+        dateDone = row.get("bid_date_done");
+        if (dateDone != null)
+            bid.setBid_date_done((String) dateDone.toString());
+        else bid.setBid_date_done(null);
+        Object dateCreate = null;
+        dateCreate = row.get("bid_date_create");
+        if (dateCreate != null)
+            bid.setBid_date_create(((String) dateCreate.toString()).split(" ")[0]);
+        else bid.setBid_date_create(null);
+        Object dateLastUpdate = null;
+        dateLastUpdate = row.get("bid_date_last_update");
+        if (dateLastUpdate != null)
+            bid.setBid_date_last_update((String) dateLastUpdate.toString());
+        else bid.setBid_date_last_update(null);
+        int driverCanUpdateField = (Integer) row.get("bid_driverCanUpdate");
+        if (driverCanUpdateField == 1)
+            bid.setDriverCanUpdate(true);
+        else bid.setDriverCanUpdate(false);
+
+        /*
         Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, Object> pair = iterator.next();
@@ -500,7 +551,7 @@ public class Bid {
                     else bid.setDriverCanUpdate(false);
                 } else bid.setDriverCanUpdate(false);
             }
-        }
+        }*/
     }
 
     public Bid getBidForView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {

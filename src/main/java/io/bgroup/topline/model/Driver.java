@@ -76,6 +76,17 @@ public class Driver {
     }
 
     public Driver getDriver(String idDriver) {
+        if (idDriver == null) return null;
+        int id = -1;
+        try {
+            id = Integer.parseInt(idDriver);
+        } catch (Exception e) {
+            return null;
+        }
+        return getDriver(id);
+    }
+
+    public Driver getDriver(int idDriver) {
         ArrayList<Driver> driverList = null;
         ArrayList<Object> args = new ArrayList<Object>();
         String sql = "select * from users where id_user=?";

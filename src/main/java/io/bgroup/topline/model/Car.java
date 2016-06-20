@@ -27,29 +27,39 @@ public class Car {
     public ArrayList<Car> getCarsList() {
         ArrayList<Car> carsList = null;
         String sql = "select * from cars where car_block='0'";
-        carsList = getCarsFromDbSelect(sql,null);
+        carsList = getCarsFromDbSelect(sql, null);
         return carsList;
     }
 
     public Car getCar(String id_car) {
+        if (id_car == null) return null;
+        int id = -1;
+        try {
+            id = Integer.parseInt(id_car);
+        } catch (Exception e) {
+            return null;
+        }
+        return getCar(id);
+    }
 
+    public Car getCar(int id_car) {
         Car car = null;
         String sql = "select * from cars where id_car = ?";
         ArrayList<Object> args = new ArrayList<Object>();
         args.add(id_car);
-        car = getCarFromDbSelect(sql,args);
+        car = getCarFromDbSelect(sql, args);
         return car;
     }
 
-    private Car getCarFromDbSelect(String sql,ArrayList<Object> args) {
-        ArrayList<Car> carsList = getCarsFromDbSelect(sql,args);
+    private Car getCarFromDbSelect(String sql, ArrayList<Object> args) {
+        ArrayList<Car> carsList = getCarsFromDbSelect(sql, args);
         if (carsList == null) return null;
         return carsList.get(0);
     }
 
-    private ArrayList<Car> getCarsFromDbSelect(String sql,ArrayList<Object> args) {
+    private ArrayList<Car> getCarsFromDbSelect(String sql, ArrayList<Object> args) {
         List<Map<String, Object>> carsListFromDb = null;
-        carsListFromDb = dbMvc.getSelectResult(sql,args);
+        carsListFromDb = dbMvc.getSelectResult(sql, args);
         if (carsListFromDb == null) return null;
         ArrayList<Car> carsList = null;
         for (Map row : carsListFromDb) {
