@@ -98,6 +98,17 @@ public class CompanyUnit {
         return companyUnitArrayList.get(0);
     }
 
+    public CompanyUnit getCompanyUnit(String idCompanyUnit) {
+        int idCompanyUnitInt = -1;
+        if (idCompanyUnit == null) return null;
+        try {
+            idCompanyUnitInt = Integer.parseInt(idCompanyUnit);
+        } catch (Exception e) {
+                return null;
+        }
+        return getCompanyUnit(idCompanyUnitInt);
+    }
+
     private ArrayList<CompanyUnit> getCompanyUnitFromDbSelect(String sql, ArrayList<Object> args) {
         List<Map<String, Object>> companyUnitListFromDb = null;
         companyUnitListFromDb = dbMvc.getSelectResult(sql, args);

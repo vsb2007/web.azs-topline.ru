@@ -36,23 +36,34 @@ public class Post {
     public ArrayList<Post> getPostList() {
         ArrayList<Post> postList = null;
         String sql = "select * from post";
-        postList = getPostFromDbSelect(sql,null);
+        postList = getPostFromDbSelect(sql, null);
         return postList;
     }
 
     public Post getPost(String idPost) {
+        if (idPost == null) return null;
         ArrayList<Post> postArrayList = null;
         String sql = "select * from post where id_post=?";
         ArrayList<Object> args = new ArrayList<Object>();
         args.add(idPost);
-        postArrayList = getPostFromDbSelect(sql,args);
+        postArrayList = getPostFromDbSelect(sql, args);
         if (postArrayList == null || postArrayList.size() == 0) return null;
         return postArrayList.get(0);
     }
 
-    private ArrayList<Post> getPostFromDbSelect(String sql,ArrayList<Object> args ) {
+    public Post getPost(int idPost) {
+        ArrayList<Post> postArrayList = null;
+        String sql = "select * from post where id_post=?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(idPost);
+        postArrayList = getPostFromDbSelect(sql, args);
+        if (postArrayList == null || postArrayList.size() == 0) return null;
+        return postArrayList.get(0);
+    }
+
+    private ArrayList<Post> getPostFromDbSelect(String sql, ArrayList<Object> args) {
         List<Map<String, Object>> postListFromDb = null;
-        postListFromDb = dbMvc.getSelectResult(sql,args);
+        postListFromDb = dbMvc.getSelectResult(sql, args);
         if (postListFromDb == null) return null;
         ArrayList<Post> postArrayList = null;
         for (Map row : postListFromDb) {

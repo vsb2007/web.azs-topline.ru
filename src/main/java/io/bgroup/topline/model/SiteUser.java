@@ -19,9 +19,9 @@ public class SiteUser {
     private String fio = "";
     private String phone = "";
     private String email = "";
-    private String isEnable = "";
+    private boolean isEnable = true;
     private String isDelete = "";
-    private String id;
+    private int id;
     private String error;
     private Post post;
     private CompanyUnit companyUnit;
@@ -90,11 +90,11 @@ public class SiteUser {
         return email;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public String getIsEnable() {
+    public boolean getIsEnable() {
         return isEnable;
     }
 
@@ -135,11 +135,11 @@ public class SiteUser {
         this.companyUnit = companyUnit;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public void setIsEnable(String isEnable) {
+    public void setIsEnable(boolean isEnable) {
         this.isEnable = isEnable;
     }
 
@@ -219,7 +219,7 @@ public class SiteUser {
         } else if (userRedFormValue != null && userRedFormValue.equals("1")) {
             redUser = findUser(request);
             String tmpError = updateUserMessage(redUser, request);
-            redUser = findSiteUser(Integer.parseInt(redUser.getId()));
+            redUser = findSiteUser(redUser.getId());
             redUser.setError(tmpError);
         }
         return redUser;
@@ -372,54 +372,28 @@ public class SiteUser {
             return null;
         }
         ArrayList<SiteUser> siteUserArrayList = new ArrayList<SiteUser>(listDbUser.size());
+        long time = System.currentTimeMillis();
         for (Map row : listDbUser) {
             SiteUser tmpSiteUser = new SiteUser();
             setSiteUserFromMapRow(tmpSiteUser, row);
             siteUserArrayList.add(tmpSiteUser);
         }
+        System.out.println(System.currentTimeMillis() - time);
         return siteUserArrayList;
     }
 
     private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
-        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
-        try {
-            while (iterator.hasNext()) {
-                Map.Entry<String, Object> pair = iterator.next();
-                if (pair.getKey().equals("id_user")) {
-                    redUser.setId(pair.getValue().toString());
-                } else if (pair.getKey().equals("username")) {
-                    redUser.setName(pair.getValue().toString());
-                } else if (pair.getKey().equals("user_email")) {
-                    if (pair.getValue() == null)
-                        redUser.setEmail(null);
-                    else redUser.setEmail(pair.getValue().toString());
-                } else if (pair.getKey().equals("user_fio")) {
-                    if (pair.getValue() == null)
-                        redUser.setFio(null);
-                    else redUser.setFio(pair.getValue().toString());
-                } else if (pair.getKey().equals("user_phone")) {
-                    if (pair.getValue() == null)
-                        redUser.setPhone(null);
-                    else redUser.setPhone(pair.getValue().toString());
-                } else if (pair.getKey().equals("enabled")) {
-                    if (pair.getValue() == null)
-                        redUser.setIsEnable(null);
-                    else redUser.setIsEnable(pair.getValue().toString());
-                } else if (pair.getKey().equals("user_post_id")) {
-                    if (pair.getValue() == null)
-                        redUser.setPost(null);
-                    else redUser.setPost(postMvc.getPost(pair.getValue().toString()));
-                } else if (pair.getKey().equals("user_company_unit_id")) {
-                    if (pair.getValue() == null) {
-                        redUser.setCompanyUnit(null);
-                    } else {
-                        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit((Integer) pair.getValue()));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Object idUserObject = row.get("id_user");
+        int idUser;
+        idUser = ((Long) idUserObject).intValue();
+        redUser.setId(idUser);
+        redUser.setName((String) row.get("username"));
+        redUser.setEmail((String) row.get("user_email"));
+        redUser.setFio((String) row.get("user_fio"));
+        redUser.setPhone((String) row.get("user_phone"));
+        redUser.setIsEnable((Boolean) row.get("enabled"));
+        redUser.setPost(postMvc.getPost((Integer) row.get("user_post_id")));
+        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit((Integer) row.get("user_company_unit_id")));
     }
 
     public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {

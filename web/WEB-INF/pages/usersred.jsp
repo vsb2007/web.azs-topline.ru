@@ -140,10 +140,10 @@
                 <li ripple>
     <span class="item-text">
     <div class="switch">
-        <c:if test="${userRed.getIsEnable().equals(\"true\")}">
+        <c:if test="${userRed.getIsEnable()}">
             <input type="checkbox" id="user-active-flag" name="user-active-flag" value="0" checked/>
         </c:if>
-        <c:if test="${!userRed.getIsEnable().equals(\"true\")}">
+        <c:if test="${!userRed.getIsEnable()}">
 
             <input type="checkbox" id="user-active-flag" name="user-active-flag" value="0"/>
         </c:if>

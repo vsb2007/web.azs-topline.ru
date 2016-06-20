@@ -17,7 +17,7 @@ public class Driver {
     private String driverFio;
     private String driverPhone;
     private String driverEmail;
-    private String driverBlock;
+    private boolean driverBlock;
     private SiteUser driver;
 
     public SiteUser getDriver() {
@@ -60,11 +60,11 @@ public class Driver {
         this.driverEmail = driverEmail;
     }
 
-    public String getDriverBlock() {
+    public boolean getDriverBlock() {
         return driverBlock;
     }
 
-    private void setDriverBlock(String driverBlock) {
+    private void setDriverBlock(boolean driverBlock) {
         this.driverBlock = driverBlock;
     }
 

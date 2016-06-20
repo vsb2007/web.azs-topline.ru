@@ -18,11 +18,11 @@
                         <form action="usersred" method="post">
                             <input type="hidden" id="user-find-label" value="1" name="user-find-label">
                             <input value="${siteUser.getName()}" name="buttonuserred" id="buttonuserred" type="hidden">
-                            <c:if test="${siteUser.getIsEnable().equals(\"true\")}">
+                            <c:if test="${siteUser.getIsEnable()}">
                                 <button class="button raised color-white bg-blue-500" type="submit"
                                         style="width: 15em;"/>
                             </c:if>
-                            <c:if test="${!siteUser.getIsEnable().equals(\"true\")}">
+                            <c:if test="${!siteUser.getIsEnable()}">
                                 <button class="button raised color-white bg-grey-500" type="submit"
                                         style="width: 15em;"/>
                             </c:if>
