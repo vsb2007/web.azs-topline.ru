@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class Trailer {
     private final int countOilSection = 6;
-    private String id_trailer;
-    private String trailer_car_id;
+    private int id_trailer;
+    private int trailer_car_id;
     private String trailer_number;
     private String trailer_name;
     private String trailer_block;
@@ -24,19 +24,19 @@ public class Trailer {
     @Autowired
     private OilSections oilSectionsMvc;
 
-    public String getId_trailer() {
+    public int getId_trailer() {
         return id_trailer;
     }
 
-    private void setId_trailer(String id_trailer) {
+    private void setId_trailer(int id_trailer) {
         this.id_trailer = id_trailer;
     }
 
-    public String getTrailer_car_id() {
+    public int getTrailer_car_id() {
         return trailer_car_id;
     }
 
-    private void setTrailer_car_id(String trailer_car_id) {
+    private void setTrailer_car_id(int trailer_car_id) {
         this.trailer_car_id = trailer_car_id;
     }
 
@@ -75,7 +75,7 @@ public class Trailer {
     public ArrayList<Trailer> getTrailersList() {
         ArrayList<Trailer> trailersList = null;
         String sql = "select * from trailer where trailer_block='0'";
-        trailersList = getTrailersFromDbSelect(sql,null);
+        trailersList = getTrailersFromDbSelect(sql, null);
         return trailersList;
     }
 
@@ -84,28 +84,28 @@ public class Trailer {
         String sql = "select * from trailer where id_trailer=?";
         ArrayList<Object> args = new ArrayList<Object>();
         args.add(id_trailer);
-        trailer = getTrailerFromDbSelect(sql,args);
+        trailer = getTrailerFromDbSelect(sql, args);
         return trailer;
     }
 
-    private Trailer getTrailerFromDbSelect(String sql,ArrayList<Object> args ) {
-        ArrayList<Trailer> trailerList = getTrailersFromDbSelect(sql,args);
+    private Trailer getTrailerFromDbSelect(String sql, ArrayList<Object> args) {
+        ArrayList<Trailer> trailerList = getTrailersFromDbSelect(sql, args);
         if (trailerList == null) return null;
         return trailerList.get(0);
     }
 
-    private ArrayList<Trailer> getTrailersFromDbSelect(String sql,ArrayList<Object> args ) {
+    private ArrayList<Trailer> getTrailersFromDbSelect(String sql, ArrayList<Object> args) {
         List<Map<String, Object>> trailersListFromDb = null;
-        trailersListFromDb = dbMvc.getSelectResult(sql,args);
+        trailersListFromDb = dbMvc.getSelectResult(sql, args);
         if (trailersListFromDb == null) return null;
         ArrayList<Trailer> trailerList = null;
         for (Map row : trailersListFromDb) {
             Trailer trailer = new Trailer();
             ArrayList<OilSections> oilSections = null;
             trailer.setTrailer_block((String) row.get("trailer_block").toString());
-            trailer.setId_trailer((String) row.get("id_trailer").toString());
+            trailer.setId_trailer((Integer) row.get("id_trailer"));
             trailer.setTrailer_number((String) row.get("trailer_number").toString());
-            trailer.setTrailer_car_id((String) row.get("trailer_car_id").toString());
+            trailer.setTrailer_car_id((Integer) row.get("trailer_car_id"));
             for (int i = 1; i <= countOilSection; i++) {
                 String trailer_sec = row.get("trailer_sec_" + i).toString();
                 if (!trailer_sec.equals("0")) {
@@ -137,7 +137,7 @@ public class Trailer {
         return response;
     }
 
-    public String getTrailerForAjax(String idCar) {
+    public String getTrailerForAjax(String idCarString) {
         ArrayList<Trailer> trailersList = getTrailersList();
         if (trailersList == null) return "Error: нет данных по прицепам";
         String response = "";
@@ -149,8 +149,14 @@ public class Trailer {
                 + "<option value=\"-1\">Выбрать прицеп</option>";
         String optionSelected = "";
         boolean optionSelectedFlag = false;
+        int idCar = -1;
+        try {
+            idCar = Integer.parseInt(idCarString);
+        } catch (Exception e) {
+            idCar = -1;
+        }
         for (Trailer trailer : trailersList) {
-            if (trailer.getTrailer_car_id().equals(idCar)) {
+            if (trailer.getTrailer_car_id() == idCar) {
                 optionSelected = "selected";
                 optionSelectedFlag = true;
             }
