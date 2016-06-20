@@ -532,7 +532,7 @@ public class Bid {
         изменения в контроль остатков
          */
         boolean flag = false;
-        if (bid.getBid_is_freeze()) {
+        if (!bid.getBid_is_freeze()) {
             /* загрузка*/
             OilStorage oilStorageIn = bid.getOilStorageIn();
             if (oilStorageIn == null) return false;
