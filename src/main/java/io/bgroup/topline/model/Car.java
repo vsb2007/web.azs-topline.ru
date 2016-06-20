@@ -16,7 +16,7 @@ public class Car {
     private ArrayList<OilSections> oilSections;
 
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
     @Autowired
     private OilType oilTypeMvc;
     @Autowired
@@ -27,27 +27,29 @@ public class Car {
     public ArrayList<Car> getCarsList() {
         ArrayList<Car> carsList = null;
         String sql = "select * from cars where car_block='0'";
-        carsList = getCarsFromDbSelect(sql);
+        carsList = getCarsFromDbSelect(sql,null);
         return carsList;
     }
 
     public Car getCar(String id_car) {
 
         Car car = null;
-        String sql = "select * from cars where id_car=" + id_car;
-        car = getCarFromDbSelect(sql);
+        String sql = "select * from cars where id_car = ?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(id_car);
+        car = getCarFromDbSelect(sql,args);
         return car;
     }
 
-    private Car getCarFromDbSelect(String sql) {
-        ArrayList<Car> carsList = getCarsFromDbSelect(sql);
+    private Car getCarFromDbSelect(String sql,ArrayList<Object> args) {
+        ArrayList<Car> carsList = getCarsFromDbSelect(sql,args);
         if (carsList == null) return null;
         return carsList.get(0);
     }
 
-    private ArrayList<Car> getCarsFromDbSelect(String sql) {
+    private ArrayList<Car> getCarsFromDbSelect(String sql,ArrayList<Object> args) {
         List<Map<String, Object>> carsListFromDb = null;
-        carsListFromDb = dbMvc.getSelectResult(sql);
+        carsListFromDb = dbMvc.getSelectResult(sql,args);
         if (carsListFromDb == null) return null;
         ArrayList<Car> carsList = null;
         for (Map row : carsListFromDb) {

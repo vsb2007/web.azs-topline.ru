@@ -79,24 +79,28 @@ public class CompanyUnit {
         this.companyUnitName = companyUnitName;
     }
 
-    public ArrayList<CompanyUnit> getCompanyUnitList(String companyId) {
+    public ArrayList<CompanyUnit> getCompanyUnitList(int companyId) {
         ArrayList<CompanyUnit> companyUnitList = null;
-        String sql = "select * from company_unit where company_id = '" + companyId + "' order by company_unit_name";
-        companyUnitList = getCompanyUnitFromDbSelect(sql);
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "select * from company_unit where company_id = ? order by company_unit_name";
+        args.add(companyId);
+        companyUnitList = getCompanyUnitFromDbSelect(sql, args);
         return companyUnitList;
     }
 
     public CompanyUnit getCompanyUnit(int idCompanyUnit) {
         ArrayList<CompanyUnit> companyUnitArrayList = null;
-        String sql = "select * from company_unit where id_company_unit='" + idCompanyUnit + "'";
-        companyUnitArrayList = getCompanyUnitFromDbSelect(sql);
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "select * from company_unit where id_company_unit=?";
+        args.add(idCompanyUnit);
+        companyUnitArrayList = getCompanyUnitFromDbSelect(sql, args);
         if (companyUnitArrayList == null || companyUnitArrayList.size() == 0) return null;
         return companyUnitArrayList.get(0);
     }
 
-    private ArrayList<CompanyUnit> getCompanyUnitFromDbSelect(String sql) {
+    private ArrayList<CompanyUnit> getCompanyUnitFromDbSelect(String sql, ArrayList<Object> args) {
         List<Map<String, Object>> companyUnitListFromDb = null;
-        companyUnitListFromDb = dbMvc.getSelectResult(sql);
+        companyUnitListFromDb = dbMvc.getSelectResult(sql, args);
         if (companyUnitListFromDb == null) return null;
         ArrayList<CompanyUnit> companyUnitArrayList = null;
 
@@ -104,7 +108,7 @@ public class CompanyUnit {
             CompanyUnit companyUnit = new CompanyUnit();
             companyUnit.setIdCompanyUnit((Integer) row.get("id_company_unit"));
             companyUnit.setCompanyUnitName(row.get("company_unit_name").toString());
-            companyUnit.setCompany(companyMvc.getCompany(row.get("company_id").toString()));
+            companyUnit.setCompany(companyMvc.getCompany((Integer) row.get("company_id")));
             int block = -1;
             try {
                 block = (Integer) row.get("company_unit_name");
@@ -131,8 +135,13 @@ public class CompanyUnit {
 
     public String getCompanyUnitsForAjax(HttpServletRequest request) {
         String response = "";
-        String companyId = request.getParameter("companyId");
-        if (companyId == null) return "Ошибка: в передача companyId";
+        int companyId = -1;
+        try {
+            companyId = Integer.parseInt(request.getParameter("companyId"));
+        } catch (Exception e) {
+            companyId = -1;
+        }
+        if (companyId == -1) return "Ошибка: в передача companyId";
         ArrayList<CompanyUnit> companyUnitsList = getCompanyUnitList(companyId);
 
         if (companyUnitsList == null) return "Ошибка поиска подразделений";
@@ -171,7 +180,7 @@ public class CompanyUnit {
         String sql = "update company_unit set company_unit_name = ? where id_company_unit = ?";
         args.add(companyUnitName);
         args.add(companyUnitId);
-        boolean flag = dbMvc.getUpdateResult(sql,args);
+        boolean flag = dbMvc.getUpdateResult(sql, args);
         if (flag) {
             this.error = "Ошибка обновления имени";
         }
@@ -192,7 +201,7 @@ public class CompanyUnit {
         sql = "INSERT INTO company_unit (company_unit_name,company_id) VALUES (?,?)";
         args.add(companyUnitNameFromForm);
         args.add(companyId);
-        boolean flag = dbMvc.getUpdateResult(sql,args);
+        boolean flag = dbMvc.getUpdateResult(sql, args);
         if (!flag)
             this.error = "подразделение добавлено";
         else
@@ -225,7 +234,7 @@ public class CompanyUnit {
     public ArrayList<CompanyUnit> getCompanyUnitList() {
         ArrayList<CompanyUnit> companyUnitArrayList = null;
         String sql = "select * from company_unit where Block='0' order by company_unit_name desc";
-        companyUnitArrayList = getCompanyUnitFromDbSelect(sql);
+        companyUnitArrayList = getCompanyUnitFromDbSelect(sql, null);
         return companyUnitArrayList;
     }
 }

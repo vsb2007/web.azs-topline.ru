@@ -24,7 +24,7 @@ public class BidDetail {
     private boolean isDone;
 
     @Autowired
-    DbModel dbMvc;
+    DbJdbcModel dbMvc;
     @Autowired
     OilType oilTypeMvc;
     @Autowired
@@ -156,9 +156,11 @@ public class BidDetail {
             oilSectionsList = ((Trailer) object).getOilSections();
         }
         if (oilSectionsList == null) return null;
-        String sql = "select * from bids where id_bids='" + bidId + "'";
+        String sql = "select * from bids where id_bids=?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(bidId);
         List<Map<String, Object>> bidFromDb = null;
-        bidFromDb = dbMvc.getSelectResult(sql);
+        bidFromDb = dbMvc.getSelectResult(sql,args);
         if (bidFromDb == null || bidFromDb.size() != 1) return null;
         Map row = bidFromDb.get(0);
         if (row == null) return null;

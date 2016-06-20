@@ -47,10 +47,12 @@ public class DbJdbcModel {
     }
 
     public List<Map<String, Object>> getSelectResult(String sql, ArrayList<Object> args) {
-        return jdbcTemplateMvc.queryForList(sql, args.toArray());
+        if (args != null)
+            return jdbcTemplateMvc.queryForList(sql, args.toArray());
+        else return getSelectResult(sql);
     }
 
-    public List<Map<String, Object>> getSelectResult(String sql) {
+    private List<Map<String, Object>> getSelectResult(String sql) {
         return jdbcTemplateMvc.queryForList(sql);
     }
 }

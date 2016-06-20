@@ -10,11 +10,11 @@ import java.util.Map;
 
 public class Company {
     @Autowired
-    private DbModel dbMvc;
+    private DbJdbcModel dbMvc;
     @Autowired
     private SiteUser siteUserMvc;
 
-    private String idCompany;
+    private int idCompany;
     private String companyName;
     private String error;
 
@@ -22,11 +22,11 @@ public class Company {
         this.error = error;
     }
 
-    public String getIdCompany() {
+    public int getIdCompany() {
         return idCompany;
     }
 
-    private void setIdCompany(String idCompany) {
+    private void setIdCompany(int idCompany) {
         this.idCompany = idCompany;
     }
 
@@ -41,26 +41,28 @@ public class Company {
     public ArrayList<Company> getCompanyList() {
         ArrayList<Company> companyList = null;
         String sql = "select * from company";
-        companyList = getCompanyFromDbSelect(sql);
+        companyList = getCompanyFromDbSelect(sql, null);
         return companyList;
     }
 
-    public Company getCompany(String idCompany) {
+    public Company getCompany(int idCompany) {
         ArrayList<Company> companyArrayList = null;
-        String sql = "select * from company where id_company='" + idCompany + "'";
-        companyArrayList = getCompanyFromDbSelect(sql);
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "select * from company where id_company=?";
+        args.add(idCompany);
+        companyArrayList = getCompanyFromDbSelect(sql, args);
         if (companyArrayList == null || companyArrayList.size() == 0) return null;
         return companyArrayList.get(0);
     }
 
-    private ArrayList<Company> getCompanyFromDbSelect(String sql) {
+    private ArrayList<Company> getCompanyFromDbSelect(String sql, ArrayList<Object> args) {
         List<Map<String, Object>> companyListFromDb = null;
-        companyListFromDb = dbMvc.getSelectResult(sql);
+        companyListFromDb = dbMvc.getSelectResult(sql, args);
         if (companyListFromDb == null) return null;
         ArrayList<Company> companyArrayList = null;
         for (Map row : companyListFromDb) {
             Company company = new Company();
-            company.setIdCompany((String) row.get("id_company").toString());
+            company.setIdCompany((Integer) row.get("id_company"));
             company.setCompanyName((String) row.get("company_name").toString());
             if (companyArrayList == null) companyArrayList = new ArrayList<Company>();
             companyArrayList.add(company);
@@ -103,15 +105,17 @@ public class Company {
         String companyNameFromForm = request.getParameter("companyName");
         if (companyNameFromForm == null) return false;
         String sql;
-        sql = "select * from company where company_name='" + companyNameFromForm + "'";
-        List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql);
+        ArrayList<Object> args = new ArrayList<Object>();
+        sql = "select * from company where company_name=?";
+        args.add(companyNameFromForm);
+        List<Map<String, Object>> dbSelectResult = dbMvc.getSelectResult(sql, args);
         if (dbSelectResult != null && dbSelectResult.size() > 0) {
             this.error = "Компания существует";
             return false;
         } else {
-            sql = "INSERT INTO company (company_name) VALUES ('" + companyNameFromForm + "')";
-            boolean flag = dbMvc.getInsertResult(sql);
-            if (!flag)
+            sql = "INSERT INTO company (company_name) VALUES (?)";
+            boolean flag = dbMvc.getUpdateResult(sql, args);
+            if (flag)
                 this.error = "Комания добавлена";
             else
                 this.error = "Комания  не добавлена, ошибка!!!";
@@ -124,17 +128,24 @@ public class Company {
     }
 
     public Company getCompany(HttpServletRequest request) {
-        String companyId = request.getParameter("companyId");
+        int companyId = -1;
+        try {
+            companyId = Integer.parseInt(request.getParameter("companyId"));
+        } catch (Exception e) {
+            companyId = -1;
+        }
         return getCompany(companyId);
     }
 
     public void redCompany(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         String companyName = request.getParameter("companyName");
         String companyId = request.getParameter("companyId");
-        String sql = "update company set company_name = '" + companyName +
-                "' where id_company = '" + companyId + "'";
-        boolean flag = dbMvc.getInsertResult(sql);
-        if (flag) {
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "update company set company_name = ? where id_company = ?";
+        args.add(companyName);
+        args.add(companyId);
+        boolean flag = dbMvc.getUpdateResult(sql, args);
+        if (!flag) {
             this.error = "Ошибка обновления имени";
         }
         this.error = "Изменения сохранены";

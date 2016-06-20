@@ -48,8 +48,6 @@ public class Bid {
     @Autowired
     private DbJdbcModel dbMvc;
     @Autowired
-    private DbJdbcModel dbJdbcMvc;
-    @Autowired
     private BidDetail bidDetailMvc;
     @Autowired
     private MyConstant myConstantMvc;
@@ -666,7 +664,7 @@ public class Bid {
         }
         sql += " ON DUPLICATE KEY UPDATE " +
                 "oilstorage.volumeV = VALUES(volumeV),oilstorage.volumeM = VALUES(volumeM)";
-        boolean flag = dbJdbcMvc.getUpdateResult(sql, args);
+        boolean flag = dbMvc.getUpdateResult(sql, args);
         return flag;
     }
 
