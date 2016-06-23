@@ -1,5 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
-<c:if test="${siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())}">
+<c:if test="${(siteUser.getCompanyUnit()!=null
+                    && siteUser.getCompanyUnit().getIdCompanyUnit()==bid.getOilStorageIn().getIdOilStorage())
+        || (
+            siteUser.getPost()!=null && siteUser.getPost().getIdPost()==2 && bid.getDriver()!=null
+            && bid.getDriver().getIdDriver() == siteUser.getId()
+        )
+        }">
     <c:set var="valT" value="" scope="application"/>
     <c:set var="valP" value="" scope="application"/>
     <c:choose>
@@ -82,7 +88,7 @@
                    onchange="onMassChange('${bidDetails.getSection().getId_section()}_volume',
                            '${bidDetails.getSection().getId_section()}_mass',
                            '${bidDetails.getSection().getId_section()}_p')"
-                readonly>
+                   readonly>
             <div>
                 <span class="secondary-text">Масса</span>
             </div>

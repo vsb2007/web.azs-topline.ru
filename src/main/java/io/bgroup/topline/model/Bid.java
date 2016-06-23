@@ -217,17 +217,21 @@ public class Bid {
         if (!siteUser.isUserHasRole(principal, "ROLE_BID_CREATE")) return "Error: не достаточно прав";
         //считываем основные параметры
         //String bidNumber = request.getParameter("bidNumber").toString(); // отключил
-        String oilStorageId = request.getParameter("oilStorage").toString();
-        String driverId = request.getParameter("driver").toString();
-        String driverCanUpdateIn = request.getParameter("driverCanUpdateIn").toString();
-        String driverCanUpdateOut = request.getParameter("driverCanUpdateOut").toString();
-        if (driverCanUpdateIn == null || driverCanUpdateOut == null) return "Не заданы параметры для водителя";
+        String oilStorageId = request.getParameter("oilStorage");
+        String driverId = request.getParameter("driver");
+        String driverCanUpdateIn = request.getParameter("driverCanUpdateIn");
+        String driverCanUpdateOut = request.getParameter("driverCanUpdateOut");
+        if (driverCanUpdateIn == null) {
+            driverCanUpdateIn = "0";
+        }
+        if (driverCanUpdateOut == null) {
+            driverCanUpdateOut = "0";
+        }
         String carId = request.getParameter("car");
         String trailerId = request.getParameter("trailerId");
         // на их основе подтягиваем данные
         Car car = carMvc.getCar(carId);
         Driver driver = driverMvc.getDriver(driverId);
-
         Trailer trailer = trailerMvc.getTrailer(trailerId);
         OilStorage oilStorage = oilStorageMvc.getOilStorage(oilStorageId);
         if (car == null || driver == null || oilStorage == null)
@@ -798,6 +802,8 @@ public class Bid {
         if (driver == null) return "Водитель не найден";
         String driverCanUpdateInStr = request.getParameter("driverCanUpdateIn");
         String driverCanUpdateOutStr = request.getParameter("driverCanUpdateOut");
+        if (driverCanUpdateInStr == null) driverCanUpdateInStr = "0";
+        if (driverCanUpdateOutStr == null) driverCanUpdateOutStr = "0";
         int driverCanUpdateIn = -1;
         int driverCanUpdateOut = -1;
         try {

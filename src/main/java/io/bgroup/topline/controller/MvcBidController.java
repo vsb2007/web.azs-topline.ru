@@ -167,17 +167,30 @@ public class MvcBidController {
     }
 
     private void setViewNameForModel(ModelAndView model, SiteUser siteUser, Bid bid) {
-        if (siteUser.getPost() == null || siteUser.getPost().getIdPost()==1) {
+        if (siteUser.getPost() == null || siteUser.getPost().getIdPost() == 1) {
             model.setViewName("bidViewCreator");
-        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost()==2) {
-            model.setViewName("bidViewDriver");
-        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost()==3) {
+        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 2) {
+            if (!bid.getBid_is_freeze()) {
+                if (bid.isDriverCanUpdateIn()) {
+                    model.setViewName("bidViewOperatorIn");
+                } else {
+                    model.setViewName("bidViewDriver");
+                }
+            } else if (bid.getBid_is_freeze()) {
+                if (bid.isDriverCanUpdateOut()) {
+                    model.setViewName("bidViewOperatorOut");
+                } else {
+                    model.setViewName("bidViewDriver");
+                }
+            } else
+                model.setViewName("bidViewDriver");
+        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 3) {
             if (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bid.getOilStorageIn().getIdOilStorage())
                 model.setViewName("bidViewOperatorIn");
             if (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() != bid.getOilStorageIn().getIdOilStorage()) {
                 model.setViewName("bidViewOperatorOut");
             }
-        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost()==4) {
+        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 4) {
             model.setViewName("bidViewWatcher");
         }
     }

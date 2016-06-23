@@ -14,7 +14,7 @@
         Загрузка:<br>
         <c:set var="readonlyTmp" value="" scope="application"/>
         <c:if test="${bid.getBid_is_freeze() && siteUser.getCompanyUnit()!=null
-                    && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage())
+                    && siteUser.getCompanyUnit().getIdCompanyUnit() == bid.getOilStorageIn().getIdOilStorage()
                     }">
             <c:set var="readonlyTmp" value="readonly" scope="application"/>
         </c:if>
@@ -24,9 +24,13 @@
                     <form action="bidUpdate" method="post" id="bidUpdateForm">
                 </c:if>
             </sec:authorize>
-            <c:if test="${!bid.getBid_is_freeze()}">
+            <c:if test="${!bid.getBid_is_freeze() && bid.getDriver().getIdDriver() != siteUser.getId()}">
                 <c:set var="freeze" value="in" scope="application"/>
                 <c:set var="submitButtonValue" value="Отпустить топливо" scope="application"/>
+            </c:if>
+            <c:if test="${!bid.getBid_is_freeze() && bid.getDriver().getIdDriver() == siteUser.getId()}">
+                <c:set var="freeze" value="in" scope="application"/>
+                <c:set var="submitButtonValue" value="Загрузить топливо" scope="application"/>
             </c:if>
             <c:if test="${bid.getBid_is_freeze()}">
                 <c:set var="freeze" value="out" scope="application"/>
@@ -80,7 +84,7 @@
             <%@ include file="oilTypeStorageControl.jsp" %>
         </div>
     </c:if>
-    <script src="js/bidUpdate01.js"></script>
+    <script src="js/bidUpdate02.js"></script>
     <script src="js/jquery-2.2.3.min.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

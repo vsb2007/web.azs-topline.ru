@@ -53,6 +53,7 @@
                         <option value="1">Водитель может принимать топливо</option>
                     </c:if>
                 </select><br>
+                <%--
                 <select class="dropdown-menu" id="driverCanUpdateOut" name="driverCanUpdateOut" onchange="">
                     <option value="0">Водитель не может сливать топливо</option>
                     <c:if test="${bid.isDriverCanUpdateOut()}">
@@ -62,6 +63,7 @@
                         <option value="1">Водитель может сливать топливо</option>
                     </c:if>
                 </select><br>
+                --%>
                     <%-- машина --%>
                     <%-- Топливо НЕ отпущено --%>
                 <c:if test="${!bid.getBid_is_freeze()}">
@@ -145,7 +147,7 @@
             <div id="results"></div>
         </c:if>
     </div>
-    <script src="js/bidRed.js"></script>
+    <script src="js/bidRed01.js"></script>
     <script src="js/jquery-2.2.3.min.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

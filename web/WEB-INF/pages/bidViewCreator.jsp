@@ -82,7 +82,7 @@
             <%@ include file="oilTypeStorageControl.jsp" %>
         </div>
     </c:if>
-    <script src="js/bidUpdate01.js"></script>
+    <script src="js/bidUpdate02.js"></script>
     <script src="js/jquery-2.2.3.min.js"></script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>
