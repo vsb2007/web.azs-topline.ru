@@ -58,7 +58,6 @@ public class MvcBidController {
     @RequestMapping(value = "bidcreateform")
     public ModelAndView bidcreatedo(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        System.out.println("111");
         String message = bidMvc.createBid(principal, request);
         if (request != null) {
             model.addObject("message", message);

@@ -19,7 +19,8 @@ public class Bid {
     private Trailer trailer;
     private String fileLink;
 
-    private boolean driverCanUpdate;
+    private boolean driverCanUpdateIn;
+    private boolean driverCanUpdateOut;
     private String bid_date_freeze;
     private boolean bid_is_freeze;
     private String bid_date_close;
@@ -82,12 +83,20 @@ public class Bid {
     public Bid() {
     }
 
-    public boolean isDriverCanUpdate() {
-        return driverCanUpdate;
+    public boolean isDriverCanUpdateOut() {
+        return driverCanUpdateOut;
     }
 
-    public void setDriverCanUpdate(boolean driverCanUpdate) {
-        this.driverCanUpdate = driverCanUpdate;
+    public void setDriverCanUpdateOut(boolean driverCanUpdateOut) {
+        this.driverCanUpdateOut = driverCanUpdateOut;
+    }
+
+    public boolean isDriverCanUpdateIn() {
+        return driverCanUpdateIn;
+    }
+
+    public void setDriverCanUpdateIn(boolean driverCanUpdateIn) {
+        this.driverCanUpdateIn = driverCanUpdateIn;
     }
 
     public String getBid_date_create() {
@@ -210,6 +219,9 @@ public class Bid {
         //String bidNumber = request.getParameter("bidNumber").toString(); // отключил
         String oilStorageId = request.getParameter("oilStorage").toString();
         String driverId = request.getParameter("driver").toString();
+        String driverCanUpdateIn = request.getParameter("driverCanUpdateIn").toString();
+        String driverCanUpdateOut = request.getParameter("driverCanUpdateOut").toString();
+        if (driverCanUpdateIn == null || driverCanUpdateOut == null) return "Не заданы параметры для водителя";
         String carId = request.getParameter("car");
         String trailerId = request.getParameter("trailerId");
         // на их основе подтягиваем данные
@@ -254,6 +266,17 @@ public class Bid {
             values = strPlusCommaPlusValue(values, "now()");
             columns = strPlusCommaPlusValue(columns, "bid_date_last_update");
             values = strPlusCommaPlusValue(values, "now()");
+        }
+        /*
+        водила может принимать и сливать топливо
+         */
+        if (driverCanUpdateIn != null && driverCanUpdateOut != null) {
+            columns = strPlusCommaPlusValue(columns, "bid_driverCanUpdateIn");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(driverCanUpdateIn);
+            columns = strPlusCommaPlusValue(columns, "bid_driverCanUpdateOut");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(driverCanUpdateOut);
         }
         if (oilStorage.getIdOilStorage() > 0) {
             columns = strPlusCommaPlusValue(columns, "bid_storage_in_id");
@@ -465,10 +488,14 @@ public class Bid {
         if (dateLastUpdate != null)
             bid.setBid_date_last_update((String) dateLastUpdate.toString());
         else bid.setBid_date_last_update(null);
-        int driverCanUpdateField = (Integer) row.get("bid_driverCanUpdate");
-        if (driverCanUpdateField == 1)
-            bid.setDriverCanUpdate(true);
-        else bid.setDriverCanUpdate(false);
+        int driverCanUpdateInField = (Integer) row.get("bid_driverCanUpdateIn");
+        if (driverCanUpdateInField == 1)
+            bid.setDriverCanUpdateIn(true);
+        else bid.setDriverCanUpdateIn(false);
+        int driverCanUpdateOutField = (Integer) row.get("bid_driverCanUpdateOut");
+        if (driverCanUpdateOutField == 1)
+            bid.setDriverCanUpdateOut(true);
+        else bid.setDriverCanUpdateOut(false);
 
         /*
         Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
@@ -769,6 +796,17 @@ public class Bid {
         if (driverId == null) return "нет данных о водителе";
         Driver driver = driverMvc.getDriver(driverId);
         if (driver == null) return "Водитель не найден";
+        String driverCanUpdateInStr = request.getParameter("driverCanUpdateIn");
+        String driverCanUpdateOutStr = request.getParameter("driverCanUpdateOut");
+        int driverCanUpdateIn = -1;
+        int driverCanUpdateOut = -1;
+        try {
+            driverCanUpdateIn = Integer.parseInt(driverCanUpdateInStr);
+            driverCanUpdateOut = Integer.parseInt(driverCanUpdateOutStr);
+        } catch (Exception e) {
+            return "параметры водителя не верны";
+        }
+
         String carId = request.getParameter("car");
         if (carId == null || carId.equals("-1")) return "машина не указана";
         Car car = carMvc.getCar(carId);
@@ -785,7 +823,11 @@ public class Bid {
         args.add(oilStorageIn.getIdOilStorage());
         sql += ", bid_driver_id=?";
         args.add(driver.getIdDriver());
-        sql += ", bid_car_id='?";
+        sql += ", bid_driverCanUpdateIn=?";
+        args.add(driverCanUpdateIn);
+        sql += ", bid_driverCanUpdateOut=?";
+        args.add(driverCanUpdateOut);
+        sql += ", bid_car_id=?";
         args.add(car.getId_car());
         ArrayList<OilSections> carOilSections = car.getOilSections();
         sql += addSqlForUpdateStringForBidRed(carOilSections, request, args);

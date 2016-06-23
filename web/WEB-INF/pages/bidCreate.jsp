@@ -20,6 +20,14 @@
                         <option value="${driver.getIdDriver()}">${driver.getDriverFio()}</option>
                     </c:forEach>
                 </select><br>
+                <select class="dropdown-menu" id="driverCanUpdateIn" name="driverCanUpdateIn" onchange="">
+                    <option value="0">Водитель не может принимать топливо</option>
+                    <option value="1">Водитель может принимать топливо</option>
+                </select><br>
+                <select class="dropdown-menu" id="driverCanUpdateOut" name="driverCanUpdateOut" onchange="">
+                    <option value="0">Водитель не может сливать топливо</option>
+                    <option value="1">Водитель может сливать топливо</option>
+                </select><br>
                 <select class="dropdown-menu" id="car" name="car" onchange="onCarSelect(this)">
                     <option value="-1">Выбрать машину</option>
                     <c:forEach items="${carsList}" var="car">

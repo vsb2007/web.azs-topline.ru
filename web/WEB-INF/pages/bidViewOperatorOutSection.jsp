@@ -1,8 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
-<c:if test="${(bid.getCreateUser().getName().equals(siteUser.getName()))
-                    || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit().equals(bid.getOilStorageIn().getIdOilStorage()))
+<c:if test="${(bid.getCreateUser().getName().equals(siteUser.getName())
+                    || (siteUser.getCompanyUnit()!=null && siteUser.getCompanyUnit().getIdCompanyUnit()== bid.getOilStorageIn().getIdOilStorage())
                     || (bid.getBid_is_freeze() && siteUser.getCompanyUnit()!=null
-                    &&  siteUser.getCompanyUnit().getIdCompanyUnit().equals(bidDetails.getDestination().getIdCompanyUnit()))
+                        &&  siteUser.getCompanyUnit().getIdCompanyUnit() == bidDetails.getDestination().getIdCompanyUnit())
                     || siteUser.getPost().getIdPost()==2)
                     }">
     <c:choose>
@@ -40,7 +40,8 @@
         <div class="tile">
             <input type="text" class="text-input border-green-500"
                    value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
-            <input type="hidden" name="${bidDetails.getSection().getId_section()}_destination" value="${bidDetails.getDestination().getIdCompanyUnit()}">
+            <input type="hidden" name="${bidDetails.getSection().getId_section()}_destination"
+                   value="${bidDetails.getDestination().getIdCompanyUnit()}">
             <div>
                 <span class="secondary-text">Назначение</span>
             </div>
