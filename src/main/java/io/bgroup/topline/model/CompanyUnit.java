@@ -104,7 +104,7 @@ public class CompanyUnit {
         try {
             idCompanyUnitInt = Integer.parseInt(idCompanyUnit);
         } catch (Exception e) {
-                return null;
+            return null;
         }
         return getCompanyUnit(idCompanyUnitInt);
     }
@@ -114,9 +114,40 @@ public class CompanyUnit {
         companyUnitListFromDb = dbMvc.getSelectResult(sql, args);
         if (companyUnitListFromDb == null) return null;
         ArrayList<CompanyUnit> companyUnitArrayList = null;
-
+        ArrayList<Thread> threadArrayList = new ArrayList<Thread>();
         for (Map row : companyUnitListFromDb) {
+            if (companyUnitArrayList == null) companyUnitArrayList = new ArrayList<CompanyUnit>();
             CompanyUnit companyUnit = new CompanyUnit();
+            companyUnitArrayList.add(companyUnit);
+            Thread thread = new Thread(new GetCompanyUnitThread(companyUnit, row));
+            thread.start();
+            threadArrayList.add(thread);
+        }
+        for (Thread thread : threadArrayList) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return companyUnitArrayList;
+    }
+
+    private class GetCompanyUnitThread implements Runnable {
+        CompanyUnit companyUnit;
+        Map row;
+
+        public GetCompanyUnitThread(CompanyUnit companyUnit, Map row) {
+            this.companyUnit = companyUnit;
+            this.row = row;
+        }
+
+        @Override
+        public void run() {
+            setCompanyUnitFromRow();
+        }
+
+        public void setCompanyUnitFromRow() {
             companyUnit.setIdCompanyUnit((Integer) row.get("id_company_unit"));
             companyUnit.setCompanyUnitName(row.get("company_unit_name").toString());
             companyUnit.setCompany(companyMvc.getCompany((Integer) row.get("company_id")));
@@ -129,7 +160,7 @@ public class CompanyUnit {
             if (block == 1) companyUnit.setBlock(true);
             else companyUnit.setBlock(false);
             if (companyUnit != null && companyUnit.getIdCompanyUnit() > 0) {
-                ArrayList<OilTypeStorage> oilTypeStorageList = new ArrayList<OilTypeStorage>();
+                //ArrayList<OilTypeStorage> oilTypeStorageList = new ArrayList<OilTypeStorage>();
                 try {
                     //Integer idCompanyUnit = Integer.parseInt(companyUnit.getIdCompanyUnit());
                     Integer idCompanyUnit = companyUnit.getIdCompanyUnit();
@@ -138,10 +169,7 @@ public class CompanyUnit {
                     companyUnit.setOilTypeStorageArrayList(null);
                 }
             }
-            if (companyUnitArrayList == null) companyUnitArrayList = new ArrayList<CompanyUnit>();
-            companyUnitArrayList.add(companyUnit);
         }
-        return companyUnitArrayList;
     }
 
     public String getCompanyUnitsForAjax(HttpServletRequest request) {
