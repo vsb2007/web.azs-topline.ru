@@ -100,9 +100,40 @@ public class Driver {
         List<Map<String, Object>> driverListFromDb = null;
         driverListFromDb = dbMvc.getSelectResult(sql, args);
         if (driverListFromDb == null) return null;
-        ArrayList<Driver> driverList = null;
+        ArrayList<Driver> driverList = new ArrayList<Driver>();
+        ArrayList<Thread> threadArrayList = new ArrayList<Thread>();
         for (Map row : driverListFromDb) {
             Driver driver = new Driver();
+            driverList.add(driver);
+            Thread thread = new Thread(new GetDriverThread(driver, row));
+            thread.start();
+            threadArrayList.add(thread);
+        }
+        for (Thread thread : threadArrayList) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return driverList;
+    }
+
+    private class GetDriverThread implements Runnable {
+        private Driver driver;
+        Map row;
+
+        public GetDriverThread(Driver driver, Map row) {
+            this.driver = driver;
+            this.row = row;
+        }
+
+        @Override
+        public void run() {
+            setDriverFromMapRow(driver,row);
+        }
+
+        public void setDriverFromMapRow(Driver driver, Map row) {
             Object userIdObject = row.get("id_user");
             Integer userId;
             Long userIdLong;
@@ -112,16 +143,13 @@ public class Driver {
             } else
                 userId = (Integer) userIdObject;
             driver.setIdDriver(userId);
-            driver.setDriver(siteUserMvc.findSiteUser(driver.getIdDriver()));
+            driver.setDriver(siteUserMvc.findSiteUser(userId));
             if (driver.getDriver() != null) {
                 driver.setDriverBlock(driver.getDriver().getIsEnable());
                 driver.setDriverEmail(driver.getDriver().getEmail());
                 driver.setDriverPhone(driver.getDriver().getPhone());
                 driver.setDriverFio(driver.getDriver().getFio());
             }
-            if (driverList == null) driverList = new ArrayList<Driver>();
-            driverList.add(driver);
         }
-        return driverList;
     }
 }

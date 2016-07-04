@@ -184,11 +184,11 @@ public class SiteUser {
                 findUser = new SiteUser();
                 //setSiteUserFromMapRow(findUser, row);
                 /*
-                Thread thread = new Thread(new SetRowTread(findUser,row));
+                Thread thread = new Thread(new SetRowThread(findUser,row));
                 thread.start();
                 thread.join();
                 */
-                new SetRowTread(findUser,row).setSiteUserFromMapRow();
+                new SetRowThread(findUser,row).setSiteUserFromMapRow();
             } catch (Exception e) {
                 this.error = "Ошибка: " + e;
             }
@@ -377,13 +377,13 @@ public class SiteUser {
             return null;
         }
         ArrayList<SiteUser> siteUserArrayList = new ArrayList<SiteUser>(listDbUser.size());
-        long time = System.currentTimeMillis();
+        //long time = System.currentTimeMillis();
         ArrayList<Thread> threadArrayList = new ArrayList<Thread>();
         for (Map row : listDbUser) {
             SiteUser tmpSiteUser = new SiteUser();
             siteUserArrayList.add(tmpSiteUser);
-            //setSiteUserFromMapRow(tmpSiteUser, row);
-            Thread thread = new Thread(new SetRowTread(tmpSiteUser,row));
+            //setSiteUserFromMapRow(tmpSiteUser, row); // перешли на нити
+            Thread thread = new Thread(new SetRowThread(tmpSiteUser,row));
             thread.start();
             threadArrayList.add(thread);
         }
@@ -394,15 +394,15 @@ public class SiteUser {
                 e.printStackTrace();
             }
         }
-        System.out.println(System.currentTimeMillis() - time);
+        //System.out.println(System.currentTimeMillis() - time);
         return siteUserArrayList;
     }
 
-    private class SetRowTread implements Runnable {
+    private class SetRowThread implements Runnable {
         SiteUser siteUser;
         Map row;
 
-        public SetRowTread(SiteUser siteUser, Map row) {
+        public SetRowThread(SiteUser siteUser, Map row) {
             this.siteUser = siteUser;
             this.row = row;
         }
