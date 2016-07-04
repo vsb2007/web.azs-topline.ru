@@ -182,10 +182,15 @@ public class SiteUser {
             try {
                 Map row = findUsers.get(0);
                 findUser = new SiteUser();
-                setSiteUserFromMapRow(findUser, row);
+                //setSiteUserFromMapRow(findUser, row);
+                /*
+                Thread thread = new Thread(new SetRowTread(findUser,row));
+                thread.start();
+                thread.join();
+                */
+                new SetRowTread(findUser,row).setSiteUserFromMapRow();
             } catch (Exception e) {
                 this.error = "Ошибка: " + e;
-                //System.out.println(error);
             }
         }
         return findUser;
@@ -373,29 +378,70 @@ public class SiteUser {
         }
         ArrayList<SiteUser> siteUserArrayList = new ArrayList<SiteUser>(listDbUser.size());
         long time = System.currentTimeMillis();
+        ArrayList<Thread> threadArrayList = new ArrayList<Thread>();
         for (Map row : listDbUser) {
             SiteUser tmpSiteUser = new SiteUser();
-            setSiteUserFromMapRow(tmpSiteUser, row);
             siteUserArrayList.add(tmpSiteUser);
+            //setSiteUserFromMapRow(tmpSiteUser, row);
+            Thread thread = new Thread(new SetRowTread(tmpSiteUser,row));
+            thread.start();
+            threadArrayList.add(thread);
+        }
+        for (Thread thread: threadArrayList){
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         System.out.println(System.currentTimeMillis() - time);
         return siteUserArrayList;
     }
 
-    private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
-        Object idUserObject = row.get("id_user");
-        int idUser;
-        idUser = ((Long) idUserObject).intValue();
-        redUser.setId(idUser);
-        redUser.setName((String) row.get("username"));
-        redUser.setEmail((String) row.get("user_email"));
-        redUser.setFio((String) row.get("user_fio"));
-        redUser.setPhone((String) row.get("user_phone"));
-        redUser.setIsEnable((Boolean) row.get("enabled"));
-        redUser.setPost(postMvc.getPost((Integer) row.get("user_post_id")));
-        redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit((Integer) row.get("user_company_unit_id")));
+    private class SetRowTread implements Runnable {
+        SiteUser siteUser;
+        Map row;
+
+        public SetRowTread(SiteUser siteUser, Map row) {
+            this.siteUser = siteUser;
+            this.row = row;
+        }
+
+        @Override
+        public void run() {
+            setSiteUserFromMapRow();
+        }
+
+        public void setSiteUserFromMapRow() {
+            Object idUserObject = row.get("id_user");
+            int idUser;
+            idUser = ((Long) idUserObject).intValue();
+            siteUser.setId(idUser);
+            siteUser.setName((String) row.get("username"));
+            siteUser.setEmail((String) row.get("user_email"));
+            siteUser.setFio((String) row.get("user_fio"));
+            siteUser.setPhone((String) row.get("user_phone"));
+            siteUser.setIsEnable((Boolean) row.get("enabled"));
+            siteUser.setPost(postMvc.getPost((Integer) row.get("user_post_id")));
+            siteUser.setCompanyUnit(companyUnitMvc.getCompanyUnit((Integer) row.get("user_company_unit_id")));
+        }
     }
 
+    /*
+        private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
+            Object idUserObject = row.get("id_user");
+            int idUser;
+            idUser = ((Long) idUserObject).intValue();
+            redUser.setId(idUser);
+            redUser.setName((String) row.get("username"));
+            redUser.setEmail((String) row.get("user_email"));
+            redUser.setFio((String) row.get("user_fio"));
+            redUser.setPhone((String) row.get("user_phone"));
+            redUser.setIsEnable((Boolean) row.get("enabled"));
+            redUser.setPost(postMvc.getPost((Integer) row.get("user_post_id")));
+            redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit((Integer) row.get("user_company_unit_id")));
+        }
+      */
     public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         if (!isUserHasRole(principal, "ROLE_USERS_ADD")) return false;
         String userNameFromFormUserAdd = request.getParameter("username");
