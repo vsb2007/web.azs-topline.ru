@@ -17,6 +17,7 @@
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
             <li ripple><a href="bidcreate"><i class="icon-input"></i>Создать заявку</a></li>
+            <li ripple><a href="bidcreate"><i class="icon-input"></i>Поступление (бензовозами)</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_LIST')">
             <li ripple><a href="bidlistopen"><i class="icon-input"></i>Открытые заявки</a></li>
