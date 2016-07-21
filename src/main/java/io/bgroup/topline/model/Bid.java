@@ -219,6 +219,15 @@ public class Bid {
         String driverId = request.getParameter("driver");
         String driverCanUpdateIn = request.getParameter("driverCanUpdateIn");
         String driverCanUpdateOut = request.getParameter("driverCanUpdateOut");
+        String isEntranceString = request.getParameter("isEntrance");
+        int isEntrance = 0;
+        if (isEntranceString != null) {
+            try {
+                isEntrance = Integer.parseInt(isEntranceString);
+            } catch (Exception e) {
+            }
+        }
+        if (isEntrance != 1) isEntrance = 0;
         if (driverCanUpdateIn == null) {
             driverCanUpdateIn = "0";
         }
@@ -268,6 +277,10 @@ public class Bid {
             values = strPlusCommaPlusValue(values, "now()");
             columns = strPlusCommaPlusValue(columns, "bid_date_last_update");
             values = strPlusCommaPlusValue(values, "now()");
+            if (isEntrance == 1) {
+                columns = strPlusCommaPlusValue(columns, "bid_is_transfer");
+                values = strPlusCommaPlusValue(values, "0");
+            }
         }
         /*
         водила может принимать и сливать топливо
@@ -440,11 +453,11 @@ public class Bid {
             Bid bid = new Bid();
             //setBidFromMapRow(bid, row);
             bidsList.add(bid);
-            Thread thread = new Thread(new Bid.SetRowThread(bid,row));
+            Thread thread = new Thread(new Bid.SetRowThread(bid, row));
             thread.start();
             threadArrayList.add(thread);
         }
-        for (Thread thread: threadArrayList){
+        for (Thread thread : threadArrayList) {
             try {
                 thread.join();
             } catch (InterruptedException e) {

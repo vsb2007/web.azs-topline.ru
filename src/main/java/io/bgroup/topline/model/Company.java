@@ -16,10 +16,19 @@ public class Company {
 
     private int idCompany;
     private String companyName;
+    private int shipper;
     private String error;
 
     private void setError(String error) {
         this.error = error;
+    }
+
+    public int getShipper() {
+        return shipper;
+    }
+
+    private void setShipper(int shipper) {
+        this.shipper = shipper;
     }
 
     public int getIdCompany() {
@@ -64,6 +73,7 @@ public class Company {
             Company company = new Company();
             company.setIdCompany((Integer) row.get("id_company"));
             company.setCompanyName((String) row.get("company_name").toString());
+            company.setShipper((Integer) row.get("shipper"));
             if (companyArrayList == null) companyArrayList = new ArrayList<Company>();
             companyArrayList.add(company);
         }

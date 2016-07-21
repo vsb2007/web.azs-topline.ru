@@ -42,17 +42,40 @@ public class MvcBidController {
 
     @RequestMapping(value = "bidcreate")
     public ModelAndView bidcreate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
-        long time = System.currentTimeMillis();
+        //long time = System.currentTimeMillis();
         ModelAndView model = new ModelAndView();
         SiteUser bidUser = siteUserMvc.findSiteUser(principal);
         ArrayList<Car> carsList = carMvc.getCarsList();
         ArrayList<Driver> driversList = driverMvc.getDriverList();
         ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
-        System.out.println(System.currentTimeMillis() - time);
+        //System.out.println(System.currentTimeMillis() - time);
+        model.addObject("title", "Перемещение между складами");
+        boolean isEntrance = false;
+        model.addObject("isEntrance", isEntrance);
         model.addObject("appUser", bidUser);
         model.addObject("carsList", carsList);
         model.addObject("driversList", driversList);
         model.addObject("oilStorageList", oilStorageList);
+        model.setViewName("bidCreate");
+        return model;
+    }
+
+    @RequestMapping(value = "bidEntrance")
+    public ModelAndView bidEntrance(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        long time = System.currentTimeMillis();
+        ModelAndView model = new ModelAndView();
+        SiteUser bidUser = siteUserMvc.findSiteUser(principal);
+        ArrayList<Car> carsList = carMvc.getCarsList();
+        ArrayList<Driver> driversList = driverMvc.getDriverList();
+        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageShipperList();
+        System.out.println(System.currentTimeMillis() - time);
+        model.addObject("title", "Поступление бензовозами");
+        model.addObject("appUser", bidUser);
+        model.addObject("carsList", carsList);
+        model.addObject("driversList", driversList);
+        model.addObject("oilStorageList", oilStorageList);
+        boolean isEntrance = true;
+        model.addObject("isEntrance", isEntrance);
         model.setViewName("bidCreate");
         return model;
     }

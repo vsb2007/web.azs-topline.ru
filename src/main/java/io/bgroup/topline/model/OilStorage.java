@@ -41,6 +41,19 @@ public class OilStorage {
         return oilStorageArrayList;
     }
 
+    public ArrayList<OilStorage> getOilStorageShipperList() {
+        ArrayList<CompanyUnit> companyUnitArrayList = companyUnitMvc.getCompanyUnitList();
+        ArrayList<OilStorage> oilStorageArrayList = new ArrayList<OilStorage>();
+        for (CompanyUnit companyUnit : companyUnitArrayList) {
+            if (companyUnit.getCompany().getShipper() == 1) {
+                OilStorage oilStorage = new OilStorage();
+                oilStorage.setCompanyUnit(companyUnit);
+                oilStorageArrayList.add(oilStorage);
+            }
+        }
+        return oilStorageArrayList;
+    }
+
     public OilStorage getOilStorage(String idOilStorage) {
         try {
             return getOilStorage(Integer.parseInt(idOilStorage));

@@ -7,6 +7,9 @@
 <sec:authorize access="hasRole('ROLE_BID_LIST')">
     <div class="section">
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
+            <c:if test="${title != null}">
+                <h3> ${title}</h3>
+            </c:if>
             <form action="bidcreateform" method="post">
                 <select class="dropdown-menu" id="oilStorage" name="oilStorage" onchange="">
                     <option value="-1">Пункт загрузки</option>
@@ -24,12 +27,12 @@
                     <option value="0">Водитель не может принимать топливо</option>
                     <option value="1">Водитель может принимать топливо</option>
                 </select><br>
-                <%--
-                <select class="dropdown-menu" id="driverCanUpdateOut" name="driverCanUpdateOut" onchange="">
-                    <option value="0">Водитель не может сливать топливо</option>
-                    <option value="1">Водитель может сливать топливо</option>
-                </select><br>
-                --%>
+                    <%--
+                    <select class="dropdown-menu" id="driverCanUpdateOut" name="driverCanUpdateOut" onchange="">
+                        <option value="0">Водитель не может сливать топливо</option>
+                        <option value="1">Водитель может сливать топливо</option>
+                    </select><br>
+                    --%>
                 <select class="dropdown-menu" id="car" name="car" onchange="onCarSelect(this)">
                     <option value="-1">Выбрать машину</option>
                     <c:forEach items="${carsList}" var="car">
@@ -43,6 +46,14 @@
                 <div id="divTrailerSectionId">
                 </div>
                 <button class="button raised bg-blue-500 color-white">Добавить заявку</button>
+                <c:if test="${isEntrance!=null}">
+                    <c:if test="${isEntrance}">
+                        <input type="hidden" name="isEntrance" value="1"/>
+                    </c:if>
+                    <c:if test="${!isEntrance}">
+                        <input type="hidden" name="isEntrance" value="0"/>
+                    </c:if>
+                </c:if>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
             </form>
         </sec:authorize>
