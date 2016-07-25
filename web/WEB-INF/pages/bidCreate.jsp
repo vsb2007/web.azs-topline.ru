@@ -25,7 +25,15 @@
                 </select><br>
                 <select class="dropdown-menu" id="driverCanUpdateIn" name="driverCanUpdateIn" onchange="">
                     <option value="0">Водитель не может принимать топливо</option>
-                    <option value="1">Водитель может принимать топливо</option>
+                    <c:if test="${isEntrance!=null}">
+                        <c:if test="${isEntrance}">
+                            <option value="1" selected>Водитель может принимать топливо</option>
+                        </c:if>
+                        <c:if test="${!isEntrance}">
+                            <option value="1">Водитель может принимать топливо</option>
+                        </c:if>
+                    </c:if>
+
                 </select><br>
                     <%--
                     <select class="dropdown-menu" id="driverCanUpdateOut" name="driverCanUpdateOut" onchange="">

@@ -2,6 +2,8 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,16 +28,20 @@ public class DbJdbcModel {
         this.error = error;
     }
 
+    //@Transactional(propagation = Propagation.MANDATORY)
     public boolean getUpdateResult(String sql, ArrayList<Object> args) {
+        jdbcTemplateMvc.update(sql, args.toArray());
+        /*
         try {
             jdbcTemplateMvc.update(sql, args.toArray());
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-        }
+        }*/
         return true;
     }
-
+/*
     private boolean getUpdateResult(String sql) {
         try {
             jdbcTemplateMvc.update(sql);
@@ -45,7 +51,7 @@ public class DbJdbcModel {
         }
         return true;
     }
-
+*/
     public List<Map<String, Object>> getSelectResult(String sql, ArrayList<Object> args) {
         if (args != null)
             return jdbcTemplateMvc.queryForList(sql, args.toArray());

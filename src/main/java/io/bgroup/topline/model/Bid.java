@@ -2,6 +2,8 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -209,6 +211,7 @@ public class Bid {
         this.trailer = trailer;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public String createBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         if (siteUser == null) return "Error: Ошибка Авторизации";
@@ -654,6 +657,7 @@ public class Bid {
         return getBid(bidId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     private boolean updateBidDbFields(Bid bid, HttpServletRequest request, SiteUser siteUser) {
         ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
@@ -741,6 +745,7 @@ public class Bid {
         return companyUnit;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     private boolean updateOilTypeStorageControl(int operation, CompanyUnit companyUnit, ArrayList<BidDetail> bidDetailsCar,
                                                 ArrayList<BidDetail> bidDetailsTrailer, HttpServletRequest request) {
         ArrayList<OilTypeStorage> oilTypeStorageArrayList = companyUnit.getOilTypeStorageArrayList();
@@ -823,6 +828,7 @@ public class Bid {
         return sql;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public void closeBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         if (!siteUser.isUserHasRole(principal, "ROLE_BID_RED")) return;
@@ -834,6 +840,7 @@ public class Bid {
         dbMvc.getUpdateResult(sql, args);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public String redBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         if (!siteUser.isUserHasRole(principal, "ROLE_BID_RED")) return "Нет прав на изменения";

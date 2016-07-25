@@ -2,6 +2,8 @@ package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -108,7 +110,7 @@ public class Company {
                 "                </li>";
         return response;
     }
-
+    @Transactional(propagation = Propagation.REQUIRED)
     public boolean addCompany(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         SiteUser siteUserTmp = siteUserMvc.findSiteUser(principal);
         if (!siteUserTmp.isUserHasRole(principal, "ROLE_COMPANY_ADD")) return false;
@@ -146,7 +148,7 @@ public class Company {
         }
         return getCompany(companyId);
     }
-
+    @Transactional(propagation = Propagation.REQUIRED)
     public void redCompany(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         String companyName = request.getParameter("companyName");
         String companyId = request.getParameter("companyId");
