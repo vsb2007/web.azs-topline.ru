@@ -108,7 +108,6 @@ public class MvcBidController {
     public ModelAndView bidView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         Bid bid = bidMvc.getBidForView(principal, request);
-        //if (bid.getBid_is_freeze().equals("true")){
         if (bid.getBid_is_freeze()) {
             if (bid.isPdfFileExist()) {
                 model.addObject("pdfFile", 1);

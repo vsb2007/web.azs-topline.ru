@@ -72,14 +72,12 @@ public class OilTypeStorage {
             if (oilTypeStorageArrayList == null) oilTypeStorageArrayList = new ArrayList<OilTypeStorage>();
             oilTypeStorageArrayList.add(oilTypeStorage);
         }
-
         return oilTypeStorageArrayList;
     }
 
     private void setOilTypeStorageFromMapRow(OilTypeStorage oilTypeStorage, Map row) {
         if (oilTypeStorage == null || row == null) return;
         Object idOilStorageObject = row.get("id_oilStorage");
-
         Long oilTypeStorageIdLong;
         Integer oilTypeStorageId;
         if (idOilStorageObject instanceof Long) {
@@ -91,7 +89,6 @@ public class OilTypeStorage {
         Integer oilTypeId = (Integer) row.get("oilTypeId");
         Double volumeV = (Double) row.get("volumeV");
         Double volumeM = (Double) row.get("volumeM");
-
         OilType oilType = oilTypeMvc.getOilType(oilTypeId);
         oilTypeStorage.setOilType(oilType);
         oilTypeStorage.setIdOilTypeStorage(oilTypeStorageId);
@@ -118,10 +115,7 @@ public class OilTypeStorage {
         if (oilTypeStorageArrayList == null) return "мало данных";
         int oilTypeStorageSize = oilTypeStorageArrayList.size();
         if (oilTypeStorageSize == 0) return "мало данных";
-
-        //String sql = "insert into oilstorage (id_oilStorage,companyUnitId,oilTypeId,volumeV,volumeM) " +
-        String sql = "insert into oilstorage (id_oilStorage,volumeV,volumeM) " +
-                "values ";
+        String sql = "insert into oilstorage (id_oilStorage,volumeV,volumeM) values ";
         ArrayList<Object> args = new ArrayList<Object>();
         boolean commaFlag = false;
         for (OilTypeStorage oilTypeStorage : oilTypeStorageArrayList) {
@@ -146,12 +140,9 @@ public class OilTypeStorage {
             if (commaFlag) {
                 sql += ",";
             }
-            //sql += "(?,?,?,?,?)";
             sql += "(?,?,?)";
             if (!commaFlag) commaFlag = true;
             args.add(oilTypeStorage.getIdOilTypeStorage());
-            //args.add(companyUnit.getIdCompanyUnit());
-            //args.add(oilTypeStorage.getOilType().getId_oilType());
             args.add(volumeVNew);
             args.add(volumeMNew);
         }

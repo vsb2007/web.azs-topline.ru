@@ -33,7 +33,6 @@ public class MvcCompanyController {
     @Autowired
     private OilTypeStorage oilTypeStorageMvc;
 
-
     @RequestMapping(value = "company")
     public ModelAndView company(UsernamePasswordAuthenticationToken principal) {
         ModelAndView model = new ModelAndView();
@@ -61,7 +60,6 @@ public class MvcCompanyController {
         model.addObject("errorCompanyRed", companyMvc.getError());
         Company company = companyMvc.getCompany(request);
         ArrayList<CompanyUnit> companyUnitList = companyUnitMvc.getCompanyUnitList(company.getIdCompany());
-
         model.addObject("company", company);
         model.addObject("companyUnitList", companyUnitList);
         model.setViewName("companyView");
@@ -118,15 +116,12 @@ public class MvcCompanyController {
     @RequestMapping(value = "companyUnitAddOilStorage")
     public ModelAndView companyUnitAddOilStorage(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-
         String error = companyUnitMvc.addCompanyUnitOilStorage(principal, request);
-
         CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(request);
         ArrayList<OilType> oilTypeArrayList = oilTypeMvc.getOilTypesList();
         model.addObject("companyUnit", companyUnit);
         model.addObject("addOilStorageMessage", error);
         model.addObject("oilTypeList", oilTypeArrayList);
-
         model.setViewName("companyUnitView");
         return model;
     }
@@ -152,7 +147,6 @@ public class MvcCompanyController {
         model.addObject("companyUnit", companyUnit);
         model.addObject("updateOilStorageMessage", message);
         model.addObject("oilTypeList", oilTypeArrayList);
-
         model.setViewName("companyUnitView");
         return model;
     }

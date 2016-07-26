@@ -10,13 +10,13 @@ public class ExceptionHandlerController {
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e) {
         //return "login";// view name for 404 error
-        System.out.println("404 - 1"); // not login to this point
+        //System.out.println("404 - 1"); // not login to this point
         return "redirect:/index?logout";
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public String handle(Exception ex) {
-        System.out.println("404 - 2"); // not login to this point
+        //System.out.println("404 - 2"); // not login to this point
         return "redirect:/index?logout";
     }
     /*

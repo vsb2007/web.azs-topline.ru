@@ -6,10 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by VSB on 08.04.2016.
- * ToplineWeb.2.5
- */
 public class Post {
     @Autowired
     private DbJdbcModel dbMvc;

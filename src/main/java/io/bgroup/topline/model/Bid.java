@@ -268,12 +268,6 @@ public class Bid {
             values = strPlusCommaPlusValue(values, "?");
             args.add(siteUser.getId());
         }
-        /*
-        if (bidNumber != null) {
-            columns = strPlusCommaPlusValue(columns, "bid_number");
-            values = strPlusCommaPlusValue(values, "'" + bidNumber + "'");
-        }
-        */
         {
             //дата создания, она же дата последнего апдейта
             columns = strPlusCommaPlusValue(columns, "bid_date_create");
@@ -454,7 +448,6 @@ public class Bid {
         ArrayList<Thread> threadArrayList = new ArrayList<Thread>();
         for (Map row : bidsListFromDb) {
             Bid bid = new Bid();
-            //setBidFromMapRow(bid, row);
             bidsList.add(bid);
             Thread thread = new Thread(new Bid.SetRowThread(bid, row));
             thread.start();
@@ -538,89 +531,6 @@ public class Bid {
             if (driverCanUpdateOutField == 1)
                 bid.setDriverCanUpdateOut(true);
             else bid.setDriverCanUpdateOut(false);
-
-        /*
-        Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, Object> pair = iterator.next();
-            if (pair.getKey().equals("id_bids")) {
-                if (pair.getValue() != null) {
-                    bid.setId_bid((Integer) pair.getValue());
-                } else bid.setId_bid(-1);
-            } else if (pair.getKey().equals("bid_create_user_id")) {
-                if (pair.getValue() != null) {
-                    bid.setCreateUser(siteUserMvc.findSiteUser((Integer) pair.getValue()));
-                } else bid.setCreateUser(null);
-            } else if (pair.getKey().equals("bid_number")) {
-                if (pair.getValue() != null) {
-                    bid.setName((String) pair.getValue());
-                } else bid.setName(null);
-            } else if (pair.getKey().equals("bid_storage_in_id")) {
-                if (pair.getValue() != null) {
-                    bid.setOilStorageIn(oilStorageMvc.getOilStorage(pair.getValue().toString()));
-                } else bid.setOilStorageIn(null);
-            } else if (pair.getKey().equals("bid_driver_id")) {
-                if (pair.getValue() != null) {
-                    bid.setDriver(driverMvc.getDriver(pair.getValue().toString()));
-                } else bid.setDriver(null);
-            } else if (pair.getKey().equals("bid_car_id")) {
-                if (pair.getValue() != null) {
-                    bid.setCar(carMvc.getCar(pair.getValue().toString()));
-                } else bid.setCar(null);
-            } else if (pair.getKey().equals("bid_trailer_id")) {
-                if (pair.getValue() != null) {
-                    bid.setTrailer(trailerMvc.getTrailer(pair.getValue().toString()));
-                } else bid.setTrailer(null);
-            } else if (pair.getKey().equals("bid_date_freeze")) {
-                if (pair.getValue() != null) {
-                    bid.setBid_date_freeze(pair.getValue().toString());
-                } else bid.setBid_date_freeze(null);
-            } else if (pair.getKey().equals("bid_is_freeze")) {
-                if (pair.getValue() != null) {
-                    int isFreezeField = (Integer) pair.getValue();
-                    if (isFreezeField == 1)
-                        bid.setBid_is_freeze(true);
-                    else bid.setBid_is_freeze(false);
-                } else bid.setBid_is_freeze(false);
-            } else if (pair.getKey().equals("bid_date_close")) {
-                if (pair.getValue() != null) {
-                    bid.setBid_date_close(pair.getValue().toString());
-                } else bid.setBid_date_close(null);
-            } else if (pair.getKey().equals("bid_is_close")) {
-                if (pair.getValue() != null) {
-                    int isCloseField = (Integer) pair.getValue();
-                    if (isCloseField == 1)
-                        bid.setBid_is_close(true);
-                    else bid.setBid_is_close(false);
-                } else bid.setBid_is_close(false);
-            } else if (pair.getKey().equals("bid_is_done")) {
-                if (pair.getValue() != null) {
-                    int isDoneField = (Integer) pair.getValue();
-                    if (isDoneField == 1)
-                        bid.setBid_is_done(true);
-                    else bid.setBid_is_done(false);
-                } else bid.setBid_is_done(false);
-            } else if (pair.getKey().equals("bid_date_done")) {
-                if (pair.getValue() != null) {
-                    bid.setBid_date_done(pair.getValue().toString());
-                } else bid.setBid_date_done(null);
-            } else if (pair.getKey().equals("bid_date_create")) {
-                if (pair.getValue() != null) {
-                    bid.setBid_date_create((String) pair.getValue().toString().split(" ")[0]);
-                } else bid.setBid_date_create(null);
-            } else if (pair.getKey().equals("bid_date_last_update")) {
-                if (pair.getValue() != null) {
-                    bid.setBid_date_last_update((String) pair.getValue().toString());
-                } else bid.setBid_date_last_update(null);
-            } else if (pair.getKey().equals("bid_driverCanUpdate")) {
-                if (pair.getValue() != null) {
-                    int driverCanUpdateField = (Integer) pair.getValue();
-                    if (driverCanUpdateField == 1)
-                        bid.setDriverCanUpdate(true);
-                    else bid.setDriverCanUpdate(false);
-                } else bid.setDriverCanUpdate(false);
-            }
-        }*/
         }
     }
 
@@ -663,7 +573,6 @@ public class Bid {
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
         String sql = "update bids set bid_date_last_update=now(),";
         String suffix = "";
-        //if (bid.getBid_is_freeze().equals("0")) {
         ArrayList<Object> args = new ArrayList<Object>();
         if (!bid.getBid_is_freeze()) {
             suffix = "in";
@@ -710,7 +619,6 @@ public class Bid {
         /*
         закончили изменения в контроль остатков
          */
-        //System.out.println(sql);
         if (flag) {
             if (!dbMvc.getUpdateResult(sql, args)) return false;
         } else return false;
@@ -760,8 +668,7 @@ public class Bid {
         if (message.equals("1"))
             message = getCheckForbidDetail(operation, bidDetailsTrailer, arrayV, arrayM, request);
         if (!message.equals("1")) return false;
-        String sql = "insert into oilstorage (id_oilStorage,volumeV,volumeM) " +
-                "values ";
+        String sql = "insert into oilstorage (id_oilStorage,volumeV,volumeM) values ";
         ArrayList<Object> args = new ArrayList<Object>();
         boolean commaFlag = false;
         for (OilTypeStorage oilTypeStorage : oilTypeStorageArrayList) {
@@ -802,7 +709,6 @@ public class Bid {
         } else {
             flagIsSuffixOut = true;
         }
-
         for (BidDetail bidDetail : bidDetails) {
             String strP = request.getParameter(bidDetail.getSection().getId_section() + "_p");
             String strT = request.getParameter(bidDetail.getSection().getId_section() + "_t");
@@ -868,7 +774,6 @@ public class Bid {
         } catch (Exception e) {
             return "параметры водителя не верны";
         }
-
         String carId = request.getParameter("car");
         if (carId == null || carId.equals("-1")) return "машина не указана";
         Car car = carMvc.getCar(carId);
@@ -917,7 +822,6 @@ public class Bid {
                 sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
                 sql += "=null";
             } else {
-                //emptySectionFlag = false;
                 sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
                 sql += "=?";
                 args.add(oilTypeIdTmp);
@@ -951,7 +855,6 @@ public class Bid {
         if (bid.getOilStorageIn() == null) return "не найден отправитель";
         if (bid.getOilStorageIn().getCompanyUnit() == null) return "не найден отправитель";
         if (bid.getOilStorageIn().getCompanyUnit().getOilTypeStorageArrayList() == null) return "1";
-
         OilStorage oilStorageIn = bid.getOilStorageIn();
         Car car = bid.getCar();
         if (car == null) return "машина не найдена";

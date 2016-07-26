@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -188,7 +190,7 @@ public class SiteUser {
                 thread.start();
                 thread.join();
                 */
-                new SetRowThread(findUser,row).setSiteUserFromMapRow();
+                new SetRowThread(findUser, row).setSiteUserFromMapRow();
             } catch (Exception e) {
                 this.error = "Ошибка: " + e;
             }
@@ -230,6 +232,7 @@ public class SiteUser {
         return redUser;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     private String updateUserMessage(SiteUser redUser, HttpServletRequest request) {
         try {
             String userNameFromForm = request.getParameter("user-name-label");
@@ -383,11 +386,11 @@ public class SiteUser {
             SiteUser tmpSiteUser = new SiteUser();
             siteUserArrayList.add(tmpSiteUser);
             //setSiteUserFromMapRow(tmpSiteUser, row); // перешли на нити
-            Thread thread = new Thread(new SetRowThread(tmpSiteUser,row));
+            Thread thread = new Thread(new SetRowThread(tmpSiteUser, row));
             thread.start();
             threadArrayList.add(thread);
         }
-        for (Thread thread: threadArrayList){
+        for (Thread thread : threadArrayList) {
             try {
                 thread.join();
             } catch (InterruptedException e) {
@@ -402,7 +405,7 @@ public class SiteUser {
         SiteUser siteUser;
         Map row;
 
-        public SetRowThread(SiteUser siteUser, Map row) {
+        SetRowThread(SiteUser siteUser, Map row) {
             this.siteUser = siteUser;
             this.row = row;
         }
@@ -412,7 +415,7 @@ public class SiteUser {
             setSiteUserFromMapRow();
         }
 
-        public void setSiteUserFromMapRow() {
+        void setSiteUserFromMapRow() {
             Object idUserObject = row.get("id_user");
             int idUser;
             idUser = ((Long) idUserObject).intValue();
@@ -427,21 +430,6 @@ public class SiteUser {
         }
     }
 
-    /*
-        private void setSiteUserFromMapRow(SiteUser redUser, Map row) {
-            Object idUserObject = row.get("id_user");
-            int idUser;
-            idUser = ((Long) idUserObject).intValue();
-            redUser.setId(idUser);
-            redUser.setName((String) row.get("username"));
-            redUser.setEmail((String) row.get("user_email"));
-            redUser.setFio((String) row.get("user_fio"));
-            redUser.setPhone((String) row.get("user_phone"));
-            redUser.setIsEnable((Boolean) row.get("enabled"));
-            redUser.setPost(postMvc.getPost((Integer) row.get("user_post_id")));
-            redUser.setCompanyUnit(companyUnitMvc.getCompanyUnit((Integer) row.get("user_company_unit_id")));
-        }
-      */
     public boolean userAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         if (!isUserHasRole(principal, "ROLE_USERS_ADD")) return false;
         String userNameFromFormUserAdd = request.getParameter("username");
@@ -476,15 +464,15 @@ public class SiteUser {
     public String saveRoleForUserForAjax(HttpServletRequest request, UsernamePasswordAuthenticationToken principal) {
         String response = "Error";
         if (!isUserHasRole(principal, "ROLE_USERS_RED")) return "Нет прав на редактирование";
-        String userId = (String) request.getParameter("userId").toString();
+        String userId = request.getParameter("userId");
         int userIdInt = -1;
         try {
             userIdInt = Integer.parseInt(userId);
         } catch (Exception e) {
             userIdInt = -1;
         }
-        String role = (String) request.getParameter("role").toString();
-        String operation = (String) request.getParameter("operation").toString();
+        String role = request.getParameter("role");
+        String operation = request.getParameter("operation");
         String sql = null;
         SiteUser siteUserTmp = findSiteUser(userIdInt);
         ArrayList<Object> args = new ArrayList<Object>();

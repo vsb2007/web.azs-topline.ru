@@ -1,6 +1,5 @@
 package io.bgroup.topline.model;
 
-
 public class MyConstant {
     private static String fileFolder = "";
     private static String filePrefix = "";

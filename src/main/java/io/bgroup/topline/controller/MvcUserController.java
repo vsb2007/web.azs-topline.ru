@@ -63,12 +63,10 @@ public class MvcUserController {
     @RequestMapping(value = "usersadd")
     public ModelAndView UsersAdd(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-
         siteUserMvc.userAdd(principal, request);
         model.addObject("errorAddUser", siteUserMvc.getError());
         ArrayList<SiteUser> list = siteUserMvc.getListSiteUsers(principal);
         model.addObject("listUsers", list);
-
         model.setViewName("users");
         return model;
     }

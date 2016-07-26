@@ -110,6 +110,7 @@ public class Company {
                 "                </li>";
         return response;
     }
+
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean addCompany(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         SiteUser siteUserTmp = siteUserMvc.findSiteUser(principal);
@@ -148,6 +149,7 @@ public class Company {
         }
         return getCompany(companyId);
     }
+
     @Transactional(propagation = Propagation.REQUIRED)
     public void redCompany(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         String companyName = request.getParameter("companyName");

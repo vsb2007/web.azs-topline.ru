@@ -50,5 +50,4 @@ public class MvcUserAjaxController {
         }
         return responseBody;
     }
-
 }

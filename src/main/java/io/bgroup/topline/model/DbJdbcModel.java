@@ -28,7 +28,7 @@ public class DbJdbcModel {
         this.error = error;
     }
 
-    //@Transactional(propagation = Propagation.MANDATORY)
+    @Transactional(propagation = Propagation.MANDATORY)
     public boolean getUpdateResult(String sql, ArrayList<Object> args) {
         jdbcTemplateMvc.update(sql, args.toArray());
         /*
@@ -41,17 +41,18 @@ public class DbJdbcModel {
         }*/
         return true;
     }
-/*
-    private boolean getUpdateResult(String sql) {
-        try {
-            jdbcTemplateMvc.update(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+
+    /*
+        private boolean getUpdateResult(String sql) {
+            try {
+                jdbcTemplateMvc.update(sql);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
         }
-        return true;
-    }
-*/
+    */
     public List<Map<String, Object>> getSelectResult(String sql, ArrayList<Object> args) {
         if (args != null)
             return jdbcTemplateMvc.queryForList(sql, args.toArray());

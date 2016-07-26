@@ -14,7 +14,7 @@ public class SendEmail {
             System.out.println("Заявка пуста!!!");
             return;
         }
-        final String username = "azsreport2015@gmail.com";
+        final String username = "login@gmail.com";
         final String password = "qwe123ASD";
 
         Properties props = new Properties();
@@ -31,7 +31,6 @@ public class SendEmail {
                 });
         if (driver != null && driver.getDriverFio() != null && driver.getDriverEmail() != null) {
             try {
-
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress("azsreport2015@gmail.com"));
                 message.setRecipients(Message.RecipientType.TO,
@@ -39,9 +38,7 @@ public class SendEmail {
                 message.setSubject("Вам назначена заявка");
                 message.setText("Уважаемый " + driver.getDriverFio() + "!"
                         + "\n\n Вам назначена заявка!");
-
                 Transport.send(message);
-
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             } catch (Exception e) {

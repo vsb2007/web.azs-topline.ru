@@ -160,7 +160,7 @@ public class BidDetail {
         ArrayList<Object> args = new ArrayList<Object>();
         args.add(bidId);
         List<Map<String, Object>> bidFromDb = null;
-        bidFromDb = dbMvc.getSelectResult(sql,args);
+        bidFromDb = dbMvc.getSelectResult(sql, args);
         if (bidFromDb == null || bidFromDb.size() != 1) return null;
         Map row = bidFromDb.get(0);
         if (row == null) return null;
@@ -276,8 +276,8 @@ public class BidDetail {
             if ((bid.getCreateUser().getName().equals(siteUser.getName()))
                     || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bid.getOilStorageIn().getIdOilStorage())
                     || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bidDetail.getDestination().getIdCompanyUnit())
-                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost()==2)
-                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost()==4)
+                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 2)
+                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 4)
                     || (siteUser.getName().equals("admin"))
                     )
                 if (!bidDetail.isDone()) {
