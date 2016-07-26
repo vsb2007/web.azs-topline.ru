@@ -144,6 +144,9 @@ public class Driver {
                 userId = (Integer) userIdObject;
             driver.setIdDriver(userId);
             driver.setDriver(siteUserMvc.findSiteUser(userId));
+            /*
+            Бред тот еще... но он получен минимизацией максимальных изменений в хотелках :-)
+             */
             if (driver.getDriver() != null) {
                 driver.setDriverBlock(driver.getDriver().getIsEnable());
                 driver.setDriverEmail(driver.getDriver().getEmail());
