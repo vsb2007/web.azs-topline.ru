@@ -30,6 +30,7 @@ public class Bid {
     private String bid_date_create;
     private String bid_date_last_update;
     private boolean isDone;
+    private int isTransfer;
 
     //для логики
     private String error;
@@ -58,6 +59,14 @@ public class Bid {
 
     public SiteUser getCreateUser() {
         return createUser;
+    }
+
+    public int getIsTransfer() {
+        return isTransfer;
+    }
+
+    public void setIsTransfer(int isTransfer) {
+        this.isTransfer = isTransfer;
     }
 
     public boolean isDone() {
@@ -274,6 +283,7 @@ public class Bid {
             values = strPlusCommaPlusValue(values, "now()");
             columns = strPlusCommaPlusValue(columns, "bid_date_last_update");
             values = strPlusCommaPlusValue(values, "now()");
+            // если это поставка, а не перемещение
             if (isEntrance == 1) {
                 columns = strPlusCommaPlusValue(columns, "bid_is_transfer");
                 values = strPlusCommaPlusValue(values, "0");
@@ -531,6 +541,7 @@ public class Bid {
             if (driverCanUpdateOutField == 1)
                 bid.setDriverCanUpdateOut(true);
             else bid.setDriverCanUpdateOut(false);
+            bid.setIsTransfer((Integer)row.get("bid_is_transfer"));
         }
     }
 

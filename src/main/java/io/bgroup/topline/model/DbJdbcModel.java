@@ -28,7 +28,7 @@ public class DbJdbcModel {
         this.error = error;
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
+    //@Transactional(propagation = Propagation.MANDATORY)
     public boolean getUpdateResult(String sql, ArrayList<Object> args) {
         jdbcTemplateMvc.update(sql, args.toArray());
         /*

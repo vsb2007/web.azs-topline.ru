@@ -47,6 +47,15 @@
             <input type="text" class="text-input border-green-500" placeholder="Прицеп" required
                    name="trailer" value="${bid.getTrailer().getTrailer_number()}" readonly> <br>
             <br>
+            <c:if test="${bid.getIsTransfer()==0}">
+                Документы поступления:<br>
+                <select class="dropdown-menu" id="" name="destinationCompany">
+                    <option value="1">Топлайн</option>
+                    <option value="2">Управление АЗС</option>
+                    <option value="3">Другой</option>
+                </select>
+            </c:if>
+            <br>
             Доставка:<br>
             Секции на машине:<br>
             <c:forEach items="${bidDetailsCar}" var="bidDetails">
