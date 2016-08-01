@@ -49,11 +49,7 @@
             <br>
             <c:if test="${bid.getIsTransfer()==0}">
                 Документы поступления:<br>
-                <select class="dropdown-menu" id="" name="destinationCompany">
-                    <option value="1">Топлайн</option>
-                    <option value="2">Управление АЗС</option>
-                    <option value="3">Другой</option>
-                </select>
+                <%@ include file="bidViewOperatorDocumentIn.jsp" %>
             </c:if>
             <br>
             Доставка:<br>
