@@ -133,6 +133,10 @@ public class CompanyUnit {
         return companyUnitArrayList;
     }
 
+    public CompanyUnit getCompanyUnit(int destinationId, int destinationOrgType) {
+        return getCompanyUnit(destinationId);
+    }
+
     private class GetCompanyUnitThread implements Runnable {
         CompanyUnit companyUnit;
         Map row;
@@ -153,7 +157,7 @@ public class CompanyUnit {
             companyUnit.setCompany(companyMvc.getCompany((Integer) row.get("company_id")));
             int block = -1;
             try {
-                block = (Integer) row.get("company_unit_name");
+                block = (Integer) row.get("Block");
             } catch (Exception e) {
                 block = -1;
             }

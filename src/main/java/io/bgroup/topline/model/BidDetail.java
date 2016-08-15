@@ -11,6 +11,7 @@ public class BidDetail {
     private OilSections section;
     private OilType oilType;
     private CompanyUnit destination;
+    private Organization organizationDestination;
     private String plIn;
     private String plOut;
     private String tempIn;
@@ -29,6 +30,8 @@ public class BidDetail {
     OilType oilTypeMvc;
     @Autowired
     CompanyUnit companyUnitMvc;
+    @Autowired
+    Organization organizationMvc;
 
     public BidDetail() {
 
@@ -64,6 +67,14 @@ public class BidDetail {
 
     private void setDestination(CompanyUnit destination) {
         this.destination = destination;
+    }
+
+    public Organization getOrganizationDestination() {
+        return organizationDestination;
+    }
+
+    public void setOrganizationDestination(Organization organizationDestination) {
+        this.organizationDestination = organizationDestination;
     }
 
     public String getPlIn() {
@@ -178,6 +189,7 @@ public class BidDetail {
         for (OilSections oilSection : oilSectionsList) {
             int oilTypeId = -1;
             int destinationId = -1;
+            int destinationOrgType = 0;
             Iterator<Map.Entry<String, Object>> iterator = row.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, Object> pair = iterator.next();
@@ -189,10 +201,10 @@ public class BidDetail {
                     if (pair.getValue() != null) {
                         destinationId = (Integer) pair.getValue();
                     } else destinationId = -1;
-                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_storageOut_id")) {
+                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_orgType")) {
                     if (pair.getValue() != null) {
-                        destinationId = (Integer) pair.getValue();
-                    } else destinationId = -1;
+                        destinationOrgType = (Integer) pair.getValue();
+                    } else destinationOrgType = 0;
                 } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_p_in")) {
                     if (pair.getValue() != null) {
                         pInTmp = pair.getValue().toString();
@@ -238,9 +250,19 @@ public class BidDetail {
             if (oilTypeId == -1) continue;
             if (destinationId == -1) continue;
             OilType oilTypeTmp = oilTypeMvc.getOilType(oilTypeId);
-            CompanyUnit destinationTmp = companyUnitMvc.getCompanyUnit(destinationId);
+            CompanyUnit destinationTmp = null;
+            Organization organizationTmp = null;
+            if (destinationOrgType == 0) {
+                destinationTmp = companyUnitMvc.getCompanyUnit(destinationId);
+            } else destinationTmp = null;
+            if (destinationOrgType == 1) {
+                organizationTmp = organizationMvc.getOrganization(destinationId);
+            } else {
+                organizationTmp = null;
+            }
             BidDetail bidDetail = new BidDetail();
             bidDetail.setDestination(destinationTmp);
+            bidDetail.setOrganizationDestination(organizationTmp);
             bidDetail.setOilType(oilTypeTmp);
             bidDetail.setSection(oilSection);
             bidDetail.setPlIn(pInTmp);
