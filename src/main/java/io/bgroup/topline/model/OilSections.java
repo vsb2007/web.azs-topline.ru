@@ -68,7 +68,7 @@ public class OilSections {
             }
             response += "</select>"
                     + "&nbsp;"
-                    + "<input type=text class=\"text-input border-blue-500\" ondurationchange=\"getOrganization(this,'" + section.getId_section() + "_OrgId_span')\" "
+                    + "<input type=text class=\"text-input border-blue-500\" "
                     + "id=\"" + section.getId_section() + "_OrgId_text\" onChange=\"getOrganization(this,'" + section.getId_section() + "_OrgId_span')\">"
                     + "&nbsp;" +
                     "<span id=\"" + section.getId_section() + "_OrgId_span\">Введите пару символов</span>";
