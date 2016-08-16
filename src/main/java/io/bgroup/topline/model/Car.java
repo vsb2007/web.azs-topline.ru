@@ -22,6 +22,8 @@ public class Car {
     @Autowired
     private OilStorage oilStorageMvc;
     @Autowired
+    private Organization organizationMvc;
+    @Autowired
     private OilSections oilSectionsMvc;
 
     public ArrayList<Car> getCarsList() {
@@ -142,8 +144,9 @@ public class Car {
         response += "<ul>";
         ArrayList<OilType> oilTypesList = oilTypeMvc.getOilTypesList();
         ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        ArrayList<Organization> organizationList = organizationMvc.getOrganizationList();
         if (oilStorageList == null || oilTypesList == null) return "Error: не возможно загрузить данные";
-        response += oilSectionsMvc.getOilSectionsForAjaxSelect(carSections, oilTypesList, oilStorageList);
+        response += oilSectionsMvc.getOilSectionsForAjaxSelect(carSections, oilTypesList, oilStorageList, organizationList);
         response += "</ul>";
         return response;
     }

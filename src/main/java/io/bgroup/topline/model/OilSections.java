@@ -41,15 +41,15 @@ public class OilSections {
         this.oilSectionName = oilSectionName;
     }
 
-    public String getOilSectionsForAjaxSelect(ArrayList<OilSections> sections, ArrayList<OilType> oilTypesList, ArrayList<OilStorage> oilStorageList) {
+    public String getOilSectionsForAjaxSelect(ArrayList<OilSections> sections, ArrayList<OilType> oilTypesList, ArrayList<OilStorage> oilStorageList, ArrayList<Organization> organizationList) {
         String response = "";
-        for (OilSections carSection : sections) {
+        for (OilSections section : sections) {
             response += "<li>" +
-                    "Секция " + carSection.getOilSectionName() + " (" + carSection.getVol() + "л.)"
+                    "Секция " + section.getOilSectionName() + " (" + section.getVol() + "л.)"
                     + "&nbsp;"
                     + "<select class=\"dropdown-menu\""
-                    + "id=\"" + carSection.getId_section() + "_oilTypeId\" "
-                    + "name=\"" + carSection.getId_section() + "_oilTypeId\">"
+                    + "id=\"" + section.getId_section() + "_oilTypeId\" "
+                    + "name=\"" + section.getId_section() + "_oilTypeId\">"
                     + "<option value=\"-1\">Пустая секция</option>"
             ;
             for (OilType oilTypeTmp : oilTypesList) {
@@ -59,15 +59,19 @@ public class OilSections {
             response += "</select>"
                     + "&nbsp;"
                     + "<select class=\"dropdown-menu\""
-                    + "id=\"" + carSection.getId_section() + "_storageOutId\" "
-                    + "name=\"" + carSection.getId_section() + "_storageOutId\">"
+                    + "id=\"" + section.getId_section() + "_storageOutId\" "
+                    + "name=\"" + section.getId_section() + "_storageOutId\">"
                     + "<option value=\"-1\">Пункт отгрузки</option>";
             for (OilStorage oilStorageTmp : oilStorageList) {
                 response += "<option value=\"" + oilStorageTmp.getIdOilStorage() + "\">" +
                         oilStorageTmp.getOilStorageName() + "</option>";
             }
             response += "</select>"
-                    + "&nbsp;";
+                    + "&nbsp;"
+                    + "<input type=text class=\"text-input border-blue-500\" ondurationchange=\"getOrganization(this,'" + section.getId_section() + "_OrgId_span')\" "
+                    + "id=\"" + section.getId_section() + "_OrgId_text\" onChange=\"getOrganization(this,'" + section.getId_section() + "_OrgId_span')\">"
+                    + "&nbsp;" +
+                    "<span id=\"" + section.getId_section() + "_OrgId_span\">Введите пару символов</span>";
             response += "</li>";
         }
         return response;

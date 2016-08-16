@@ -22,6 +22,8 @@ public class Trailer {
     @Autowired
     private OilStorage oilStorageMvc;
     @Autowired
+    private Organization organizationMvc;
+    @Autowired
     private OilSections oilSectionsMvc;
 
     public int getId_trailer() {
@@ -142,8 +144,9 @@ public class Trailer {
         response += "<ul>";
         ArrayList<OilType> oilTypesList = oilTypeMvc.getOilTypesList();
         ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        ArrayList<Organization> organizationList = organizationMvc.getOrganizationList();
         if (oilStorageList == null || oilTypesList == null) return "Error: не возможно загрузить данные";
-        response += oilSectionsMvc.getOilSectionsForAjaxSelect(oilSections, oilTypesList, oilStorageList);
+        response += oilSectionsMvc.getOilSectionsForAjaxSelect(oilSections, oilTypesList, oilStorageList,organizationList);
         response += "</ul>";
         return response;
     }

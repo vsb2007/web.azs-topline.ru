@@ -62,12 +62,17 @@
                         <input type="hidden" name="isEntrance" value="0"/>
                     </c:if>
                 </c:if>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token" />
             </form>
         </sec:authorize>
     </div>
 
     <script src="js/bidCreate01.js"></script>
+    <script >
+        function getOrganization(inText, idSpan) {
+            document.getElementById(idSpan).innerHTML = inText.value;
+        }
+    </script>
 
 </sec:authorize>
 <%@ include file="footer.jsp" %>
