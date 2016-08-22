@@ -1,7 +1,9 @@
 package io.bgroup.topline.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +73,32 @@ public class Organization {
                 e.printStackTrace();
             }
         }
+        return organizationArrayList;
+    }
+
+    public String getListByFilter(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        String response = "test ok";
+        String filter = request.getParameter("filter");
+        String idSelect = request.getParameter("idSelect").replace("_text","");
+        ArrayList<Organization> organizationArrayList = getOrganizationListByFilter(filter);
+        if (organizationArrayList == null || organizationArrayList.size() == 0) return "ничего не найдно";
+        response = "<select name=\"" + idSelect + "\" " +
+                "id=\"" + idSelect + "\" " +
+                "class=\"dropdown-menu\">";
+        for (Organization organization : organizationArrayList) {
+            response += "<option value=\"" + organization.getIdOrganization() + "\">" + organization.getOrganizationName() + "</option>";
+        }
+        response += "</select>";
+        return response;
+    }
+
+    public ArrayList<Organization> getOrganizationListByFilter(String filter) {
+        ArrayList<Organization> organizationArrayList = null;
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "select * from organization where Org_Name like ? order by Org_Name";
+        args.add("%" + filter + "%");
+        organizationArrayList = getOrganizationFromDbSelect(sql, args);
+        System.out.println("222");
         return organizationArrayList;
     }
 

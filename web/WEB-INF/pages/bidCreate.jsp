@@ -53,7 +53,13 @@
                 </div>
                 <div id="divTrailerSectionId">
                 </div>
-                <button class="button raised bg-blue-500 color-white">Добавить заявку</button>
+                <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">Добавить
+                    заявку
+                </button>
+                <button class="button raised bg-blue-500 color-white" type="button" onclick="checkAddBidForm()">
+                    Проверить
+                    данные
+                </button>
                 <c:if test="${isEntrance!=null}">
                     <c:if test="${isEntrance}">
                         <input type="hidden" name="isEntrance" value="1"/>
@@ -62,16 +68,67 @@
                         <input type="hidden" name="isEntrance" value="0"/>
                     </c:if>
                 </c:if>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token" />
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
             </form>
         </sec:authorize>
     </div>
 
     <script src="js/bidCreate01.js"></script>
-    <script >
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script>
         function getOrganization(inText, idSpan) {
-            document.getElementById(idSpan).innerHTML = inText.value;
+            document.getElementById("addBidButton").setAttribute("disabled", "disabled");
+            //document.getElementById(idSpan).innerHTML = inText.value;
+            //alert(inText.id)
+            /*
+             var msg = $('#' + inText.id + '').serialize();
+             $.ajax({
+             type: 'POST',
+             url: 'orgGetListByFilter',
+             data: msg,
+             success: function (data) {
+             //$('.results').html(data);
+             //document.getElementById("control").innerHTML = data;
+             if (data != 1) {
+             document.getElementById(idSpan).innerHTML = data;
+             document.getElementById("addBidButton").removeAttribute("disabled");
+             }
+             if (data == 1) {
+             document.getElementById(idSpan).innerHTML = "Ошибка: " + data;
+             document.getElementById("addBidButton").setAttribute("disabled","disabled");
+             }
+             },
+             error: function (xhr, str) {
+             //$('.results').html('Возникла ошибка: ' + xhr.responseCode);
+             document.getElementById(idSpan).innerHTML = "Возникла ошибка: " + xhr.responseCode;
+             document.getElementById("addBidButton").setAttribute("disabled","disabled");
+             }
+             });*/
+            var xmlhttp;
+            document.getElementById(idSpan).innerHTML = "<ul class='zmdi-hc-ul'>" +
+                    "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
+                    "</ul>";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    document.getElementById(idSpan).innerHTML = xmlhttp.responseText;
+                }
+            }
+                var token = document.getElementById("token");
+                xmlhttp.open("POST", "orgGetListByFilter", true);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xmlhttp.send("filter=" + inText.value + "&" + token.name + "=" + token.value  + "&idSelect=" + inText.id);
         }
+        function checkAddBidForm() {
+            document.getElementById("addBidButton").removeAttribute("disabled");
+        }
+
     </script>
 
 </sec:authorize>

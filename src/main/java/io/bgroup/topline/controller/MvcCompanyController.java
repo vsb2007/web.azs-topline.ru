@@ -150,5 +150,4 @@ public class MvcCompanyController {
         model.setViewName("companyUnitView");
         return model;
     }
-
 }

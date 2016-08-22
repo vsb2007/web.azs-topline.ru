@@ -67,11 +67,13 @@ public class OilSections {
                         oilStorageTmp.getOilStorageName() + "</option>";
             }
             response += "</select>"
-                    + "&nbsp;"
+                    + "&nbsp;";
+            /*
                     + "<input type=text class=\"text-input border-blue-500\" "
                     + "id=\"" + section.getId_section() + "_OrgId_text\" onChange=\"getOrganization(this,'" + section.getId_section() + "_OrgId_span')\">"
                     + "&nbsp;" +
                     "<span id=\"" + section.getId_section() + "_OrgId_span\">Введите пару символов</span>";
+            */
             response += "</li>";
         }
         return response;

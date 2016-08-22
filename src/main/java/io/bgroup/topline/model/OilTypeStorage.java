@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+/*
+класс для отслеживания остатков на складах
+ */
 public class OilTypeStorage {
     private int IdOilTypeStorage;
     private OilType oilType;
