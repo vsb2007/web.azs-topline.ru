@@ -56,4 +56,21 @@ public class MvcSaleController {
         model.setViewName("saleCreate");
         return model;
     }
+
+    @RequestMapping(value = "addCreate")
+    public ModelAndView addCreate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        //long time = System.currentTimeMillis();
+        ModelAndView model = new ModelAndView();
+        model.setViewName("saleCreate");
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (!siteUser.isUserHasRole(principal,"ROLE_SALE_CREATE")) return model;
+       /* boolean flag =
+        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        ArrayList<OilType> oilTypeList = oilTypeMvc.getOilTypesList();
+        model.addObject("siteUser", siteUser);
+        model.addObject("oilStorageList", oilStorageList);
+        model.addObject("oilTypeList", oilTypeList);
+*/
+        return model;
+    }
 }

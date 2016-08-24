@@ -81,7 +81,9 @@ public class Organization {
         String filter = request.getParameter("filter");
         String idSelect = request.getParameter("idSelect").replace("_text","");
         ArrayList<Organization> organizationArrayList = getOrganizationListByFilter(filter);
-        if (organizationArrayList == null || organizationArrayList.size() == 0) return "ничего не найдно";
+        if (organizationArrayList == null || organizationArrayList.size() == 0){
+            return "<input type=\"text\" class=\"text-input border-blue-500\" required readonly placeholder=\"Ничего не найдено\">";
+        }
         response = "<select name=\"" + idSelect + "\" " +
                 "id=\"" + idSelect + "\" " +
                 "class=\"dropdown-menu\">";
@@ -98,7 +100,6 @@ public class Organization {
         String sql = "select * from organization where Org_Name like ? order by Org_Name";
         args.add("%" + filter + "%");
         organizationArrayList = getOrganizationFromDbSelect(sql, args);
-        System.out.println("222");
         return organizationArrayList;
     }
 
