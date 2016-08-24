@@ -11,7 +11,7 @@
             <form action="addSale" method="post">
                 <div class="grid-list">
                     <div class="tile">
-                        <select class="dropdown-menu" id="azs" name="azs" onchange="">
+                        <select class="dropdown-menu" id="idUnit" name="idUnit" onchange="">
                             <option value="-1">Отдел Логистики</option>
                             <c:forEach items="${oilStorageList}" var="oilStorage">
                                 <option value="${oilStorage.getCompanyUnit().getIdCompanyUnit()}">${oilStorage.getCompanyUnit().getCompanyUnitName()}</option>
@@ -46,14 +46,14 @@
                     </div>
                     <div class="tile">
                         <input type="text" class="text-input border-green-500"
-                               value="" placeholder="Номер Машины" id="carNumber" required>
+                               value="" placeholder="Номер Машины" id="carNumber" name="carNumber" required>
                         <div>
                             <span class="secondary-text">Номер Машины</span>
                         </div>
                     </div>
                     <br>
                     <div class="tile">
-                        <select class="dropdown-menu" id="oilType" name="oilType" onchange="">
+                        <select class="dropdown-menu" id="oilTypeId" name="oilTypeId" onchange="">
                             <option value="-1">Выбрать Топливо</option>
                             <c:forEach items="${oilTypeList}" var="oilType">
                                 <option value="${oilType.getId_oilType()}">${oilType.getOilTypeName()}</option>
@@ -99,7 +99,7 @@
                     <br>
                     <div class="tile">
                         <input type="number" class="text-input border-green-500"
-                               value="" placeholder="Сумма" id="sum" required readonly>
+                               value="" placeholder="Сумма" id="sum" name="sum" required readonly>
                         <div>
                             <span class="secondary-text">Сумма</span>
                         </div>
