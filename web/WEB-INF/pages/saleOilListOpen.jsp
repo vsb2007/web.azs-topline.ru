@@ -4,44 +4,44 @@
 <%@ include file="header.jsp" %>
 <%@ include file="menu.jsp" %>
 
-<sec:authorize access="hasRole('ROLE_BID_LIST')">
+<sec:authorize access="hasRole('ROLE_SALE_LIST')">
     <div class="section">
             ${message}
     </div>
 
     <div class="section">
         <ul class="list">
-            <c:forEach items="${bidsList}" var="bid">
-                <c:if test="${!bid.getBid_is_freeze()}">
+            <c:forEach items="${saleOilList}" var="sale">
+                <c:if test="${!sale.isRead()}">
                     <c:set var="bgColor" value="bg-blue-500" scope="application"/>
                 </c:if>
-                <c:if test="${bid.getBid_is_freeze()}">
+                <c:if test="${sale.isRead()}">
                     <c:set var="bgColor" value="bg-red-500" scope="application"/>
                 </c:if>
-                <c:if test="${bid.isDone()}">
+                <c:if test="${sale.isDone()}">
                     <c:set var="bgColor" value="bg-green-500" scope="application"/>
                 </c:if>
                 <li ripple>
                     <form action="bidView" method="post">
-                        <input value="${bid.getId_bid()}" name="bidIdButton" id="bidIdButton${bid.getId_bid()}"
+                        <input value="${sale.getId()}" name="bidIdButton" id="bidIdButton${sale.getId()}"
                                type="hidden">
                         <button class="button raised color-white ${bgColor}" type="submit" style="width: 15em;">
-                            <span class="item-text">${bid.getBid_date_create()} №${bid.getId_bid()}
-			                    <span class="secondary-text">${bid.getCreateUser().getName()} ${bid.getDriver().getDriverFio()}</span>
+                            <span class="item-text">${sale.getDateCreate()} №${sale.getId()}
+			                    <span class="secondary-text">${sale.getUserCreate().getName()} ${sale.getOrganization().getOrganizationName()}</span>
 		                    </span>
                         </button>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     </form>
-                    <sec:authorize access="hasRole('ROLE_BID_RED')">
+                    <sec:authorize access="hasRole('ROLE_SALE_RED')">
                         &nbsp;
-                        <c:if test="${bid.isDone()}">
-                            <c:set var="actionUrl" value="bidClose"/>
+                        <c:if test="${sale.isDone()}">
+                            <c:set var="actionUrl" value="saleOilClose"/>
                         </c:if>
-                        <c:if test="${!bid.isDone()}">
-                            <c:set var="actionUrl" value="bidRed"/>
+                        <c:if test="${!sale.isDone()}">
+                            <c:set var="actionUrl" value="saleOilRed"/>
                         </c:if>
                         <form action="${actionUrl}" method="post">
-                            <input value="${bid.getId_bid()}" name="bidIdButton" id="bidIdButton${bid.getId_bid()}"
+                            <input value="${bid.getId_bid()}" name="saleIdButton" id="saleIdButton${sale.getId()}"
                                    type="hidden">
                             <button class="button raised color-white bg-blue-500" type="submit" style="width: 10em;">
                             <span class="item-text">Редактировать

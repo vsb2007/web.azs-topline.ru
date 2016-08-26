@@ -162,6 +162,12 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return organization;
     }
 
+    @Bean(name = "saleOil")
+    public SaleOil saleOil() {
+        SaleOil saleOil = new SaleOil();
+        return saleOil;
+    }
+
     @Bean(name = "oilStorage")
     public OilStorage oilStorage() {
         OilStorage oilStorage = new OilStorage();

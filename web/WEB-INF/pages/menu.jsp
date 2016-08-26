@@ -17,13 +17,16 @@
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_BID_CREATE')">
             <li ripple><a href="bidcreate"><i class="icon-input"></i>Создать заявку</a></li>
-            <li ripple><a href="bidEntrance"><i class="icon-input"></i>Поступление Ж.Д.</a></li>
+            <!-- <li ripple><a href="bidEntrance"><i class="icon-input"></i>Поступление Ж.Д.</a></li> -->
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_BID_LIST')">
+            <li ripple><a href="bidlistopen"><i class="icon-input"></i>Открытые заявки</a></li>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_SALE_CREATE')">
             <li ripple><a href="saleCreate"><i class="icon-input"></i>Создать продажу</a></li>
         </sec:authorize>
-        <sec:authorize access="hasRole('ROLE_BID_LIST')">
-            <li ripple><a href="bidlistopen"><i class="icon-input"></i>Открытые заявки</a></li>
+        <sec:authorize access="hasRole('ROLE_SALE_LIST')">
+            <li ripple><a href="saleList"><i class="icon-input"></i>Открытые продажи</a></li>
         </sec:authorize>
         <%--<sec:authorize access="hasRole('ROLE_BID_LIST_CLOSED')">
             <li ripple><a href="bidcreate"><i class="icon-input"></i>Закрытые заявки</a></li>
