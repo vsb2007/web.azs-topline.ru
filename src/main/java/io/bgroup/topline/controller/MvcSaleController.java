@@ -102,7 +102,10 @@ public class MvcSaleController {
     public ModelAndView saleUpdate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
-        SaleOil saleOil = saleOilMvc.saleUpdate(siteUser,principal, request);
+        SaleOil saleOil = saleOilMvc.saleUpdate(siteUser, principal, request);
+        if (saleOil == null) {
+            model.addObject("message", "ошибка обновления");
+        }
         model.addObject("siteUser", siteUser);
         model.addObject("sale", saleOil);
         setViewNameForModel(model, siteUser, saleOil);
@@ -117,11 +120,9 @@ public class MvcSaleController {
                 model.setViewName("saleOilViewOperator");
         } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 4) { //наблюдатель
             model.setViewName("saleOilViewWatcher");
-        }
-        else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 1) { //логист
-            model.setViewName("saleOilViewWatcher");
-        }
-        else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 2) { //водитель
+        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 1) { //логист
+            model.setViewName("saleOilViewLogistic");
+        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 2) { //водитель
             model.setViewName("");
         }
 

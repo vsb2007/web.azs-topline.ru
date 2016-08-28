@@ -7,18 +7,20 @@
 <sec:authorize access="hasRole('ROLE_SALE_VIEW')">
     <div class="section">
             ${message}<br>
-        Creator
+        Logistics
     </div>
     <div class="section">
-        <%-- <c:if test="${!sale.isClose()}"> --%>
+        <c:if test="${!sale.isClose()}">
             <sec:authorize access="hasRole('ROLE_SALE_UPDATE')">
-                <form action="saleUpdate" method="post" id="saleUpdateForm">
+                <c:if test="${!sale.isDone()}">
+                    <form action="saleUpdate" method="post" id="saleUpdateForm">
+                </c:if>
             </sec:authorize>
             <div class="grid-list">
                 <div class="tile">
                     <input type="text" class="text-input border-green-500" placeholder="Заявка (Номер)" required
                            name="" value="Заявка №${sale.getId()}" readonly>
-                    <input type="hidden"  required name="saleNumber" value="${sale.getId()}" id="saleNumber" >
+                    <input type="hidden" required name="saleNumber" value="${sale.getId()}" id="saleNumber">
                     <div>
                         <span class="secondary-text">Номер заявки</span>
                     </div>
@@ -46,21 +48,23 @@
                     </div>
                 </div>
                 <br>
-                <div class="tile">
-                    <input type="text" class="text-input border-green-500" readonly required
-                           value="${sale.getFio()}" name="fio">
-                    <div>
-                        <span class="secondary-text">Ф.И.О.</span>
+                    <%--
+                    <div class="tile">
+                        <input type="text" class="text-input border-green-500" readonly required
+                               value="${sale.getFio()}" name="fio">
+                        <div>
+                            <span class="secondary-text">Ф.И.О.</span>
+                        </div>
                     </div>
-                </div>
-                <div class="tile">
-                    <input type="text" class="text-input border-green-500" name="carNumber" required
-                           value="${sale.getCarNumber()}">
-                    <div>
-                        <span class="secondary-text">Номер Машины</span>
+                    <div class="tile">
+                        <input type="text" class="text-input border-green-500" name="carNumber" required
+                               value="${sale.getCarNumber()}">
+                        <div>
+                            <span class="secondary-text">Номер Машины</span>
+                        </div>
                     </div>
-                </div>
-                <br>
+                    <br>
+                    --%>
                 <div class="tile">
                     <input class="text-input border-green-500" name="oilTypeId" readonly
                            value="${sale.getOilType().getOilTypeName()}">
@@ -91,43 +95,54 @@
                         <span class="secondary-text">Количество единиц</span>
                     </div>
                 </div>
-                <div class="tile">
-                    <input type="number" class="text-input border-green-500"
-                           value="${sale.getPriceOil()}" placeholder="Цена за единицу" id="priceLiters" name="priceLiters"
-                           required onchange="getSum()">
-                    <div>
-                        <span class="secondary-text">Цена за единицу</span>
+                    <%--
+                    <div class="tile">
+                        <input type="number" class="text-input border-green-500"
+                               value="${sale.getPriceOil()}" placeholder="Цена за единицу" id="priceLiters" name="priceLiters"
+                               required onchange="getSum()">
+                        <div>
+                            <span class="secondary-text">Цена за единицу</span>
+                        </div>
                     </div>
-                </div>
+                    --%>
                 <div class="tile">
                     <input type="number" class="text-input border-green-500"
-                           value="${sale.getPriceShipping()}" placeholder="Цена доставки" id="priceShipping" name="priceShipping"
+                           value="${sale.getPriceShipping()}" placeholder="Цена доставки" id="priceShipping"
+                           name="priceShipping"
                            required onchange="getSum()">
                     <div>
                         <span class="secondary-text">Цена доставки</span>
                     </div>
                 </div>
-                <br>
-                <div class="tile">
-                    <input type="number" class="text-input border-green-500"
-                           value="${sale.getSum()}" placeholder="Сумма" id="sum" name="sum" required readonly>
-                    <div>
-                        <span class="secondary-text">Сумма</span>
+                    <%--
+                    <br>
+                    <div class="tile">
+                        <input type="number" class="text-input border-green-500"
+                               value="${sale.getSum()}" placeholder="Сумма" id="sum" name="sum" required readonly>
+                        <div>
+                            <span class="secondary-text">Сумма</span>
+                        </div>
                     </div>
-                </div>
+                    --%>
             </div>
             <br>
-            <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">
-                Отпустить топливо
-            </button>
-            <button class="button raised bg-blue-500 color-white" type="button" onclick="checkAddBidForm()">
-                Проверить данные
-            </button>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
-            <sec:authorize access="hasRole('ROLE_SALE_UPDATE')">
-                </form >
-            </sec:authorize>
-      <%--  </c:if> --%>
+            <c:if test="${!sale.isDone()}">
+                <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">
+                    Отметить как выполненую
+                </button>
+                <button class="button raised bg-blue-500 color-white" type="button" onclick="checkAddBidForm()">
+                    Проверить данные
+                </button>
+                <sec:authorize access="hasRole('ROLE_SALE_UPDATE')">
+                    <%--
+                            кнопка о прочтении
+                            --%>
+                    <%@ include file="saleOilViewCheckReadButton.jsp" %>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
+                    </form >
+                </sec:authorize>
+            </c:if>
+        </c:if>
     </div>
 
     <script src="js/jquery.js"></script>
@@ -146,7 +161,6 @@
         function checkAddBidForm() {
             document.getElementById("addBidButton").removeAttribute("disabled");
         }
-
     </script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

@@ -386,6 +386,27 @@ public class SaleOil {
         return saleOilList;
     }
 
+    public String checkReadSaleOilBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (siteUser == null) return "ошибка доступа";
+        if (!siteUserMvc.isUserHasRole(principal, "ROLE_SALE_UPDATE")) return "нет прав";
+        int idSale = -1;
+        try {
+            idSale = Integer.parseInt(request.getParameter("idSale"));
+        } catch (Exception e) {
+            return "какой-то не тот номер заявки";
+        }
+        SaleOil saleOil = getSale(idSale);
+        if (saleOil == null) return "заявка не найдена";
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "update salebid set sale_is_read = 1, sale_is_read_date = now(), "
+                + "sale_read_user_id = ? where id_sale = ?";
+        args.add(siteUser.getId());
+        args.add(idSale);
+        if (!dbMvc.getUpdateResult(sql, args)) return "ошибка обновления в БД";
+        return "1";
+    }
+
     private class SetRowThread implements Runnable {
         private SaleOil saleOil;
         Map row;
@@ -423,6 +444,8 @@ public class SaleOil {
             dateRead = row.get("sale_is_read_date");
             if (dateRead != null)
                 saleOil.setDateIsRead(dateRead.toString().split(" ")[0]);
+            int isDone = (Integer) row.get("sale_is_done");
+            if (isDone == 1) saleOil.setDone(true);
             Object dateDone = null;
             dateDone = row.get("sale_is_done_date");
             if (dateDone != null)
@@ -449,8 +472,31 @@ public class SaleOil {
 
     public SaleOil saleUpdate(SiteUser siteUser, UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         if (!siteUser.isUserHasRole(principal, "ROLE_SALE_UPDATE")) return null;
-        String saleId = request.getParameter("saleIdButton");
-        if (saleId == null) return null;
+        String saleIdString = request.getParameter("saleNumber");
+        if (saleIdString == null) return null;
+        String colLitersString = request.getParameter("colLiters");
+        String priceShippingString = request.getParameter("priceShipping");
+        double colLiters = 0;
+        double priceShipping = 0;
+        int saleId = -1;
+        try {
+            colLiters = Double.parseDouble(colLitersString);
+            if (priceShippingString != null)
+                priceShipping = Double.parseDouble(priceShippingString);
+            saleId = Integer.parseInt(saleIdString);
+        } catch (Exception e) {
+            return null;
+        }
+
+        if (getSale(saleId) == null) return null;
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "update salebid set sale_is_done = 1, sale_is_done_date = now(), sale_done_user_id = ?, " +
+                "sale_col_out = ?, sale_price_shipping_out = ? where id_sale = ?";
+        args.add(siteUser.getId());
+        args.add(colLiters);
+        args.add(priceShipping);
+        args.add(saleId);
+        if (!dbMvc.getUpdateResult(sql, args)) return null;
         return getSale(saleId);
     }
 
