@@ -4,7 +4,7 @@
 <%@ include file="header.jsp" %>
 <%@ include file="menu.jsp" %>
 
-<sec:authorize access="hasRole('ROLE_BID_LIST')">
+<sec:authorize access="hasRole('ROLE_SALE_LIST')">
     <div class="section">
         <sec:authorize access="hasRole('ROLE_SALE_CREATE')">
             <h3>Продажа Топлива</h3>

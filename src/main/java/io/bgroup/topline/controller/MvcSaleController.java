@@ -71,9 +71,60 @@ public class MvcSaleController {
         ModelAndView model = new ModelAndView();
         model.setViewName("saleOilListOpen");
         String response = request.getParameter("message");
-        ArrayList<SaleOil> saleOilList = saleOilMvc.getSaleOilList();
+        ArrayList<SaleOil> saleOilList = saleOilMvc.getSaleOilList(principal);
         model.addObject("message", response);
         model.addObject("saleOilList", saleOilList);
         return model;
     }
+
+    @RequestMapping(value = "saleView")
+    public ModelAndView saleView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        SaleOil saleOil = saleOilMvc.getSaleForView(principal, request);
+        /*
+        if (saleOil.isRead()) {
+            if (saleOil.isPdfFileExist()) {
+                model.addObject("pdfFile", 1);
+            } else {
+                model.addObject("pdfFile", 0);
+            }
+        } else {
+            model.addObject("pdfFile", 0);
+        }*/
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        model.addObject("siteUser", siteUser);
+        model.addObject("sale", saleOil);
+        setViewNameForModel(model, siteUser, saleOil);
+        return model;
+    }
+
+    @RequestMapping(value = "saleUpdate")
+    public ModelAndView saleUpdate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        SaleOil saleOil = saleOilMvc.saleUpdate(siteUser,principal, request);
+        model.addObject("siteUser", siteUser);
+        model.addObject("sale", saleOil);
+        setViewNameForModel(model, siteUser, saleOil);
+        return model;
+    }
+
+    private void setViewNameForModel(ModelAndView model, SiteUser siteUser, SaleOil saleOil) {
+        if (siteUser.getPost() == null || siteUser.getPost().getIdPost() == 5) {   //продавец
+            model.setViewName("saleOilViewCreator");
+        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 3) { //оператор
+            if (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == saleOil.getCompanyUnit().getIdCompanyUnit())
+                model.setViewName("saleOilViewOperator");
+        } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 4) { //наблюдатель
+            model.setViewName("saleOilViewWatcher");
+        }
+        else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 1) { //логист
+            model.setViewName("saleOilViewWatcher");
+        }
+        else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 2) { //водитель
+            model.setViewName("");
+        }
+
+    }
+
 }

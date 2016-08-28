@@ -21,39 +21,40 @@
                 <c:if test="${sale.isDone()}">
                     <c:set var="bgColor" value="bg-green-500" scope="application"/>
                 </c:if>
-                <li ripple>
-                    <form action="bidView" method="post">
-                        <input value="${sale.getId()}" name="bidIdButton" id="bidIdButton${sale.getId()}"
-                               type="hidden">
-                        <button class="button raised color-white ${bgColor}" type="submit" style="width: 15em;">
+                    <li ripple>
+                        <form action="saleView" method="post">
+                            <input value="${sale.getId()}" name="saleIdButton" id="saleIdButton${sale.getId()}"
+                                   type="hidden">
+                            <button class="button raised color-white ${bgColor}" type="submit" style="width: 15em;">
                             <span class="item-text">${sale.getDateCreate()} №${sale.getId()}
 			                    <span class="secondary-text">${sale.getUserCreate().getName()} ${sale.getOrganization().getOrganizationName()}</span>
 		                    </span>
-                        </button>
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    </form>
-                    <sec:authorize access="hasRole('ROLE_SALE_RED')">
-                        &nbsp;
-                        <c:if test="${sale.isDone()}">
-                            <c:set var="actionUrl" value="saleOilClose"/>
-                        </c:if>
-                        <c:if test="${!sale.isDone()}">
-                            <c:set var="actionUrl" value="saleOilRed"/>
-                        </c:if>
-                        <form action="${actionUrl}" method="post">
-                            <input value="${bid.getId_bid()}" name="saleIdButton" id="saleIdButton${sale.getId()}"
-                                   type="hidden">
-                            <button class="button raised color-white bg-blue-500" type="submit" style="width: 10em;">
+                            </button>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        </form>
+                        <sec:authorize access="hasRole('ROLE_SALE_RED')">
+                            &nbsp;
+                            <c:if test="${sale.isDone()}">
+                                <c:set var="actionUrl" value="saleOilClose"/>
+                            </c:if>
+                            <c:if test="${!sale.isDone()}">
+                                <c:set var="actionUrl" value="saleOilRed"/>
+                            </c:if>
+                            <form action="${actionUrl}" method="post">
+                                <input value="${bid.getId_bid()}" name="saleIdButton" id="saleIdButton${sale.getId()}"
+                                       type="hidden">
+                                <button class="button raised color-white bg-blue-500" type="submit"
+                                        style="width: 10em;">
                             <span class="item-text">Редактировать
 			                    <span class="secondary-text">Закрыть</span>
 		                    </span>
-                            </button>
-                                <%--<span class="item-text" style="font-size: small"> Машина: ${bid.getCar().getCar_name()}<br>
-                                   Прицеп: ${bid.getTrailer().getTrailer_number()}</span> --%>
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        </form>
-                    </sec:authorize>
-                </li>
+                                </button>
+                                    <%--<span class="item-text" style="font-size: small"> Машина: ${bid.getCar().getCar_name()}<br>
+                                       Прицеп: ${bid.getTrailer().getTrailer_number()}</span> --%>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </sec:authorize>
+                    </li>
             </c:forEach>
         </ul>
     </div>

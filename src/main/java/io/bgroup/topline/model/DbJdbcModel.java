@@ -28,7 +28,7 @@ public class DbJdbcModel {
         this.error = error;
     }
 
-    //@Transactional(propagation = Propagation.MANDATORY)
+    @Transactional(propagation = Propagation.MANDATORY)
     public boolean getUpdateResult(String sql, ArrayList<Object> args) {
         jdbcTemplateMvc.update(sql, args.toArray());
         /*
@@ -54,7 +54,7 @@ public class DbJdbcModel {
         }
     */
     public List<Map<String, Object>> getSelectResult(String sql, ArrayList<Object> args) {
-        if (args != null)
+        if (args != null && args.size() > 0)
             return jdbcTemplateMvc.queryForList(sql, args.toArray());
         else return getSelectResult(sql);
     }
