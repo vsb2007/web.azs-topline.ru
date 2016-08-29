@@ -86,7 +86,7 @@
                 <div class="tile">
                     <input type="number" class="text-input border-green-500"
                            value="${sale.getCol()}" placeholder="Количество единиц" id="colLiters" name="colLiters"
-                           required onchange="getSum()">
+                           required onchange="getSum()" step="any">
                     <div>
                         <span class="secondary-text">Количество единиц</span>
                     </div>
@@ -94,7 +94,7 @@
                 <div class="tile">
                     <input type="number" class="text-input border-green-500"
                            value="${sale.getPriceOil()}" placeholder="Цена за единицу" id="priceLiters" name="priceLiters"
-                           required onchange="getSum()">
+                           required onchange="getSum()" step="any">
                     <div>
                         <span class="secondary-text">Цена за единицу</span>
                     </div>
@@ -102,7 +102,7 @@
                 <div class="tile">
                     <input type="number" class="text-input border-green-500"
                            value="${sale.getPriceShipping()}" placeholder="Цена доставки" id="priceShipping" name="priceShipping"
-                           required onchange="getSum()">
+                           required onchange="getSum()" step="any">
                     <div>
                         <span class="secondary-text">Цена доставки</span>
                     </div>

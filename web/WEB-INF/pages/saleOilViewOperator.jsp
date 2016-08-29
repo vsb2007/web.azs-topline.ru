@@ -88,7 +88,7 @@
                 <div class="tile">
                     <input type="number" class="text-input border-green-500"
                            value="${sale.getCol()}" placeholder="Количество единиц" id="colLiters" name="colLiters"
-                           required onchange="getSum()">
+                           required onchange="" step="any">
                     <div>
                         <span class="secondary-text">Количество единиц</span>
                     </div>

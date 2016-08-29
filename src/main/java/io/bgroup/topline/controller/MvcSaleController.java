@@ -66,6 +66,14 @@ public class MvcSaleController {
         return "redirect:saleList";
     }
 
+    @RequestMapping(value = "saleOilClose")
+    public String saleOilClose(UsernamePasswordAuthenticationToken principal, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        saleOilMvc.closeSaleOil(principal, request);
+        //request.setAttribute("message", response);
+        //redirectAttributes.addAttribute("message", response);
+        return "redirect:saleList";
+    }
+
     @RequestMapping(value = "saleList")
     public ModelAndView saleList(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();

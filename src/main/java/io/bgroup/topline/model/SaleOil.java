@@ -407,6 +407,20 @@ public class SaleOil {
         return "1";
     }
 
+    public boolean closeSaleOil(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (!siteUser.isUserHasRole(principal, "ROLE_SALE_UPDATE")) return false;
+        String id = request.getParameter("saleIdButton");
+        if (id == null) return false;
+        SaleOil saleOil = getSale(id);
+        if (saleOil == null) return false;
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "update salebid set sale_is_close=1, sale_is_close_date = now(), sale_close_user_id = ? where id_sale = ?";
+        args.add(siteUser.getId());
+        args.add(id);
+        return dbMvc.getUpdateResult(sql,args);
+    }
+
     private class SetRowThread implements Runnable {
         private SaleOil saleOil;
         Map row;
