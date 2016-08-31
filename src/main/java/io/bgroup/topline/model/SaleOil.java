@@ -472,7 +472,7 @@ public class SaleOil {
         double priceShipping = 0;
         double sum = 0;
         double totalSum = 0;
-        int orgDogId=-1;
+        int orgDogId = -1;
         try {
             saleNumber = Integer.parseInt(request.getParameter("saleNumber"));
             idUnit = Integer.parseInt(request.getParameter("idUnit"));
@@ -536,10 +536,9 @@ public class SaleOil {
         sql += "sale_org_dog_id = ?,";
         args.add(orgDogId);
 
-        if (totalSum<0){
+        if (totalSum < 0) {
             sql += "sale_is_block = 1,";
-        }
-        else {
+        } else {
             sql += "sale_is_block = 0,";
         }
 
@@ -552,6 +551,26 @@ public class SaleOil {
             return "Неизвестная ошибка обновления заявки";
         }
         return "Заявка обновлена";
+    }
+
+    public String changeStatusSaleOil(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        String idSale = request.getParameter("saleNumber");
+        SaleOil saleOil = getSale(idSale);
+        if (saleOil == null) return "Продажа не найдена";
+        String sql = "update salebid set sale_is_block = ? where id_sale = ?";
+        ArrayList<Object> args = new ArrayList<Object>();
+        String response;
+        if (saleOil.isBlock()) {
+            args.add(0);
+            response = "0";
+        } else {
+            args.add(1);
+            response = "1";
+        }
+        args.add(idSale);
+        if (dbMvc.getUpdateResult(sql, args))
+            return response;
+        return "Error: ошибка обновления статуса";
     }
 
     private class SetRowThread implements Runnable {

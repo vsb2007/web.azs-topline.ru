@@ -30,15 +30,15 @@ public class DbJdbcModel {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public boolean getUpdateResult(String sql, ArrayList<Object> args) {
-        jdbcTemplateMvc.update(sql, args.toArray());
-        /*
+        //jdbcTemplateMvc.update(sql, args.toArray());
+
         try {
             jdbcTemplateMvc.update(sql, args.toArray());
 
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-        }*/
+        }
         return true;
     }
 

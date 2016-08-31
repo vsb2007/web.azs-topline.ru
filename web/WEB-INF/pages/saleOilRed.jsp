@@ -222,6 +222,7 @@
             xmlhttp.send("filter=" + inText.value + "&" + token.name + "=" + token.value + "&idSelect=" + inText.id);
         }
         function checkAddBidForm() {
+            document.getElementById("results").innerHTML = "";
             var openSum = document.getElementById("openSum").value;
             var sum = document.getElementById("sum").value;
             if (sum == NaN || sum <=0) return;

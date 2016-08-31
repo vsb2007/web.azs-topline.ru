@@ -36,4 +36,14 @@ public class MvcSaleAjaxController {
         }
         return responseBody;
     }
+
+    @RequestMapping(value = "changeStatusSailOil", produces = {"text/plain; charset=UTF-8"})
+    @ResponseBody
+    public String changeStatusSailOil(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        String responseBody = "Error";
+        if (request != null) {
+            responseBody = saleOilMvc.changeStatusSaleOil(principal, request);
+        }
+        return responseBody;
+    }
 }
