@@ -11,11 +11,22 @@ import java.util.Map;
 public class Organization {
     private int idOrganization;
     private String organizationName;
+    private ArrayList<OrganizationPact> organizationPacts;
 
     @Autowired
     private DbJdbcModel dbMvc;
+    @Autowired
+    private OrganizationPact organizationPactMvc;
 
     public Organization() {
+    }
+
+    public ArrayList<OrganizationPact> getOrganizationPacts() {
+        return organizationPacts;
+    }
+
+    public void setOrganizationPacts(ArrayList<OrganizationPact> organizationPacts) {
+        this.organizationPacts = organizationPacts;
     }
 
     public int getIdOrganization() {
@@ -79,14 +90,16 @@ public class Organization {
     public String getListByFilter(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         String response = "test ok";
         String filter = request.getParameter("filter");
-        String idSelect = request.getParameter("idSelect").replace("_text","");
+        String idSelect = request.getParameter("idSelect").replace("_text", "");
         ArrayList<Organization> organizationArrayList = getOrganizationListByFilter(filter);
-        if (organizationArrayList == null || organizationArrayList.size() == 0){
-            return "<input type=\"text\" class=\"text-input border-blue-500\" required readonly placeholder=\"Ничего не найдено\">";
+        if (organizationArrayList == null || organizationArrayList.size() == 0) {
+            return "<select class=\"dropdown-menu\"  name=\"" + idSelect + "\" style=\"width: 150px\" required>\n" +
+                    "                                <option></option>\n" +
+                    "                        </select>";
         }
         response = "<select name=\"" + idSelect + "\" " +
                 "id=\"" + idSelect + "\" " +
-                "class=\"dropdown-menu\">";
+                "class=\"dropdown-menu\" onChange=\"getDogForOrg()\">";
         for (Organization organization : organizationArrayList) {
             response += "<option value=\"" + organization.getIdOrganization() + "\">" + organization.getOrganizationName() + "</option>";
         }
@@ -101,6 +114,19 @@ public class Organization {
         args.add("%" + filter + "%");
         organizationArrayList = getOrganizationFromDbSelect(sql, args);
         return organizationArrayList;
+    }
+
+    public String getOrgDogById(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        String orgId = request.getParameter("orgId");
+        if (orgId == null) return "не указана организация";
+        ArrayList<OrganizationPact> organizationPactList = organizationPactMvc.getOrganizationPactList(orgId);
+        if (organizationPactList == null) return "Договора не найдены";
+        String response = "<select class=\"dropdown-menu\"  name=\"orgDogId\" id=\"orgDogId\" required onchange=\"getSumForDogForOrg()\"><option></option>";
+        for (OrganizationPact organizationPact : organizationPactList) {
+            response += "<option value=" + organizationPact.getId() + ">" + organizationPact.getPactName() + "</option>";
+        }
+        response += "</select>";
+        return response;
     }
 
     private class GetOrganizationThread implements Runnable {
@@ -120,6 +146,7 @@ public class Organization {
         public void setOrganizationFromRow() {
             organization.setIdOrganization((Integer) row.get("Org_Id"));
             organization.setOrganizationName(row.get("Org_Name").toString());
+            organization.setOrganizationPacts(organizationPactMvc.getOrganizationPactList(organization.getIdOrganization()));
         }
     }
 }

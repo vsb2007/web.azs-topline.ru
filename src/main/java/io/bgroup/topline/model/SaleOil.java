@@ -50,13 +50,31 @@ public class SaleOil {
     private boolean isDone;
     private String dateIsDone;
     private boolean isClose;
+    private boolean isBlock;
     private String dateIsClose;
     private String dateCreate;
     private SiteUser userCreate;
     private SiteUser userRead;
     private SiteUser userClose;
+    private int orgPactId;
 
     public SaleOil() {
+    }
+
+    public int getOrgPactId() {
+        return orgPactId;
+    }
+
+    public void setOrgPactId(int orgPactId) {
+        this.orgPactId = orgPactId;
+    }
+
+    public boolean isBlock() {
+        return isBlock;
+    }
+
+    public void setBlock(boolean block) {
+        isBlock = block;
     }
 
     public SiteUser getUserCreate() {
@@ -243,6 +261,8 @@ public class SaleOil {
         double priceLiters = 0;
         double priceShipping = 0;
         double sum = 0;
+        double totalSum = -1;
+        int orgDogId = -1;
         try {
             idUnit = Integer.parseInt(request.getParameter("idUnit"));
             idOrg = Integer.parseInt(request.getParameter("OrgId"));
@@ -252,6 +272,9 @@ public class SaleOil {
             priceLiters = Double.parseDouble(request.getParameter("priceLiters"));
             priceShipping = Double.parseDouble(request.getParameter("priceShipping"));
             sum = Double.parseDouble(request.getParameter("sum"));
+            totalSum = Double.parseDouble(request.getParameter("totalSum"));
+            orgDogId = Integer.parseInt(request.getParameter("orgDogId"));
+
         } catch (Exception e) {
             return "не верные данные";
         }
@@ -315,9 +338,17 @@ public class SaleOil {
         values = strPlusCommaPlusValue(values, "?");
         args.add(sum);
 
+        columns = strPlusCommaPlusValue(columns, "sale_org_dog_id");
+        values = strPlusCommaPlusValue(values, "?");
+        args.add(orgDogId);
+
         columns = strPlusCommaPlusValue(columns, "sale_create_date");
         values = strPlusCommaPlusValue(values, "now()");
         //args.add("now()");
+        if (totalSum < 0) {
+            columns = strPlusCommaPlusValue(columns, "sale_is_block");
+            values = strPlusCommaPlusValue(values, "1");
+        }
 
         sql += "(" + columns + ") values (" + values + ")";
         if (dbMvc.getUpdateResult(sql, args)) {
@@ -347,12 +378,12 @@ public class SaleOil {
         }
         if (siteUser.getPost() != null) {
             if (siteUser.getPost().getIdPost() == 1) { //логист
-                sql = "select * from salebid where sale_id_unit = -1 and sale_is_close = 0";
+                sql = "select * from salebid where sale_id_unit = -1 and sale_is_close = 0 and sale_is_block = 0";
             } else if (siteUser.getPost().getIdPost() == 2) { // водитель
                 return null;
             } else if (siteUser.getPost().getIdPost() == 3) { // оператор
                 sql = "select * from salebid where sale_id_unit = " + siteUser.getCompanyUnit().getIdCompanyUnit()
-                        + " and sale_is_close = 0";
+                        + " and sale_is_close = 0 and sale_is_block = 0";
             } else if (siteUser.getPost().getIdPost() == 4) { // наблюдатель
                 sql = "select * from salebid where sale_is_close = 0";
             } else if (siteUser.getPost().getIdPost() == 5) { // продавец
@@ -386,6 +417,9 @@ public class SaleOil {
         return saleOilList;
     }
 
+    /*
+    отмечаем, что заявка принята к исполнению/прочитана
+     */
     public String checkReadSaleOilBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         if (siteUser == null) return "ошибка доступа";
@@ -418,7 +452,106 @@ public class SaleOil {
         String sql = "update salebid set sale_is_close=1, sale_is_close_date = now(), sale_close_user_id = ? where id_sale = ?";
         args.add(siteUser.getId());
         args.add(id);
-        return dbMvc.getUpdateResult(sql,args);
+        return dbMvc.getUpdateResult(sql, args);
+    }
+
+    public String redSaleOil(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (siteUser == null) return "Error: Ошибка Авторизации";
+        if (!siteUser.isUserHasRole(principal, "ROLE_SALE_RED")) return "Error: не достаточно прав";
+        //считываем основные параметры
+        int saleNumber = -1;
+        int idUnit = -1;
+        int idOrg = -1;
+        String fio = request.getParameter("fio");
+        String carNumber = request.getParameter("carNumber");
+        int idOilType = -1;
+        int lt = -1;
+        double colLiters = 0;
+        double priceLiters = 0;
+        double priceShipping = 0;
+        double sum = 0;
+        double totalSum = 0;
+        int orgDogId=-1;
+        try {
+            saleNumber = Integer.parseInt(request.getParameter("saleNumber"));
+            idUnit = Integer.parseInt(request.getParameter("idUnit"));
+            idOrg = Integer.parseInt(request.getParameter("OrgId"));
+            idOilType = Integer.parseInt(request.getParameter("oilTypeId"));
+            lt = Integer.parseInt(request.getParameter("lt"));
+            colLiters = Double.parseDouble(request.getParameter("colLiters"));
+            priceLiters = Double.parseDouble(request.getParameter("priceLiters"));
+            priceShipping = Double.parseDouble(request.getParameter("priceShipping"));
+            sum = Double.parseDouble(request.getParameter("sum"));
+            totalSum = Double.parseDouble(request.getParameter("totalSum"));
+            orgDogId = Integer.parseInt(request.getParameter("orgDogId"));
+        } catch (Exception e) {
+            return "не верные данные";
+        }
+        // на их основе подтягиваем данные
+        if (idUnit != -1) {
+            CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(idUnit);
+            if (companyUnit == null) return "точка отгрузки не найдена";
+        }
+        if (idOrg > 0) {
+            Organization organization = organizationMvc.getOrganization(idOrg);
+            if (organization == null) return "покупатель не найден";
+        }
+        if (idOilType > 0) {
+            OilType oilType = oilTypeMvc.getOilType(idOilType);
+            if (oilType == null) return "тип топлива не найден";
+        }
+        if (lt == -1) return "единицы измерения не заданы";
+
+        String sql = "update salebid set ";
+        ArrayList<Object> args = new ArrayList<Object>();
+
+        sql += "sale_id_unit = ?,";
+        args.add(idUnit);
+
+        sql += "sale_id_org = ?,";
+        args.add(idOrg);
+
+        sql += "sale_driver_fio = ?,";
+        args.add(fio);
+
+        sql += "sale_car_number = ?,";
+        args.add(carNumber);
+
+        sql += "sale_id_oil = ?,";
+        args.add(idOilType);
+
+        sql += "sale_lt = ?,";
+        args.add(lt);
+
+        sql += "sale_col = ?,";
+        args.add(colLiters);
+
+        sql += "sale_price_oil = ?,";
+        args.add(priceLiters);
+
+        sql += "sale_price_shipping = ?,";
+        args.add(priceShipping);
+
+        sql += "sale_org_dog_id = ?,";
+        args.add(orgDogId);
+
+        if (totalSum<0){
+            sql += "sale_is_block = 1,";
+        }
+        else {
+            sql += "sale_is_block = 0,";
+        }
+
+        sql += "sale_sum = ?";
+        args.add(sum);
+
+        sql += " where id_sale = ?";
+        args.add(saleNumber);
+        if (!dbMvc.getUpdateResult(sql, args)) {
+            return "Неизвестная ошибка обновления заявки";
+        }
+        return "Заявка обновлена";
     }
 
     private class SetRowThread implements Runnable {
@@ -451,8 +584,13 @@ public class SaleOil {
             saleOil.setPriceOil((Double) row.get("sale_price_oil"));
             saleOil.setPriceShipping((Double) row.get("sale_price_shipping"));
             saleOil.setSum((Double) row.get("sale_sum"));
+            saleOil.setOrgPactId((Integer) row.get("sale_org_dog_id"));
+            int block = (Integer) row.get("sale_is_block");
+            if (block == 1) saleOil.setBlock(true);
+            else saleOil.setBlock(false);
             int read = (Integer) row.get("sale_is_read");
             if (read == 1) saleOil.setRead(true);
+            else saleOil.setRead(false);
             saleOil.setUserRead(siteUserMvc.findSiteUser((Integer) row.get("sale_read_user_id")));
             Object dateRead;
             dateRead = row.get("sale_is_read_date");

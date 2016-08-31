@@ -6,15 +6,23 @@
 
 <sec:authorize access="hasRole('ROLE_SALE_LIST')">
     <div class="section">
-        <sec:authorize access="hasRole('ROLE_SALE_CREATE')">
+        <sec:authorize access="hasRole('ROLE_SALE_RED')">
             <h3>Продажа Топлива</h3>
-            <form action="addSale" method="post">
+            <form action="javascript:void(null);" method="post" id="saleUpdateForm" onsubmit="sendFormForSaleRed()">
                 <div class="grid-list">
                     <div class="tile">
                         <select class="dropdown-menu" id="idUnit" name="idUnit" onchange="">
-                            <option value="-1">Отдел Логистики</option>
+                            <c:set var="selected" value=""/>
+                            <c:if test="${sale.getCompanyUnit() == null}">
+                                <c:set var="selected" value="selected"/>
+                            </c:if>
+                            <option value="-1" ${selected}>Отдел Логистики</option>
                             <c:forEach items="${oilStorageList}" var="oilStorage">
-                                <option value="${oilStorage.getCompanyUnit().getIdCompanyUnit()}">${oilStorage.getCompanyUnit().getCompanyUnitName()}</option>
+                                <c:set var="selected" value=""/>
+                                <c:if test="${sale.getCompanyUnit() != null && sale.getCompanyUnit().getIdCompanyUnit()==oilStorage.getCompanyUnit().getIdCompanyUnit()}">
+                                    <c:set var="selected" value="selected"/>
+                                </c:if>
+                                <option value="${oilStorage.getCompanyUnit().getIdCompanyUnit()}"  ${selected}>${oilStorage.getCompanyUnit().getCompanyUnitName()}</option>
                             </c:forEach>
                         </select>
                         <div>
@@ -24,33 +32,49 @@
                     <br>
                     <div class="tile">
                         <input type=text class="text-input border-blue-500"
-                               id="OrgId_text" onChange="getOrganization(this,'_OrgId_span')">
+                               id="OrgId_text" onChange="getOrganization(this,'_OrgId_span')"
+                               value="${sale.getOrganization().getOrganizationName()}">
                         <div>
                             <span class="secondary-text">Фильтр организаций</span>
                         </div>
                     </div>
                     <div class="tile">
                         <span id="_OrgId_span">
-                            <select class="dropdown-menu"  name="orgId" style="width: 150px"
-                                     required>
-                                <option></option>
-                        </select>
+                            <c:if test="${sale.getOrganization()!=null}">
+                                <select name="OrgId" id="OrgId" class="dropdown-menu">
+                                    <option value="${sale.getOrganization().getIdOrganization()}">${sale.getOrganization().getOrganizationName()}</option>
+                                </select>
+                            </c:if>
+                            <c:if test="${sale.getOrganization()==null}">
+                            <input type="text" class="text-input border-blue-500" readonly
+                                   placeholder="Установите фильтр" required>
+                            </c:if>
                         </span>
                         <div>
                             <span class="secondary-text">Грузополучатель</span>
                         </div>
-                    </div><br>
+                    </div>
+                    <br>
                     <div class="tile">
                         <span id="_orgDogId_span">
-                            <select class="dropdown-menu"  name="orgDogId" style="width: 150px"
-                                    required>
+                            <select class="dropdown-menu" name="orgDogId" id="orgDogId" style="width: 150px"
+                                    required onchange="getSumForDogForOrg()">
                                 <option></option>
+                                <c:if test="${sale.getOrganization()!=null}">
+                                    <c:if test="${sale.getOrganization().getOrganizationPacts()!=null}">
+                                        <c:forEach items="${sale.getOrganization().getOrganizationPacts()}" var="pact" >
+                                            <option value="${pact.getId()}">${pact.getPactName()}</option>
+                                        </c:forEach>
+                                    </c:if>
+                                </c:if>
                         </select>
                         </span>
                         <div>
                             <span class="secondary-text">Договор грузополучателя</span>
                         </div>
-                    </div><br>
+                    </div>
+                    <br>
+
                     <div class="tile">
                         <input type="text" class="text-input border-green-500"
                                value="0" placeholder="На счете" name="openSum" id="openSum" required readonly>
@@ -59,16 +83,18 @@
                         </div>
                     </div>
                     <br>
+
                     <div class="tile">
                         <input type="text" class="text-input border-green-500"
-                               value="" placeholder="Ф.И.О." name="fio" required>
+                               value="${sale.getFio()}" placeholder="Ф.И.О." name="fio" required>
                         <div>
                             <span class="secondary-text">Ф.И.О.</span>
                         </div>
                     </div>
                     <div class="tile">
                         <input type="text" class="text-input border-green-500"
-                               value="" placeholder="Номер Машины" id="carNumber" name="carNumber" required>
+                               value="${sale.getCarNumber()}" placeholder="Номер Машины" id="carNumber" name="carNumber"
+                               required>
                         <div>
                             <span class="secondary-text">Номер Машины</span>
                         </div>
@@ -78,7 +104,11 @@
                         <select class="dropdown-menu" id="oilTypeId" name="oilTypeId" onchange="">
                             <option value="-1">Выбрать Топливо</option>
                             <c:forEach items="${oilTypeList}" var="oilType">
-                                <option value="${oilType.getId_oilType()}">${oilType.getOilTypeName()}</option>
+                                <c:set var="selected" value=""/>
+                                <c:if test="${sale.getOilType().getId_oilType() == oilType.getId_oilType()}">
+                                    <c:set var="selected" value="selected"/>
+                                </c:if>
+                                <option value="${oilType.getId_oilType()}" ${selected}>${oilType.getOilTypeName()}</option>
                             </c:forEach>
                         </select>
                     </div>
@@ -86,8 +116,16 @@
                     <div class="tile">
                         <select id="lt" name="lt" class="dropdown-menu" required>
                             <option></option>
-                            <option value="0">Литры</option>
-                            <option value="1">Тонны</option>
+                            <c:set var="selected" value=""/>
+                            <c:if test="${sale.getLt() ==0}">
+                                <c:set var="selected" value="selected"/>
+                            </c:if>
+                            <option value="0" ${selected}>Литры</option>
+                            <c:set var="selected" value=""/>
+                            <c:if test="${sale.getLt() ==1}">
+                                <c:set var="selected" value="selected"/>
+                            </c:if>
+                            <option value="1" ${selected}>Тонны</option>
                         </select>
                         <div>
                             <span class="secondary-text">Единицы измерения</span>
@@ -96,7 +134,7 @@
                     <br>
                     <div class="tile">
                         <input type="number" class="text-input border-green-500"
-                               value="" placeholder="Количество единиц" id="colLiters" name="colLiters"
+                               value="${sale.getCol()}" placeholder="Количество единиц" id="colLiters" name="colLiters"
                                required onchange="getSum()" step="any">
                         <div>
                             <span class="secondary-text">Количество единиц</span>
@@ -104,7 +142,8 @@
                     </div>
                     <div class="tile">
                         <input type="number" class="text-input border-green-500"
-                               value="" placeholder="Цена за единицу" id="priceLiters" name="priceLiters"
+                               value="${sale.getPriceOil()}" placeholder="Цена за единицу" id="priceLiters"
+                               name="priceLiters"
                                required onchange="getSum()" step="any">
                         <div>
                             <span class="secondary-text">Цена за единицу</span>
@@ -112,7 +151,8 @@
                     </div>
                     <div class="tile">
                         <input type="number" class="text-input border-green-500"
-                               value="" placeholder="Цена доставки" id="priceShipping" name="priceShipping"
+                               value="${sale.getPriceShipping()}" placeholder="Цена доставки" id="priceShipping"
+                               name="priceShipping"
                                required onchange="getSum()" step="any">
                         <div>
                             <span class="secondary-text">Цена доставки</span>
@@ -121,22 +161,25 @@
                     <br>
                     <div class="tile">
                         <input type="number" class="text-input border-green-500"
-                               value="" placeholder="Сумма" id="sum" name="sum" required readonly step="any">
+                               value="${sale.getSum()}" placeholder="Сумма" id="sum" name="sum" required readonly
+                               step="any">
                         <div>
                             <span class="secondary-text">Сумма</span>
                         </div>
                     </div>
                 </div>
                 <br>
-                <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">Добавить
-                    заявку
+                <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">
+                    Изменить заявку
                 </button>
                 <button class="button raised bg-blue-500 color-white" type="button" onclick="checkAddBidForm()">
                     Проверить данные
                 </button>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
+                <input type="hidden" required name="saleNumber" value="${sale.getId()}" id="saleNumber">
                 <input type="hidden" name="totalSum" id="totalSum" value="0">
             </form>
+            <div id="results"></div>
         </sec:authorize>
     </div>
 
@@ -185,7 +228,7 @@
             if (openSum - sum < 0){
                 document.getElementById("addBidButton").innerHTML = "Отправить на проверку";
             }
-            else{document.getElementById("addBidButton").innerHTML = "Добавить заявку";
+            else{document.getElementById("addBidButton").innerHTML = "Изменить заявку";
             }
             document.getElementById("totalSum").value = openSum - sum;
             document.getElementById("addBidButton").removeAttribute("disabled");
@@ -241,6 +284,23 @@
             xmlhttp.send("orgDogId=" + orgDogId.value + "&" + token.name + "=" + token.value);
         }
 
+        function sendFormForSaleRed() {
+            var msg = $('#saleUpdateForm').serialize();
+            $.ajax({
+                type: 'POST',
+                url: 'saleRedUpdate',
+                data: msg,
+                success: function (data) {
+                    //$('.results').html(data);
+                    document.getElementById("results").innerHTML = data;
+                },
+                error: function (xhr, str) {
+                    //$('.results').html('Возникла ошибка: ' + xhr.responseCode);
+                    document.getElementById("results").innerHTML = "Возникла ошибка: " + xhr.responseCode;
+                }
+            });
+
+        }
     </script>
 
 </sec:authorize>

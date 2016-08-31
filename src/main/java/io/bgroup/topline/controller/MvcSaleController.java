@@ -106,6 +106,21 @@ public class MvcSaleController {
         return model;
     }
 
+    @RequestMapping(value = "saleOilRed")
+    public ModelAndView saleOilRed(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        SaleOil saleOil = saleOilMvc.getSaleForView(principal, request);
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        ArrayList<OilType> oilTypeList = oilTypeMvc.getOilTypesList();
+        model.addObject("oilStorageList", oilStorageList);
+        model.addObject("oilTypeList", oilTypeList);
+        model.addObject("siteUser", siteUser);
+        model.addObject("sale", saleOil);
+        model.setViewName("saleOilRed");
+        return model;
+    }
+
     @RequestMapping(value = "saleUpdate")
     public ModelAndView saleUpdate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
@@ -133,7 +148,6 @@ public class MvcSaleController {
         } else if (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 2) { //водитель
             model.setViewName("");
         }
-
     }
 
 }

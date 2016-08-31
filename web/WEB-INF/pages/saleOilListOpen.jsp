@@ -22,6 +22,9 @@
                 <c:if test="${sale.isDone()}">
                     <c:set var="bgColor" value="bg-green-500" scope="application"/>
                 </c:if>
+                <c:if test="${sale.isBlock()}">
+                    <c:set var="bgColor" value="bg-yellow-500" scope="application"/>
+                </c:if>
                 <li ripple>
                     <form action="saleView" method="post">
                         <input value="${sale.getId()}" name="saleIdButton" id="saleIdButton${sale.getId()}"
