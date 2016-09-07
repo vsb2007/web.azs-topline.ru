@@ -40,6 +40,8 @@ public class MvcBidController {
     private Bid bidMvc;
     @Autowired
     private BidDetail bidDetailMvc;
+    @Autowired
+    private Organization organizationMvc;
 
     @RequestMapping(value = "bidcreate")
     public ModelAndView bidcreate(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
@@ -145,6 +147,7 @@ public class MvcBidController {
         ArrayList<Car> carsList = carMvc.getCarsList();
         ArrayList<Driver> driversList = driverMvc.getDriverList();
         ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
+        ArrayList<Organization> organizationList = organizationMvc.getOrganizationListWithSaleBids();
         ArrayList<OilType> oilTypeList = oilTypeMvc.getOilTypesList();
         ArrayList<Trailer> trailersList = trailerMvc.getTrailersList();
         model.addObject("siteUser", siteUser);
@@ -152,6 +155,7 @@ public class MvcBidController {
         model.addObject("trailersList", trailersList);
         model.addObject("driversList", driversList);
         model.addObject("oilStorageList", oilStorageList);
+        model.addObject("organizationList", organizationList);
         model.addObject("oilTypeList", oilTypeList);
         model.addObject("bid", bid);
         model.addObject("isCarSectionBidUp", isCarSectionBidUp);

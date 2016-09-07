@@ -53,6 +53,17 @@ public class Organization {
         return organizationArrayList;
     }
 
+    public ArrayList<Organization> getOrganizationListWithSaleBids() {
+        ArrayList<Organization> organizationArrayList = null;
+        ArrayList<Object> args = new ArrayList<Object>();
+        String sql = "select * from organization " +
+                "where Org_id in (select sale_id_org from salebid where sale_is_close = 0 " +
+                "group by sale_id_org) " +
+                "order by Org_Name ";
+        organizationArrayList = getOrganizationFromDbSelect(sql, null);
+        return organizationArrayList;
+    }
+
     public Organization getOrganization(int idOrganization) {
         ArrayList<Organization> organizationArrayList = null;
         ArrayList<Object> args = new ArrayList<Object>();

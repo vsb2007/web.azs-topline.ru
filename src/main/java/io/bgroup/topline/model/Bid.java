@@ -368,7 +368,15 @@ public class Bid {
             String oilTypeIdTmp = request.getParameter(oilSections.getId_section() + "_oilTypeId");
             if (oilTypeIdTmp.equals("-1")) continue;
             String storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_storageOutId");
-            if (storageOutIdTmp.equals("-1")) continue;
+            int orgType = 0; // получатель из списка АЗС
+            if (storageOutIdTmp.equals("-1")) {
+                storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_OrgId");
+                if (storageOutIdTmp.equals("-1")) {
+                    continue;
+                } else {
+                    orgType = 1; // получатель из списка контрагентов (покупателей)
+                }
+            }
             emptySectionFlag = false;
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_oilType_id");
             values = strPlusCommaPlusValue(values, "?");
@@ -376,6 +384,10 @@ public class Bid {
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_storageOut_id");
             values = strPlusCommaPlusValue(values, "?");
             args.add(storageOutIdTmp);
+            columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_orgType");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(orgType);
+
         }
         columnAndValue[0] = columns;
         columnAndValue[1] = values;
@@ -407,15 +419,15 @@ public class Bid {
             if (companyUnitId <= 0) return null;
             sql = "select * from bids where bid_is_close=? and (" +
                     "bid_storage_in_id = ? " +
-                    "or bid_car_sec_1_storageOut_id = ? " +
-                    "or bid_car_sec_2_storageOut_id = ? " +
-                    "or bid_car_sec_3_storageOut_id = ? " +
-                    "or bid_trailer_sec_1_storageOut_id = ? " +
-                    "or bid_trailer_sec_2_storageOut_id = ? " +
-                    "or bid_trailer_sec_3_storageOut_id = ? " +
-                    "or bid_trailer_sec_4_storageOut_id = ? " +
-                    "or bid_trailer_sec_5_storageOut_id = ? " +
-                    "or bid_trailer_sec_6_storageOut_id = ? )";
+                    "or (bid_car_sec_1_storageOut_id = ? and bid_car_sec_1_orgType=0) " +
+                    "or (bid_car_sec_2_storageOut_id = ? and bid_car_sec_2_orgType=0) " +
+                    "or (bid_car_sec_3_storageOut_id = ? and bid_car_sec_3_orgType=0) " +
+                    "or (bid_trailer_sec_1_storageOut_id = ? and bid_trailer_sec_1_orgType=0) " +
+                    "or (bid_trailer_sec_2_storageOut_id = ? and bid_trailer_sec_2_orgType=0) " +
+                    "or (bid_trailer_sec_3_storageOut_id = ? and bid_trailer_sec_3_orgType=0) " +
+                    "or (bid_trailer_sec_4_storageOut_id = ? and bid_trailer_sec_4_orgType=0) " +
+                    "or (bid_trailer_sec_5_storageOut_id = ? and bid_trailer_sec_5_orgType=0) " +
+                    "or (bid_trailer_sec_6_storageOut_id = ? and bid_trailer_sec_6_orgType=0) )";
             args.add("0");
             args.add(companyUnitId);
             args.add(companyUnitId);
@@ -541,7 +553,7 @@ public class Bid {
             if (driverCanUpdateOutField == 1)
                 bid.setDriverCanUpdateOut(true);
             else bid.setDriverCanUpdateOut(false);
-            bid.setIsTransfer((Integer)row.get("bid_is_transfer"));
+            bid.setIsTransfer((Integer) row.get("bid_is_transfer"));
         }
     }
 
@@ -598,34 +610,43 @@ public class Bid {
         if (sqlCar.equals("") && !sqlTrailer.equals("")) sql += sqlTrailer;
         if (sqlCar.equals("") && sqlTrailer.equals("")) return false;
         sql += " where id_bids=?";
-
         args.add(bid.getId_bid());
         /*
         изменения в контроль остатков
          */
         boolean flag = false;
-        if (!bid.getBid_is_freeze()) {
+        try {
+            if (!bid.getBid_is_freeze()) {
             /* загрузка*/
-            OilStorage oilStorageIn = bid.getOilStorageIn();
-            if (oilStorageIn == null) return false;
-            CompanyUnit companyUnit = oilStorageIn.getCompanyUnit();
+                OilStorage oilStorageIn = bid.getOilStorageIn();
+                if (oilStorageIn == null) return false;
+                CompanyUnit companyUnit = oilStorageIn.getCompanyUnit();
 
-            if (companyUnit.getOilTypeStorageArrayList() != null) {
-                flag = updateOilTypeStorageControl(1, companyUnit, bidDetailsCar, bidDetailsTrailer, request);
-            } else flag = true;
-        } else {
+                if (companyUnit.getOilTypeStorageArrayList() != null) {
+                    flag = updateOilTypeStorageControl(1, companyUnit, bidDetailsCar, bidDetailsTrailer, request);
+                } else flag = true;
+            } else {
             /*
             слив
              */
-            CompanyUnit companyUnit = findCompanyUnitFromRequestOnOilOut(request, bidDetailsCar, bidDetailsTrailer);
-            if (companyUnit == null) {
-                return false;
+                String orgType = request.getParameter("orgType");
+                if (orgType == null || orgType.equals("0")) { // если не контрагент - проверяем
+                    CompanyUnit companyUnit = findCompanyUnitFromRequestOnOilOut(request, bidDetailsCar, bidDetailsTrailer);
+                    if (companyUnit == null) {
+                        return false;
+                    }
+                    if (companyUnit.getOilTypeStorageArrayList() != null) {
+                        flag = updateOilTypeStorageControl(0, companyUnit, bidDetailsCar, bidDetailsTrailer, request);
+                    } else {
+                        flag = true;
+                    }
+                } else {
+                    // если контрагент - пропускаем
+                    flag = true;
+                }
             }
-            if (companyUnit.getOilTypeStorageArrayList() != null) {
-                flag = updateOilTypeStorageControl(0, companyUnit, bidDetailsCar, bidDetailsTrailer, request);
-            } else {
-                flag = true;
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         /*
         закончили изменения в контроль остатков
@@ -827,11 +848,17 @@ public class Bid {
         for (OilSections oilSections : tmpOilSections) {
             String oilTypeIdTmp = request.getParameter(oilSections.getId_section() + "_oilTypeId");
             String storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_storageOutId");
+            String orgType = "0";
+            if (storageOutIdTmp != null && storageOutIdTmp.equals("-1")) {
+                storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_OrgId");
+                orgType = "1";
+            }
             if (oilTypeIdTmp == null || oilTypeIdTmp.equals("-1") || storageOutIdTmp == null || storageOutIdTmp.equals("-1")) {
                 sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
                 sql += "=null";
                 sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
                 sql += "=null";
+                sql += ", bid_" + oilSections.getId_section() + "_orgType=0";
             } else {
                 sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
                 sql += "=?";
@@ -839,6 +866,8 @@ public class Bid {
                 sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
                 sql += "=?";
                 args.add(storageOutIdTmp);
+                sql += ", bid_" + oilSections.getId_section() + "_orgType=?";
+                args.add(orgType);
             }
         }
         return sql;

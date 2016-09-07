@@ -144,7 +144,7 @@ public class Trailer {
         response += "<ul>";
         ArrayList<OilType> oilTypesList = oilTypeMvc.getOilTypesList();
         ArrayList<OilStorage> oilStorageList = oilStorageMvc.getOilStorageList();
-        ArrayList<Organization> organizationList = organizationMvc.getOrganizationList();
+        ArrayList<Organization> organizationList = organizationMvc.getOrganizationListWithSaleBids();
         if (oilStorageList == null || oilTypesList == null) return "Error: не возможно загрузить данные";
         response += oilSectionsMvc.getOilSectionsForAjaxSelect(oilSections, oilTypesList, oilStorageList,organizationList);
         response += "</ul>";

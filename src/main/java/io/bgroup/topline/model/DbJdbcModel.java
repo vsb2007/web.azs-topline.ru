@@ -53,7 +53,7 @@ public class DbJdbcModel {
             return true;
         }
     */
-    public List<Map<String, Object>> getSelectResult(String sql, ArrayList<Object> args) {
+    public /*synchronized*/ List<Map<String, Object>> getSelectResult(String sql, ArrayList<Object> args) {
         if (args != null && args.size() > 0)
             return jdbcTemplateMvc.queryForList(sql, args.toArray());
         else return getSelectResult(sql);

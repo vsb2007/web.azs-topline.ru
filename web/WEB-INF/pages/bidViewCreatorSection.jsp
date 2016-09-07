@@ -47,14 +47,28 @@
                 <span class="secondary-text">Вид топлива</span>
             </div>
         </div>
+        <c:if test="${bidDetails.getDestination()!=null}">
         <div class="tile">
             <input type="text" class="text-input border-green-500"
                    value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
             <input type="hidden" name="${bidDetails.getSection().getId_section()}_destination" value="${bidDetails.getDestination().getIdCompanyUnit()}">
+            <input type="hidden" name="orgType" value="0">
             <div>
                 <span class="secondary-text">Назначение</span>
             </div>
         </div>
+        </c:if>
+        <c:if test="${bidDetails.getDestination()==null}">
+            <div class="tile">
+                <input type="text" class="text-input border-green-500"
+                       value="${bidDetails.getOrganizationDestination().getOrganizationName()}" readonly>
+                <input type="hidden" name="${bidDetails.getSection().getId_section()}_destination" value="${bidDetails.getOrganizationDestination().getIdOrganization()}">
+                <input type="hidden" name="orgType" value="1">
+                <div>
+                    <span class="secondary-text">Назначение</span>
+                </div>
+            </div>
+        </c:if>
         <div class="tile">
             <input class="text-input border-green-500" placeholder="0" required
                    name="${bidDetails.getSection().getId_section()}_volume"

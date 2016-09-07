@@ -53,9 +53,10 @@
                            value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
                 </c:when>
                 <c:otherwise>
-                    <select class="dropdown-menu" id="oilStorage"
-                        id="${bidDetails.getSection().getId_section()}_storageOutId"
-                        name="${bidDetails.getSection().getId_section()}_storageOutId" >
+                    <select class="dropdown-menu"
+                            id="${bidDetails.getSection().getId_section()}_storageOutId"
+                            name="${bidDetails.getSection().getId_section()}_storageOutId">
+                        <option value="-1">Пункт отгрузки</option>
                         <c:forEach items="${oilStorageList}" var="oilStorage">
                             <c:if test="${oilStorage.getIdOilStorage().equals(bidDetails.getDestination().getIdCompanyUnit())}">
                                 <option value="${oilStorage.getIdOilStorage()}"
@@ -63,6 +64,35 @@
                             </c:if>
                             <c:if test="${!oilStorage.getIdOilStorage().equals(bidDetails.getDestination().getIdCompanyUnit())}">
                                 <option value="${oilStorage.getIdOilStorage()}">${oilStorage.getOilStorageName()}</option>
+                            </c:if>
+                        </c:forEach>
+                    </select>
+                </c:otherwise>
+            </c:choose>
+            <div>
+                <span class="secondary-text">Назначение</span>
+            </div>
+        </div>
+        <div class="tile">
+            <c:choose>
+                <c:when test="${bidDetails.isDone()}">
+                    <input type="text" class="text-input border-green-500"
+                           value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
+                </c:when>
+                <c:otherwise>
+                    <select class="dropdown-menu"
+                            id="${bidDetails.getSection().getId_section()}_OrgId"
+                            name="${bidDetails.getSection().getId_section()}_OrgId">
+                        <option value="-1">Покупатель</option>
+                        <c:forEach items="${organizationList}" var="organization">
+                            <c:if test="${organization.getIdOrganization() == bidDetails.getOrganizationDestination().getIdOrganization()}">
+                                <option value="${organization.getIdOrganization()}"
+                                        selected>${organization.getOrganizationName()}</option>
+                            </c:if>
+                            <c:if test="${organization.getIdOrganization() != bidDetails.getOrganizationDestination().getIdOrganization()}">
+                                <option value="${organization.getIdOrganization()}">
+                                        ${organization.getOrganizationName()}
+                                </option>
                             </c:if>
                         </c:forEach>
                     </select>

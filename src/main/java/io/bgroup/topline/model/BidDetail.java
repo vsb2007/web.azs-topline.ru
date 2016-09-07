@@ -297,9 +297,9 @@ public class BidDetail {
         for (BidDetail bidDetail : bidDetails) {
             if ((bid.getCreateUser().getName().equals(siteUser.getName()))
                     || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bid.getOilStorageIn().getIdOilStorage())
-                    || (siteUser.getCompanyUnit() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bidDetail.getDestination().getIdCompanyUnit())
-                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 2)
-                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 4)
+                    || (siteUser.getCompanyUnit() != null && bidDetail.getDestination() != null && siteUser.getCompanyUnit().getIdCompanyUnit() == bidDetail.getDestination().getIdCompanyUnit())
+                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 2) //водитель
+                    || (siteUser.getPost() != null && siteUser.getPost().getIdPost() == 4) //наблюдатель
                     || (siteUser.getName().equals("admin"))
                     )
                 if (!bidDetail.isDone()) {

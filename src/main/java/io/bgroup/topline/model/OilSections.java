@@ -68,12 +68,17 @@ public class OilSections {
             }
             response += "</select>"
                     + "&nbsp;";
-            /*
-                    + "<input type=text class=\"text-input border-blue-500\" "
-                    + "id=\"" + section.getId_section() + "_OrgId_text\" onChange=\"getOrganization(this,'" + section.getId_section() + "_OrgId_span')\">"
-                    + "&nbsp;" +
-                    "<span id=\"" + section.getId_section() + "_OrgId_span\">Введите пару символов</span>";
-            */
+            if (organizationList != null && organizationList.size() > 0) {
+                response += "<select class=\"dropdown-menu\""
+                        + "id=\"" + section.getId_section() + "_OrgId\" "
+                        + "name=\"" + section.getId_section() + "_OrgId\">"
+                        + "<option value=\"-1\">Покупатель</option>";
+                for (Organization organization : organizationList) {
+                    response += "<option value=\"" + organization.getIdOrganization() + "\">" +
+                            organization.getOrganizationName() + "</option>";
+                }
+                response += "</select>";
+            }
             response += "</li>";
         }
         return response;
