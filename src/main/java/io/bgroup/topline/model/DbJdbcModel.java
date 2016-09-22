@@ -14,7 +14,8 @@ public class DbJdbcModel {
 
     @Autowired
     private JdbcTemplate jdbcTemplateMvc;
-
+    @Autowired
+    private JdbcTemplate jdbcTemplateSncpc;
     private String error;
 
     public DbJdbcModel() {
@@ -61,5 +62,17 @@ public class DbJdbcModel {
 
     private List<Map<String, Object>> getSelectResult(String sql) {
         return jdbcTemplateMvc.queryForList(sql);
+    }
+
+    public List<Map<String, Object>> getSelectResultSncpc(String sql, ArrayList<Object> args) {
+        try {
+            return jdbcTemplateSncpc.queryForList(sql, args.toArray());
+        } catch (Exception e) {
+            System.out.println(sql);
+            System.out.println(args.toArray().toString());
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

@@ -65,9 +65,14 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         return new StringHttpMessageConverter(Charset.forName("UTF-8"));
     }
 
-    @Bean(name = "jdbcTemplate")
+    @Bean(name = "jdbcTemplateMvc")
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(this.dataSource());
+    }
+
+    @Bean(name = "jdbcTemplateSncpc")
+    public JdbcTemplate jdbcTemplateSncpc() {
+        return new JdbcTemplate(this.dataSourceSncpc());
     }
 
     @Bean(name = "DbJdbcModel")
@@ -82,6 +87,23 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         String jdbcUser = this.environment.getProperty("jdbc.user");
         String jdbcPassword = this.environment.getProperty("jdbc.password");
         String jdbcDbName = this.environment.getProperty("jdbc.db_name");
+
+        DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
+        driverManagerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        driverManagerDataSource.setUrl("jdbc:mysql://" + jdbcHost + ":" + jdbcPort + "/" + jdbcDbName);
+        driverManagerDataSource.setUsername(jdbcUser);
+        driverManagerDataSource.setPassword(jdbcPassword);
+
+        return driverManagerDataSource;
+    }
+
+    @Bean(name = "dataSourceSncpc")
+    public DriverManagerDataSource dataSourceSncpc() {
+        String jdbcHost = this.environment.getProperty("jdbc.hostSncpc");
+        String jdbcPort = this.environment.getProperty("jdbc.portSncpc");
+        String jdbcUser = this.environment.getProperty("jdbc.userSncpc");
+        String jdbcPassword = this.environment.getProperty("jdbc.passwordSncpc");
+        String jdbcDbName = this.environment.getProperty("jdbc.db_nameSncpc");
 
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
         driverManagerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
