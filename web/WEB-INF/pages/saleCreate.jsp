@@ -31,18 +31,19 @@
                     </div>
                     <div class="tile">
                         <span id="_OrgId_span">
-                            <select class="dropdown-menu"  name="orgId" style="width: 150px"
-                                     required>
+                            <select class="dropdown-menu" name="orgId" style="width: 150px"
+                                    required>
                                 <option></option>
                         </select>
                         </span>
                         <div>
                             <span class="secondary-text">Грузополучатель</span>
                         </div>
-                    </div><br>
+                    </div>
+                    <br>
                     <div class="tile">
                         <span id="_orgDogId_span">
-                            <select class="dropdown-menu"  name="orgDogId" style="width: 150px"
+                            <select class="dropdown-menu" name="orgDogId" style="width: 150px"
                                     required>
                                 <option></option>
                         </select>
@@ -50,7 +51,8 @@
                         <div>
                             <span class="secondary-text">Договор грузополучателя</span>
                         </div>
-                    </div><br>
+                    </div>
+                    <br>
                     <div class="tile">
                         <input type="text" class="text-input border-green-500"
                                value="0" placeholder="На счете" name="openSum" id="openSum" required readonly>
@@ -178,22 +180,31 @@
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xmlhttp.send("filter=" + inText.value + "&" + token.name + "=" + token.value + "&idSelect=" + inText.id);
         }
+
         function checkAddBidForm() {
             var openSum = document.getElementById("openSum").value;
             var sum = document.getElementById("sum").value;
-            if (sum == NaN || sum <=0) return;
-            if (openSum - sum < 0){
+            if (sum == NaN || sum <= 0) return;
+            if (openSum - sum < 0) {
                 document.getElementById("addBidButton").innerHTML = "Отправить на проверку";
             }
-            else{document.getElementById("addBidButton").innerHTML = "Добавить заявку";
+            else {
+                document.getElementById("addBidButton").innerHTML = "Добавить заявку";
             }
             document.getElementById("totalSum").value = openSum - sum;
             document.getElementById("addBidButton").removeAttribute("disabled");
         }
+
         function getDogForOrg() {
             document.getElementById("addBidButton").setAttribute("disabled", "disabled");
             document.getElementById("openSum").value = 0;
             var orgId = document.getElementById("OrgId");
+            var orgIdValue;
+            if (orgId == NaN || orgId == null) {
+                orgIdValue = -1;
+            } else {
+                orgIdValue = orgId.value;
+            }
             var xmlhttp;
             var idSpan = "_orgDogId_span";
             document.getElementById(idSpan).innerHTML = "<ul class='zmdi-hc-ul'>" +
@@ -214,7 +225,7 @@
             var token = document.getElementById("token");
             xmlhttp.open("POST", "orgGetDog", true);
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xmlhttp.send("orgId=" + orgId.value + "&" + token.name + "=" + token.value);
+            xmlhttp.send("orgId=" + orgIdValue + "&" + token.name + "=" + token.value);
         }
 
         function getSumForDogForOrg() {
@@ -240,8 +251,6 @@
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xmlhttp.send("orgDogId=" + orgDogId.value + "&" + token.name + "=" + token.value);
         }
-
     </script>
-
 </sec:authorize>
 <%@ include file="footer.jsp" %>
