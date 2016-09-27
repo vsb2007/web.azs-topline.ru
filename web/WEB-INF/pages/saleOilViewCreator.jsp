@@ -121,7 +121,7 @@
                 </div>
             </div>
             <br>
-            <c:if test="${!sale.isDone()}">
+            <c:if test="${!sale.isDone() && !sale.isBlock()}">
                 <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">
                     Отметить как выполненую
                 </button>
