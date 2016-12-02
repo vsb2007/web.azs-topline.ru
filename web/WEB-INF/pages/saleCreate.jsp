@@ -77,12 +77,15 @@
                     </div>
                     <br>
                     <div class="tile">
-                        <select class="dropdown-menu" id="oilTypeId" name="oilTypeId" onchange="">
-                            <option value="-1">Выбрать Топливо</option>
+                        <select class="dropdown-menu" id="oilTypeId" name="oilTypeId" onchange="" required>
+                            <option></option>
                             <c:forEach items="${oilTypeList}" var="oilType">
                                 <option value="${oilType.getId_oilType()}">${oilType.getOilTypeName()}</option>
                             </c:forEach>
                         </select>
+                        <div>
+                            <span class="secondary-text">Тип топлива</span>
+                        </div>
                     </div>
                     <br>
                     <div class="tile">
