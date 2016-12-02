@@ -128,6 +128,21 @@
                             <span class="secondary-text">Сумма</span>
                         </div>
                     </div>
+                    <div class="tile">
+                        <input type="text" class="text-input border-green-500" value=""
+                               placeholder="гггг-мм-дд" id="desiredDate" name="desiredDate" required readonly>
+                        <div>
+                            <span class="secondary-text">Дата поставки</span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="tile">
+                        <textarea class="text-area border-green-500" value="" placeholder="Коментарии к заявке"
+                                  id="comments" name="comments"></textarea>
+                        <div>
+                            <span class="secondary-text">Коментарии</span>
+                        </div>
+                    </div>
                 </div>
                 <br>
                 <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">Добавить
@@ -161,8 +176,8 @@
             document.getElementById("addBidButton").setAttribute("disabled", "disabled");
             var xmlhttp;
             document.getElementById(idSpan).innerHTML = "<ul class='zmdi-hc-ul'>" +
-                    "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
-                    "</ul>";
+                "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
+                "</ul>";
             if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
                 xmlhttp = new XMLHttpRequest();
             }
@@ -208,8 +223,8 @@
             var xmlhttp;
             var idSpan = "_orgDogId_span";
             document.getElementById(idSpan).innerHTML = "<ul class='zmdi-hc-ul'>" +
-                    "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
-                    "</ul>";
+                "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
+                "</ul>";
             if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
                 xmlhttp = new XMLHttpRequest();
             }
@@ -252,5 +267,17 @@
             xmlhttp.send("orgDogId=" + orgDogId.value + "&" + token.name + "=" + token.value);
         }
     </script>
+    <script>
+        $(function () {
+            $("#desiredDate").datepicker({
+                defaultDate: "today",
+                changeMonth: false,
+                numberOfMonths: 1,
+                dateFormat: 'yy-mm-dd', // See format options on parseDate
+                firstDay: 1,
+            });
+        });
+    </script>
+
 </sec:authorize>
 <%@ include file="footer.jsp" %>

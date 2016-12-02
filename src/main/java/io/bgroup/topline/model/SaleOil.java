@@ -49,6 +49,8 @@ public class SaleOil {
     private String dateIsRead;
     private boolean isDone;
     private String dateIsDone;
+    private String desiredDate;
+    private String comments;
     private boolean isClose;
     private boolean isBlock;
     private String dateIsClose;
@@ -59,6 +61,22 @@ public class SaleOil {
     private int orgPactId;
 
     public SaleOil() {
+    }
+
+    public String getDesiredDate() {
+        return desiredDate;
+    }
+
+    public void setDesiredDate(String desiredDate) {
+        this.desiredDate = desiredDate;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public int getOrgPactId() {
@@ -263,6 +281,8 @@ public class SaleOil {
         double sum = 0;
         double totalSum = -1;
         int orgDogId = -1;
+        String desiredDate = null;
+        String comments = null;
         try {
             idUnit = Integer.parseInt(request.getParameter("idUnit"));
             idOrg = Integer.parseInt(request.getParameter("OrgId"));
@@ -274,10 +294,13 @@ public class SaleOil {
             sum = Double.parseDouble(request.getParameter("sum"));
             totalSum = Double.parseDouble(request.getParameter("totalSum"));
             orgDogId = Integer.parseInt(request.getParameter("orgDogId"));
+            desiredDate = request.getParameter("desiredDate");
+            comments = request.getParameter("comments");
 
         } catch (Exception e) {
             return "не верные данные";
         }
+
         // на их основе подтягиваем данные
         if (idUnit != -1) {
             CompanyUnit companyUnit = companyUnitMvc.getCompanyUnit(idUnit);
@@ -346,9 +369,22 @@ public class SaleOil {
         values = strPlusCommaPlusValue(values, "?");
         args.add(orgDogId);
 
+        if (desiredDate == null || desiredDate.length() == 0) {
+            columns = strPlusCommaPlusValue(columns, "sale_desired_date");
+            values = strPlusCommaPlusValue(values, "now()");
+        } else {
+            columns = strPlusCommaPlusValue(columns, "sale_desired_date");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(desiredDate);
+        }
+
+        columns = strPlusCommaPlusValue(columns, "sale_comments");
+        values = strPlusCommaPlusValue(values, "?");
+        args.add(comments);
+
         columns = strPlusCommaPlusValue(columns, "sale_create_date");
         values = strPlusCommaPlusValue(values, "now()");
-        //args.add("now()");
+
         if (totalSum < 0) {
             columns = strPlusCommaPlusValue(columns, "sale_is_block");
             values = strPlusCommaPlusValue(values, "1");
@@ -358,6 +394,7 @@ public class SaleOil {
         if (dbMvc.getUpdateResult(sql, args)) {
             return "Заявка создана";
         } else {
+            System.out.println("333");
             return "Неизвестная ошибка добавления заявки";
         }
     }
@@ -477,6 +514,8 @@ public class SaleOil {
         double sum = 0;
         double totalSum = 0;
         int orgDogId = -1;
+        String desiredDate = null;
+        String comments = null;
         try {
             saleNumber = Integer.parseInt(request.getParameter("saleNumber"));
             idUnit = Integer.parseInt(request.getParameter("idUnit"));
@@ -489,6 +528,8 @@ public class SaleOil {
             sum = Double.parseDouble(request.getParameter("sum"));
             totalSum = Double.parseDouble(request.getParameter("totalSum"));
             orgDogId = Integer.parseInt(request.getParameter("orgDogId"));
+            desiredDate = request.getParameter("desiredDate");
+            comments = request.getParameter("comments");
         } catch (Exception e) {
             return "не верные данные";
         }
@@ -545,6 +586,16 @@ public class SaleOil {
         } else {
             sql += "sale_is_block = 0,";
         }
+
+        if (desiredDate == null || desiredDate.length() == 0) {
+            sql += "sale_desired_date = now(),";
+        } else {
+            sql += "sale_desired_date = ?,";
+            args.add(desiredDate);
+        }
+
+        sql += "sale_comments = ?,";
+        args.add(comments);
 
         sql += "sale_sum = ?";
         args.add(sum);
@@ -629,6 +680,14 @@ public class SaleOil {
             dateCreate = row.get("sale_create_date");
             if (dateCreate != null)
                 saleOil.setDateCreate(dateCreate.toString().split(" ")[0]);
+            Object desiredDate = null;
+            desiredDate = row.get("sale_desired_date");
+            if (desiredDate != null)
+                saleOil.setDesiredDate(desiredDate.toString().split(" ")[0]);
+            Object comments = null;
+            comments = row.get("sale_comments");
+            if (comments != null)
+                saleOil.setComments(comments.toString());
             saleOil.setUserCreate(siteUserMvc.findSiteUser((Integer) row.get("sale_create_user_id")));
             Object dateClose = null;
             dateClose = row.get("sale_is_close_date");

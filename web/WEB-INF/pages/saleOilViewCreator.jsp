@@ -119,6 +119,22 @@
                         <span class="secondary-text">Сумма</span>
                     </div>
                 </div>
+                <div class="tile">
+                    <input type="text" class="text-input border-green-500"
+                           value="${sale.getDesiredDate()}" placeholder="Дата доставки" id="desiredDate" name="desiredDate" required readonly>
+                    <div>
+                        <span class="secondary-text">Дата доставки</span>
+                    </div>
+
+                </div>
+                <br>
+                <div class="tile">
+                      <textarea class="text-area border-green-500"  placeholder="Коментарии к заявке"
+                                id="comments" name="comments">${sale.getComments()}</textarea>
+                    <div>
+                        <span class="secondary-text">Коментарии</span>
+                    </div>
+                </div>
             </div>
             <br>
             <c:if test="${!sale.isDone() && !sale.isBlock()}">
