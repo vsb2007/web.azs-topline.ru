@@ -80,9 +80,11 @@
                            value="${bidDetails.getDestination().getCompanyUnitName()}" readonly>
                 </c:when>
                 <c:otherwise>
-                    <select class="dropdown-menu"
+                    <select class="dropdown-menu" style="width: 100px"
                             id="${bidDetails.getSection().getId_section()}_OrgId"
-                            name="${bidDetails.getSection().getId_section()}_OrgId">
+                            name="${bidDetails.getSection().getId_section()}_OrgId"
+                            onchange="getSaleBidId('${bidDetails.getSection().getId_section()}')"
+                    >
                         <option value="-1">Покупатель</option>
                         <c:forEach items="${organizationList}" var="organization">
                             <c:if test="${organization.getIdOrganization() == bidDetails.getOrganizationDestination().getIdOrganization()}">
@@ -100,6 +102,18 @@
             </c:choose>
             <div>
                 <span class="secondary-text">Назначение</span>
+            </div>
+        </div>
+        <div class="tile">
+            <c:if test="${bidDetails.getSaleOilId()>0}">
+                <span id="span_${bidDetails.getSection().getId_section()}_OrgId">
+                    <input type="text" class="text-input border-green-500" value="${bidDetails.getSaleOilId()}" readonly></span>
+            </c:if>
+            <c:if test="${bidDetails.getSaleOilId()<=0}">
+                <span id="span_${bidDetails.getSection().getId_section()}_OrgId"></span>
+            </c:if>
+            <div>
+                <span class="secondary-text">Номер продажи</span>
             </div>
         </div>
     </div>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 
 @Controller
 @EnableWebMvc
@@ -23,7 +24,7 @@ public class MvcSaleAjaxController {
     @ResponseBody
     public String checkReadSaleForm(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         String responseBody = "Неизвестная ошибка";
-        responseBody = saleOilMvc.checkReadSaleOilBid(principal,request);
+        responseBody = saleOilMvc.checkReadSaleOilBid(principal, request);
         return responseBody;
     }
 
@@ -46,4 +47,16 @@ public class MvcSaleAjaxController {
         }
         return responseBody;
     }
+
+    @RequestMapping(value = "getSaleBidsIdByOrg", produces = {"text/plain; charset=UTF-8"})
+    @ResponseBody
+    public String getSaleBidsIdByOrg(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        String responseBody = "Error";
+        if (request == null) return responseBody;
+        if (request != null) {
+            responseBody = saleOilMvc.getSaleBidIdForBid(principal,request);
+        }
+        return responseBody;
+    }
+
 }

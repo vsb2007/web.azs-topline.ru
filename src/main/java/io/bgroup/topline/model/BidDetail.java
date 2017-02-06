@@ -22,6 +22,7 @@ public class BidDetail {
     private String massOut;
     private String dateIn;
     private String dateOut;
+    private int saleOilId;
     private boolean isDone;
 
     @Autowired
@@ -32,6 +33,8 @@ public class BidDetail {
     CompanyUnit companyUnitMvc;
     @Autowired
     Organization organizationMvc;
+    @Autowired
+    SaleOil saleOilMvc;
 
     public BidDetail() {
 
@@ -157,6 +160,18 @@ public class BidDetail {
         this.dateOut = dateOut;
     }
 
+    public int getSaleOilId() {
+        return saleOilId;
+    }
+
+    public void setSaleOilId(String saleOilId) {
+        int idTmp = -1;
+        try {
+            idTmp = Integer.parseInt(saleOilId);
+        }catch (Exception e){}
+        this.saleOilId = idTmp;
+    }
+
     public ArrayList<BidDetail> getBidDetailList(int bidId, Object object) {
         if (object == null) return null;
         ArrayList<OilSections> oilSectionsList = null;
@@ -186,6 +201,7 @@ public class BidDetail {
         String massOutTmp = null;
         String dateInTmp = null;
         String dateOutTmp = null;
+        String saleIdtmp = null;
         for (OilSections oilSection : oilSectionsList) {
             int oilTypeId = -1;
             int destinationId = -1;
@@ -245,6 +261,10 @@ public class BidDetail {
                     if (pair.getValue() != null) {
                         dateOutTmp = pair.getValue().toString();
                     } else dateOutTmp = null;
+                } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_saleId")) {
+                    if (pair.getValue() != null) {
+                        saleIdtmp = pair.getValue().toString();
+                    } else saleIdtmp = null;
                 }
             }
             if (oilTypeId == -1) continue;
@@ -275,6 +295,7 @@ public class BidDetail {
             bidDetail.setMassOut(massOutTmp);
             bidDetail.setDateIn(dateInTmp);
             bidDetail.setDateOut(dateOutTmp);
+            bidDetail.setSaleOilId(saleIdtmp);
             if (pOutTmp != null
                     && tOutTmp != null
                     && volumeOutTmp != null

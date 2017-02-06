@@ -17,7 +17,7 @@
                         <option value="${oilStorage.getIdOilStorage()}">${oilStorage.getOilStorageName()}</option>
                     </c:forEach>
                 </select><br>
-                <select class="dropdown-menu" id="driver" name="driver" onchange="">
+                <select class="dropdown-menu" id="driver" name="driver" onchange="" >
                     <option value="-1">Водитель</option>
                     <c:forEach items="${driversList}" var="driver">
                         <option value="${driver.getIdDriver()}">${driver.getDriverFio()}</option>
@@ -79,36 +79,10 @@
     <script>
         function getOrganization(inText, idSpan) {
             document.getElementById("addBidButton").setAttribute("disabled", "disabled");
-            //document.getElementById(idSpan).innerHTML = inText.value;
-            //alert(inText.id)
-            /*
-             var msg = $('#' + inText.id + '').serialize();
-             $.ajax({
-             type: 'POST',
-             url: 'orgGetListByFilter',
-             data: msg,
-             success: function (data) {
-             //$('.results').html(data);
-             //document.getElementById("control").innerHTML = data;
-             if (data != 1) {
-             document.getElementById(idSpan).innerHTML = data;
-             document.getElementById("addBidButton").removeAttribute("disabled");
-             }
-             if (data == 1) {
-             document.getElementById(idSpan).innerHTML = "Ошибка: " + data;
-             document.getElementById("addBidButton").setAttribute("disabled","disabled");
-             }
-             },
-             error: function (xhr, str) {
-             //$('.results').html('Возникла ошибка: ' + xhr.responseCode);
-             document.getElementById(idSpan).innerHTML = "Возникла ошибка: " + xhr.responseCode;
-             document.getElementById("addBidButton").setAttribute("disabled","disabled");
-             }
-             });*/
             var xmlhttp;
             document.getElementById(idSpan).innerHTML = "<ul class='zmdi-hc-ul'>" +
-                    "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
-                    "</ul>";
+                "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
+                "</ul>";
             if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
                 xmlhttp = new XMLHttpRequest();
             }
@@ -120,15 +94,43 @@
                     document.getElementById(idSpan).innerHTML = xmlhttp.responseText;
                 }
             }
-                var token = document.getElementById("token");
-                xmlhttp.open("POST", "orgGetListByFilter", true);
-                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xmlhttp.send("filter=" + inText.value + "&" + token.name + "=" + token.value  + "&idSelect=" + inText.id);
+            var token = document.getElementById("token");
+            xmlhttp.open("POST", "orgGetListByFilter", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send("filter=" + inText.value + "&" + token.name + "=" + token.value + "&idSelect=" + inText.id);
         }
         function checkAddBidForm() {
             document.getElementById("addBidButton").removeAttribute("disabled");
         }
+        function getSaleBidId(idSection) {
+            var idSpan = "span_" + idSection + "_OrgId";
+            var orgId = document.getElementById(idSection + "_OrgId").value;
+            if (orgId == -1) {
+                document.getElementById(idSpan).innerHTML = "";
+                return;
+            }
+            document.getElementById("addBidButton").setAttribute("disabled", "disabled");
+            var xmlhttp;
+            document.getElementById(idSpan).innerHTML = "<ul class='zmdi-hc-ul'>" +
+                "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
+                "</ul>";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    document.getElementById(idSpan).innerHTML = xmlhttp.responseText;
+                }
+            }
+            var token = document.getElementById("token");
+            xmlhttp.open("POST", "getSaleBidsIdByOrg", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send("orgId=" + orgId + "&idSection=" + idSection + "&" + token.name + "=" + token.value);
 
+        }
     </script>
 
 </sec:authorize>

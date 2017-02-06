@@ -378,6 +378,8 @@ public class Bid {
                 }
             }
             emptySectionFlag = false;
+            String saleId = request.getParameter(oilSections.getId_section() + "_saleIdForBid");
+            if (saleId == null) continue;
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_oilType_id");
             values = strPlusCommaPlusValue(values, "?");
             args.add(oilTypeIdTmp);
@@ -387,6 +389,9 @@ public class Bid {
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_orgType");
             values = strPlusCommaPlusValue(values, "?");
             args.add(orgType);
+            columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_saleId");
+            values = strPlusCommaPlusValue(values, "?");
+            args.add(saleId);
 
         }
         columnAndValue[0] = columns;
@@ -849,8 +854,10 @@ public class Bid {
             String oilTypeIdTmp = request.getParameter(oilSections.getId_section() + "_oilTypeId");
             String storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_storageOutId");
             String orgType = "0";
+            String saleId = "0";
             if (storageOutIdTmp != null && storageOutIdTmp.equals("-1")) {
                 storageOutIdTmp = request.getParameter(oilSections.getId_section() + "_OrgId");
+                saleId = request.getParameter(oilSections.getId_section() + "_saleIdForBid");
                 orgType = "1";
             }
             if (oilTypeIdTmp == null || oilTypeIdTmp.equals("-1") || storageOutIdTmp == null || storageOutIdTmp.equals("-1")) {
@@ -859,6 +866,7 @@ public class Bid {
                 sql += ", bid_" + oilSections.getId_section() + "_storageOut_id";
                 sql += "=null";
                 sql += ", bid_" + oilSections.getId_section() + "_orgType=0";
+                sql += ", bid_" + oilSections.getId_section() + "_saleId=0";
             } else {
                 sql += ", bid_" + oilSections.getId_section() + "_oilType_id";
                 sql += "=?";
@@ -868,6 +876,8 @@ public class Bid {
                 args.add(storageOutIdTmp);
                 sql += ", bid_" + oilSections.getId_section() + "_orgType=?";
                 args.add(orgType);
+                sql += ", bid_" + oilSections.getId_section() + "_saleId=?";
+                args.add(saleId);
             }
         }
         return sql;

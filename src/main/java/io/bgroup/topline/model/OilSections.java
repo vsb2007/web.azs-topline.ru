@@ -57,8 +57,8 @@ public class OilSections {
                         oilTypeTmp.getOilTypeName() + "</option>";
             }
             response += "</select>"
-                    + "&nbsp;"
-                    + "<select class=\"dropdown-menu\""
+                    + "&nbsp;";
+            response += "<select class=\"dropdown-menu\""
                     + "id=\"" + section.getId_section() + "_storageOutId\" "
                     + "name=\"" + section.getId_section() + "_storageOutId\">"
                     + "<option value=\"-1\">Пункт отгрузки</option>";
@@ -71,13 +71,15 @@ public class OilSections {
             if (organizationList != null && organizationList.size() > 0) {
                 response += "<select class=\"dropdown-menu\""
                         + "id=\"" + section.getId_section() + "_OrgId\" "
-                        + "name=\"" + section.getId_section() + "_OrgId\">"
+                        + "name=\"" + section.getId_section() + "_OrgId\" "
+                        + "onchange=\"getSaleBidId('" + section.getId_section() + "')\">"
                         + "<option value=\"-1\">Покупатель</option>";
                 for (Organization organization : organizationList) {
                     response += "<option value=\"" + organization.getIdOrganization() + "\">" +
                             organization.getOrganizationName() + "</option>";
                 }
                 response += "</select>";
+                response += "<span id=\"span_" + section.getId_section() + "_OrgId\" ></span>";
             }
             response += "</li>";
         }

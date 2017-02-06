@@ -57,7 +57,7 @@ public class Organization {
         ArrayList<Organization> organizationArrayList = null;
         ArrayList<Object> args = new ArrayList<Object>();
         String sql = "select * from organization " +
-                "where Org_id in (select sale_id_org from salebid where sale_is_close = 0 and sale_is_done = 0 " +
+                "where Org_id in (select sale_id_org from salebid where sale_is_close = 0 and sale_is_done = 0 and sale_is_block = 0 " +
                 "group by sale_id_org) " +
                 "order by Org_Name ";
         organizationArrayList = getOrganizationFromDbSelect(sql, null);

@@ -53,17 +53,17 @@
                         <option value="1">Водитель может принимать топливо</option>
                     </c:if>
                 </select><br>
-                <%--
-                <select class="dropdown-menu" id="driverCanUpdateOut" name="driverCanUpdateOut" onchange="">
-                    <option value="0">Водитель не может сливать топливо</option>
-                    <c:if test="${bid.isDriverCanUpdateOut()}">
-                        <option value="1" selected>Водитель может сливать топливо</option>
-                    </c:if>
-                    <c:if test="${!bid.isDriverCanUpdateOut()}">
-                        <option value="1">Водитель может сливать топливо</option>
-                    </c:if>
-                </select><br>
-                --%>
+                    <%--
+                    <select class="dropdown-menu" id="driverCanUpdateOut" name="driverCanUpdateOut" onchange="">
+                        <option value="0">Водитель не может сливать топливо</option>
+                        <c:if test="${bid.isDriverCanUpdateOut()}">
+                            <option value="1" selected>Водитель может сливать топливо</option>
+                        </c:if>
+                        <c:if test="${!bid.isDriverCanUpdateOut()}">
+                            <option value="1">Водитель может сливать топливо</option>
+                        </c:if>
+                    </select><br>
+                    --%>
                     <%-- машина --%>
                     <%-- Топливо НЕ отпущено --%>
                 <c:if test="${!bid.getBid_is_freeze()}">
@@ -149,5 +149,36 @@
     </div>
     <script src="js/bidRed01.js"></script>
     <script src="js/jquery-2.2.3.min.js"></script>
+    <script>
+        function getSaleBidId(idSection) {
+            var idSpan = "span_" + idSection + "_OrgId";
+            var orgId = document.getElementById(idSection + "_OrgId").value;
+            if (orgId == -1) {
+                document.getElementById(idSpan).innerHTML = "";
+                return;
+            }
+            //document.getElementById("addBidButton").setAttribute("disabled", "disabled");
+            var xmlhttp;
+            document.getElementById(idSpan).innerHTML = "<ul class='zmdi-hc-ul'>" +
+                "<li><i class='zmdi-hc-li zmdi zmdi-refresh zmdi-hc-spin'></i>loading...</li>" +
+                "</ul>";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    document.getElementById(idSpan).innerHTML = xmlhttp.responseText;
+                }
+            }
+            var token = document.getElementById("token");
+            xmlhttp.open("POST", "getSaleBidsIdByOrg", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send("orgId=" + orgId + "&idSection=" + idSection + "&" + token.name + "=" + token.value);
+
+        }
+    </script>
 </sec:authorize>
 <%@ include file="footer.jsp" %>

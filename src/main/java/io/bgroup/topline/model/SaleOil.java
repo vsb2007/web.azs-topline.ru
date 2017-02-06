@@ -628,6 +628,45 @@ public class SaleOil {
         return "Error: ошибка обновления статуса";
     }
 
+    /*
+    возвращаем номера заявок продаж по которым создается заявка транспортировки
+     */
+    public String getSaleBidIdForBid(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        if (siteUser == null) return "Error: Ошибка Авторизации";
+        if (!siteUser.isUserHasRole(principal, "ROLE_BID_CREATE")) return "Error: не достаточно прав";
+        String orgIdString = request.getParameter("orgId");
+        String idSectionString = request.getParameter("idSection");
+        ArrayList<SaleOil> saleOilArrayList = getSaleOilListByOrgId(orgIdString);
+        if (saleOilArrayList == null || saleOilArrayList.size() == 0) return "Нет активных заявок на продажу";
+        String response = "";
+        if (saleOilArrayList.size() > 0) {
+            response += "<select id=\"" + idSectionString + "_saleIdForBid\" "
+                    + "name=\"" + idSectionString + "_saleIdForBid\" "
+                    + "required class=\"dropdown-menu\">";
+            response += "<option value=\"\">Номер продажи</option>";
+            String selected = "";
+            if (saleOilArrayList.size() == 1) selected = "selected";
+            for (SaleOil saleOil : saleOilArrayList) {
+                response += "<option value=" + saleOil.getId() + " " + selected + ">" + saleOil.getId() + "</option>";
+            }
+            response += "</select>";
+        }
+        return response;
+    }
+
+    private ArrayList<SaleOil> getSaleOilListByOrgId(String orgId) {
+        if (orgId == null || orgId.length() == 0) return null;
+        String sql = "SELECT * FROM salebid where " +
+                "sale_id_org = ?\n" +
+                "and sale_is_close =0\n" +
+                "and sale_is_block =0";
+        ArrayList<Object> args = new ArrayList<Object>();
+        args.add(orgId);
+        ArrayList<SaleOil> saleOilArrayList = getSaleListFromDbSelect(sql, args);
+        return saleOilArrayList;
+    }
+
     private class SetRowThread implements Runnable {
         private SaleOil saleOil;
         Map row;
