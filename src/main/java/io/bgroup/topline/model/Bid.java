@@ -379,7 +379,7 @@ public class Bid {
             }
             emptySectionFlag = false;
             String saleId = request.getParameter(oilSections.getId_section() + "_saleIdForBid");
-            if (saleId == null) continue;
+
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_oilType_id");
             values = strPlusCommaPlusValue(values, "?");
             args.add(oilTypeIdTmp);
@@ -389,9 +389,11 @@ public class Bid {
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_orgType");
             values = strPlusCommaPlusValue(values, "?");
             args.add(orgType);
-            columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_saleId");
-            values = strPlusCommaPlusValue(values, "?");
-            args.add(saleId);
+            if (saleId != null || orgType == 1) {
+                columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_saleId");
+                values = strPlusCommaPlusValue(values, "?");
+                args.add(saleId);
+            }
 
         }
         columnAndValue[0] = columns;
