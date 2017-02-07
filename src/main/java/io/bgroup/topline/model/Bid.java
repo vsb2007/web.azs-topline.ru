@@ -389,7 +389,7 @@ public class Bid {
             columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_orgType");
             values = strPlusCommaPlusValue(values, "?");
             args.add(orgType);
-            if (saleId != null || orgType == 1) {
+            if (saleId != null && orgType == 1) {
                 columns = strPlusCommaPlusValue(columns, "bid_" + oilSections.getId_section() + "_saleId");
                 values = strPlusCommaPlusValue(values, "?");
                 args.add(saleId);
