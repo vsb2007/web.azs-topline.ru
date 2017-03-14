@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -111,6 +112,7 @@ public class MvcBidController {
     public ModelAndView bidView(UsernamePasswordAuthenticationToken principal, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         Bid bid = bidMvc.getBidForView(principal, request);
+        /*
         if (bid.getBid_is_freeze()) {
             if (bid.isPdfFileExist()) {
                 model.addObject("pdfFile", 1);
@@ -120,6 +122,8 @@ public class MvcBidController {
         } else {
             model.addObject("pdfFile", 0);
         }
+        */
+        model.addObject("pdfFile", 1);
         SiteUser siteUser = siteUserMvc.findSiteUser(principal);
         ArrayList<BidDetail> bidDetailsCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
         ArrayList<BidDetail> bidDetailsTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
@@ -249,18 +253,12 @@ public class MvcBidController {
         String fileName = "";
         fileName = myConstantMvc.getFilePrefix() + "_" + bid.getId_bid()
                 + "_" + bid.getBid_date_create().replace("-", "") + ".pdf";
-        fileNamePath = myConstantMvc.getFileFolder() + fileName;
+        PdfCreator pdfCreator = new PdfCreator();
         try {
-            File fileToDownload = new File(fileNamePath);
-            if (!fileToDownload.exists() || fileToDownload.isDirectory()) {
-                return;
-            }
-            InputStream inputStream = new FileInputStream(fileToDownload);
-            response.setContentType("application/force-download");
+            response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
-            IOUtils.copy(inputStream, response.getOutputStream());
+            pdfCreator.getDocument(response.getOutputStream(),fileName);
             response.flushBuffer();
-            inputStream.close();
         } catch (Exception e) {
             //LOGGER.debug("Request could not be completed at this moment. Please try again.");
             e.printStackTrace();
