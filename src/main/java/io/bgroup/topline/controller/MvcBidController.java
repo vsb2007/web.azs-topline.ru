@@ -257,7 +257,7 @@ public class MvcBidController {
         try {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
-            pdfCreator.getDocument(response.getOutputStream(),fileName);
+            pdfCreator.getDocument(response.getOutputStream(),fileName,bid);
             response.flushBuffer();
         } catch (Exception e) {
             //LOGGER.debug("Request could not be completed at this moment. Please try again.");

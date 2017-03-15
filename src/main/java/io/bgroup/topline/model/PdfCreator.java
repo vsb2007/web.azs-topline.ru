@@ -1,5 +1,6 @@
 package io.bgroup.topline.model;
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -7,6 +8,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import javax.servlet.ServletOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 public class PdfCreator {
@@ -17,18 +19,18 @@ public class PdfCreator {
             Font.NORMAL, BaseColor.RED);
     private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
             Font.BOLD);
-    private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,
-            Font.BOLD);
+    private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,Font.BOLD);
+    //private static Font smallBold = new Font("tahoma.ttf", 12,Font.BOLD);
 
-    public boolean getDocument(ServletOutputStream outputStream, String fileName) {
+    public boolean getDocument(ServletOutputStream outputStream, String fileName, Bid bid) {
         try {
             Document document = new Document(PageSize.A4.rotate());
             //PdfWriter.getInstance(document, new FileOutputStream(FILE));
             PdfWriter.getInstance(document, outputStream);
             document.open();
-            addMetaData(document);
-            addTitlePage(document);
-            addContent(document);
+            //addMetaData(document);
+            //addTitlePage(document);
+            addContent(document,bid);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,48 +79,29 @@ public class PdfCreator {
         document.newPage();
     }
 
-    private static void addContent(Document document) throws DocumentException {
-        Anchor anchor = new Anchor("First Chapter", catFont);
-        anchor.setName("First Chapter");
-
+    private  void addContent(Document document, Bid bid) throws DocumentException {
         // Second parameter is the number of the chapter
-        Chapter catPart = new Chapter(new Paragraph(anchor), 1);
 
-        Paragraph subPara = new Paragraph("Subcategory 1", subFont);
-        Section subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph("Hello"));
+        BaseFont courier = null;
+        try {
+            courier = BaseFont.createFont("D:\\GitHub\\web.azs-topline.ru\\src\\main\\resources\\timesNewRoman.ttf",BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Font font = new Font(courier, 12, Font.NORMAL);
 
-        subPara = new Paragraph("Subcategory 2", subFont);
-        subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph("Paragraph 1"));
-        subCatPart.add(new Paragraph("Paragraph 2"));
-        subCatPart.add(new Paragraph("Paragraph 3"));
-
-        // add a list
-        createList(subCatPart);
-        Paragraph paragraph = new Paragraph();
-        addEmptyLine(paragraph, 5);
-        subCatPart.add(paragraph);
+        //Paragraph paragraph = new Paragraph("ООО Топлайн", smallBold);
+        Paragraph paragraph = new Paragraph("ООО Топлайн", font);
+        document.add(paragraph);
+        //paragraph = new Paragraph("инн/кпп", smallBold);
+        paragraph = new Paragraph("инн/кпп", font);
 
         // add a table
-        createTable(subCatPart);
+        //createTable(subCatPart);
+
 
         // now add all this to the document
-        document.add(catPart);
-
-        // Next section
-        anchor = new Anchor("Second Chapter", catFont);
-        anchor.setName("Second Chapter");
-
-        // Second parameter is the number of the chapter
-        catPart = new Chapter(new Paragraph(anchor), 1);
-
-        subPara = new Paragraph("Subcategory", subFont);
-        subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph("This is a very important message"));
-
-        // now add all this to the document
-        document.add(catPart);
+        document.add(paragraph);
 
     }
 
