@@ -1,14 +1,28 @@
 package io.bgroup.topline.model;
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorker;
+import com.itextpdf.tool.xml.XMLWorkerFontProvider;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
+import com.itextpdf.tool.xml.html.CssAppliers;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
+import com.itextpdf.tool.xml.html.Tags;
+import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 import javax.servlet.ServletOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+
+import java.nio.charset.Charset;
 import java.util.Date;
 
 public class PdfCreator {
@@ -19,18 +33,20 @@ public class PdfCreator {
             Font.NORMAL, BaseColor.RED);
     private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
             Font.BOLD);
-    private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,Font.BOLD);
+    private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
     //private static Font smallBold = new Font("tahoma.ttf", 12,Font.BOLD);
 
     public boolean getDocument(ServletOutputStream outputStream, String fileName, Bid bid) {
         try {
             Document document = new Document(PageSize.A4.rotate());
             //PdfWriter.getInstance(document, new FileOutputStream(FILE));
-            PdfWriter.getInstance(document, outputStream);
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            writer.setInitialLeading(12.5f);
             document.open();
             //addMetaData(document);
             //addTitlePage(document);
-            addContent(document,bid);
+
+            addContent(writer, document, bid);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,29 +95,179 @@ public class PdfCreator {
         document.newPage();
     }
 
-    private  void addContent(Document document, Bid bid) throws DocumentException {
+    private void addContent(PdfWriter writer, Document document, Bid bid) throws DocumentException {
+        ClassLoader classLoader = getClass().getClassLoader();
+
+        //String myFontsDir = classLoader.getResource("fonts/timesNewRoman.ttf").getPath();
+        String myFontsDir = classLoader.getResource("fonts").getPath();
+        int iResult = FontFactory.registerDirectory(myFontsDir);
+        /*if (iResult == 0) {
+            System.out.println("TestPDF(): Could not register font directory " + myFontsDir);
+        } else {
+            System.out.println("TestPDF(): Registered font directory " + myFontsDir);
+        }*/
+        String htmlContent = "<html><head>"
+                + "<meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\"/>"
+                + "</head><body style=\"font-family: Arial Unicode MS, FreeSans; font-size:16px; font-weight: normal; \">"
+                + "<h4 >Здраво Kristijan!</h4>" +
+                "Тест Test"
+                + "</body></html>";
+        InputStream inf = null;
+        try {
+            inf = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        XMLWorkerFontProvider fontImp = new XMLWorkerFontProvider(myFontsDir);
+        FontFactory.setFontImp(fontImp);
+        try {
+            XMLWorkerHelper.getInstance().parseXHtml(writer, document, inf, null, Charset.forName("UTF-8"), fontImp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*
+        XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider(XMLWorkerFontProvider.DONTLOOKFORFONTS);
+        fontProvider.register(classLoader.getResource("fonts/FreeSans.ttf").getPath());
+        for (String s : fontProvider.getRegisteredFamilies()) {
+            System.out.println(s);
+        }*/
+
+    }
+
+    private void addContent3(PdfWriter writer, Document document, Bid bid) throws DocumentException {
+
+        // step 4
+
+        // CSS
+        CSSResolver cssResolver = new StyleAttrCSSResolver();
+        // CssFile cssFile = XMLWorkerHelper.getCSS(new FileInputStream(CSS));
+        // cssResolver.addCss(cssFile);
+
+        // HTML
+        XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider(XMLWorkerFontProvider.DONTLOOKFORFONTS);
+        //fontProvider.register("fonts/Arimo-Regular.ttf");
+        //fontProvider.register("fonts/Arimo-Bold.ttf");
+        //fontProvider.register("fonts/Arimo-Italic.ttf");
+        ClassLoader classLoader = getClass().getClassLoader();
+        fontProvider.register(classLoader.getResource("timesNewRoman.ttf").getPath());
+        fontProvider.addFontSubstitute("Times", "Times");
+        CssAppliers cssAppliers = new CssAppliersImpl(fontProvider);
+        HtmlPipelineContext htmlContext = new HtmlPipelineContext(cssAppliers);
+        htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
+
+        // Pipelines
+        PdfWriterPipeline pdf = new PdfWriterPipeline(document, writer);
+        HtmlPipeline html = new HtmlPipeline(htmlContext, pdf);
+        CssResolverPipeline css = new CssResolverPipeline(cssResolver, html);
+
+        // XML Worker
+        XMLWorker worker = new XMLWorker(css, true);
+        XMLParser p = new XMLParser(worker);
+
+        // p.parse(new FileInputStream(HTML));
+        String htmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">" +
+                " <head>" +
+                "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+                " </head>" +
+                "<body>test Тест</body>" +
+                "</html>";
+        htmlContent = "<html><body>test Тест</body></html>";
+
+        try {
+            p.parse(new StringReader(htmlContent));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void addContent2(Document document, Bid bid) throws DocumentException {
         // Second parameter is the number of the chapter
 
         BaseFont courier = null;
         try {
-            courier = BaseFont.createFont("D:\\GitHub\\web.azs-topline.ru\\src\\main\\resources\\timesNewRoman.ttf",BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            ClassLoader classLoader = getClass().getClassLoader();
+            courier = BaseFont.createFont(classLoader.getResource("timesNewRoman.ttf").getPath(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Font font = new Font(courier, 12, Font.NORMAL);
+        Font font10 = new Font(courier, 10, Font.NORMAL);
+        Font font10Underline = new Font(courier, 10, Font.NORMAL | Font.UNDERLINE);
+        Font font10Bold = new Font(courier, 10, Font.BOLD);
+        Font font12Bold = new Font(courier, 12, Font.BOLD);
 
         //Paragraph paragraph = new Paragraph("ООО Топлайн", smallBold);
-        Paragraph paragraph = new Paragraph("ООО Топлайн", font);
+        Paragraph paragraph = new Paragraph("ООО Топлайн", font10);
         document.add(paragraph);
         //paragraph = new Paragraph("инн/кпп", smallBold);
-        paragraph = new Paragraph("инн/кпп", font);
+        paragraph = new Paragraph("ИНН/КПП: 0000000/00000000", font10);
+        document.add(paragraph);
+        String bidDate = bid.getBid_date_freeze().split(" ")[0];
+        paragraph = new Paragraph("Товарно-транспортная накладная № " + bid.getId_bid() + " от " + bidDate, font12Bold);
+        paragraph.setAlignment(Element.ALIGN_CENTER);
+        document.add(paragraph);
+
+        document.add(new Paragraph());
+
+        paragraph = new Paragraph();
+
+        Phrase phrase = new Phrase();
+        Chunk chunk = new Chunk("Автомобиль ", font10);
+//        document.add(chunk);
+        paragraph.add(chunk);
+        chunk = new Chunk(bid.getCar().getCar_name(), font10Underline);
+        //chunk.setUnderline(0.1f, -2f);
+        //      document.add(chunk);
+        paragraph.add(chunk);
+
+        chunk = new Chunk("  Прицеп   ", font10);
+        //    document.add(chunk);
+        paragraph.add(chunk);
+        chunk = new Chunk("                                                                           ", font10Underline);
+        //chunk.setUnderline(0.1f, -2f);
+        //  document.add(chunk);
+        paragraph.add(chunk);
+
+        chunk = new Chunk(" Водитель ", font10);
+//        document.add(chunk);
+        paragraph.add(chunk);
+        chunk = new Chunk("                        (" + bid.getDriver().getDriverFio() + ")", font10Underline);
+        //chunk.setUnderline(0.1f, -2f);
+        //      document.add(chunk);
+        paragraph.add(chunk);
+        //paragraph.add(phrase);
+        paragraph.setAlignment(Element.ALIGN_JUSTIFIED_ALL);
+        document.add(paragraph);
+
+        document.add(new Paragraph(" "));
+
+        paragraph = new Paragraph();
+        paragraph.setAlignment(Element.ALIGN_RIGHT);
+        chunk = new Chunk("Доверенность ", font10);
+        paragraph.add(chunk);
+        document.add(paragraph);
+
+        paragraph = new Paragraph();
+        paragraph.setAlignment(Element.ALIGN_RIGHT);
+        chunk = new Chunk("№_________________ ", font10);
+        paragraph.add(chunk);
+        document.add(paragraph);
+
+
+        paragraph = new Paragraph();
+        paragraph.setAlignment(Element.ALIGN_RIGHT);
+        chunk = new Chunk("№_________________ ", font10);
+        paragraph.add(chunk);
+        document.add(paragraph);
+
 
         // add a table
         //createTable(subCatPart);
 
 
         // now add all this to the document
-        document.add(paragraph);
+        // document.add(paragraph);
 
     }
 
