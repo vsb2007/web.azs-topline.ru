@@ -257,7 +257,9 @@ public class MvcBidController {
         try {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
-            pdfCreator.getDocument(response.getOutputStream(),fileName,bid);
+            ArrayList<BidDetail> bidDetailListCar = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getCar());
+            ArrayList<BidDetail> bidDetailListTrailer = bidDetailMvc.getBidDetailList(bid.getId_bid(), bid.getTrailer());
+            pdfCreator.getDocument(response.getOutputStream(),bid.getHtmlTTN(bidDetailListCar,bidDetailListTrailer));
             response.flushBuffer();
         } catch (Exception e) {
             //LOGGER.debug("Request could not be completed at this moment. Please try again.");

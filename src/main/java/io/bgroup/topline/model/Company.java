@@ -20,6 +20,8 @@ public class Company {
     private String companyName;
     private int shipper;
     private String error;
+    private String inn;
+    private String kpp;
 
     private void setError(String error) {
         this.error = error;
@@ -49,6 +51,22 @@ public class Company {
         this.companyName = companyName;
     }
 
+    public String getInn() {
+        return inn;
+    }
+
+    private void setInn(String inn) {
+        this.inn = inn;
+    }
+
+    public String getKpp() {
+        return kpp;
+    }
+
+    private void setKpp(String kpp) {
+        this.kpp = kpp;
+    }
+
     public ArrayList<Company> getCompanyList() {
         ArrayList<Company> companyList = null;
         String sql = "select * from company";
@@ -76,6 +94,15 @@ public class Company {
             company.setIdCompany((Integer) row.get("id_company"));
             company.setCompanyName((String) row.get("company_name").toString());
             company.setShipper((Integer) row.get("shipper"));
+            Object innObject = row.get("INN");
+            if (innObject != null) {
+                company.setInn((String)innObject);
+            }
+            Object kppObject = row.get("KPP");
+            if (kppObject != null) {
+                company.setKpp((String)kppObject);
+            }
+
             if (companyArrayList == null) companyArrayList = new ArrayList<Company>();
             companyArrayList.add(company);
         }

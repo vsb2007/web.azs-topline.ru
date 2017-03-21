@@ -12,6 +12,7 @@ import java.util.*;
 public class Bid {
     private int id_bid;
     private SiteUser createUser;
+    private SiteUser userBidIn;
     private String name;
     private OilStorage oilStorageIn;
     private Driver driver;
@@ -59,6 +60,14 @@ public class Bid {
 
     public SiteUser getCreateUser() {
         return createUser;
+    }
+
+    public SiteUser getUserBidIn() {
+        return userBidIn;
+    }
+
+    private void setUserBidIn(SiteUser userBidIn) {
+        this.userBidIn = userBidIn;
     }
 
     public int getIsTransfer() {
@@ -492,6 +501,278 @@ public class Bid {
         return bidsList;
     }
 
+    /*
+    формируем html ТТН карточки для передачи в pdf
+     */
+    public String getHtmlTTN(ArrayList<BidDetail> bidDetailListCar, ArrayList<BidDetail> bidDetailListTrailer) {
+        String html = new String();
+        String inn = "5501244039";
+        String kpp = "550701001";
+        String org1 = "ООО \"Управление АЗС\"";
+        String org2 = "Управление АЗС, ООО";
+        String dateFreeze = this.getBid_date_freeze().split(" ")[0];
+        String year = dateFreeze.split("-")[0];
+        String month = dateFreeze.split("-")[1];
+        String day = dateFreeze.split("-")[2];
+        String newDate = day + "." + month + "." + year;
+        String car = this.getCar().getCar_name();
+        String trailer = null;
+        if (this.getTrailer() != null)
+            trailer = this.getTrailer().getTrailer_number();
+        else trailer = "______________";
+        String driver = this.getDriver().getDriverFio();
+        String header = "Товарно-транспортная накладная № " + this.getId_bid() + " от " + newDate + " г.";
+
+
+        /*try {
+            inn = this.getOilStorageIn().getCompanyUnit().getCompany().getInn();
+            kpp = this.getOilStorageIn().getCompanyUnit().getCompany().getKpp();
+        } catch (Exception e) {
+
+        }
+        */
+        html += "<html><head>"
+                + "<meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\"/>"
+                + "<style>pre {font-family: Arial Unicode MS, FreeSans; font-size:14px; font-weight: normal; text-decoration: underline;}</style>}"
+                + "</head><body style=\"font-family: Arial Unicode MS, FreeSans; font-size:12px; font-weight: normal; \">"
+        ;
+        html += "<table width=\"100%\" border=\"0\">" +
+                "    <tr ><td colspan=\"10\" align=\"left\">" + org1 + "</td></tr>" +
+                "    <tr ><td colspan=\"10\" align=\"left\">ИНН/КПП:" + inn + "/" + kpp + "</td></tr>" +
+                "    <tr ><td colspan=\"10\" align=\"center\"><h4>" + header + "</h4></td></tr>" +
+                "    <tr ><td colspan=\"10\" align=\"center\">&nbsp;</td></tr>" +
+                "    <tr>\n" +
+                "        <td colspan=\"3\">Автомобиль <pre>" + car + "</pre></td>" +
+                "        <td colspan=\"3\">Прицеп  <pre>" + trailer + "</pre></td>" +
+                "        <td colspan=\"4\">Водитель <pre >___________________(" + driver + ")</pre></td>\n" +
+                "    </tr>\n" +
+                "    <tr>\n" +
+                "        <td colspan=\"7\">&nbsp;</td>\n" +
+                "        <td colspan=\"3\" align=\"left\"> Доверенность <br/>№______________________</td>\n" +
+                "    </tr>\n" +
+                "    <tr>\n" +
+                "        <td colspan=\"3\" align=\"left\"> Грузоотправитель<br/><pre >" + org2 + "</pre></td>\n" +
+                "        <td colspan=\"3\">&nbsp;</td>\n" +
+                "        <td colspan=\"4\" align=\"left\"> Грузополучатель <br/>______________________</td>\n" +
+                "    </tr>\n" +
+                "<tr><td>&nbsp;</td></tr>" +
+                "    <tr>\n" +
+                "        <td colspan=\"10\">\n" +
+                "           <table border=\"1\" width=\"100%\"" +
+                "style=\"border-collapse: collapse;border: 1px solid black; \">" +
+                "           <tr>\n" +
+                "               <th align=\"center\">Товар</th>" +
+                "               <th align=\"center\">&nbsp;</th>" +
+                "               <th align=\"center\">Место храненния</th>" +
+                "               <th align=\"center\">Объем</th>" +
+                "               <th align=\"center\">Плотность</th>" +
+                "               <th align=\"center\">Масса/кол</th>" +
+                "               <th align=\"center\">Ед.Изм</th>" +
+                "               <th align=\"center\">Т</th>" +
+                "               <th align=\"center\">Цена</th>" +
+                "               <th align=\"center\">Сумма</th>" +
+                "           </tr>\n";
+        Double[] sum = new Double[2];
+        sum[0] = 0.0;
+        sum[1] = 0.0;
+
+        if (this.getCar() != null) {
+            if (this.getCar().getOilSections() != null) {
+                if (bidDetailListCar != null) {
+                    String oilStorage = this.getOilStorageIn().getOilStorageName();
+                    html += getTableForHtml(bidDetailListCar, oilStorage, sum);
+                }
+            }
+        }
+        if (this.getTrailer() != null) {
+            if (this.getTrailer().getOilSections() != null) {
+                if (bidDetailListTrailer != null) {
+                    String oilStorage = this.getOilStorageIn().getOilStorageName();
+                    html += getTableForHtml(bidDetailListTrailer, oilStorage, sum);
+                }
+            }
+        }
+        Double sumV = ((double)Math.round(sum[0] * 1000)) / 1000;
+        Double sumM = ((double) Math.round(sum[1] * 1000)) / 1000;
+
+        html += "<tr>"
+                + "<td colspan=\"3\" align=\"right\">Итого:</td>"
+                + "<td align=\"center\">" + sumV + "</td>"
+                + "<td>&nbsp;</td>"
+                + "<td align=\"center\">" + sumM + "</td>"
+                + "<td colspan=\"2\">&nbsp;</td>"
+                + "<td colspan=\"1\">&nbsp;</td>"
+                + "<td colspan=\"1\">&nbsp;</td>"
+                + "</tr>"
+        ;
+        html += "</table>" +
+                "        </td>\n" +
+                "    </tr>\n"
+        ;
+        html += "<tr><td>&nbsp;</td></tr>" +
+                "<tr><td colspan=\"10\">Информация по опасному веществу:<pre> UN, 1203 Бензин моторный, 3, Гу II (D/E),1202 Топливо дизельное, 3, Гу III (D/E)</pre></td></tr>"
+                + "<tr><td colspan=\"10\">Номера пломб ___________________________________________________</td></tr>"
+                + "<tr><td>&nbsp;</td></tr>"
+        ;
+        String operator = null;
+        if (this.getUserBidIn() != null && this.getUserBidIn().getFio() != null && !this.getUserBidIn().getFio().equals("")) {
+            operator = this.getUserBidIn().getFio();
+        } else
+            operator = "_________________";
+        html += "<tr >" +
+                "<td colspan=\"10\" ><table width=\"100%\" border=\"1\" " +
+                "style=\"border-collapse: collapse;border: 1px solid black; \">" +
+                "<tr width=\"100%\">" +
+                "<td width=\"50%\" valign=\"top\">" +
+                "Налив ст. ___ начало ____ ч. ____ м. окончание ____ ч.____м.Слив<br/>" +
+                "ТТН выписал__________________<pre>(" + operator + ")</pre><br/>" +
+                "Сдал оператор____________________<pre>(" + operator + ")</pre><br/>" +
+                "Принял водитель_____________________<pre> (" + driver + ")</pre><br/>" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "Подпись" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "ФИО<br/>" +
+                "<br/>" +
+                " <br/><br/>" +
+                " <br/>" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "М.П." +
+                " <br/><br/>" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "</td>" +
+                "<td width=\"50%\" valign=\"top\">" +
+                " Сдал водитель____________________( " + driver + ")<br/>" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "Подпись" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                " Ф И О<br/>" +
+                "Принял____________________(_________________________)\n" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                " Д о л ж н о с т ь " +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "ФИО<br/>" +
+                " Подпись ___________________________ _____ час____мин<br/>" +
+                "По доверенности №_____от ____________20____года<br/>" +
+                "Выданной кем______________________________<br/>" +
+                " <br/><br/>" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "М.П.<br/><br/>" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "</td>" +
+                "</tr></table></td>" +
+                "</tr>"
+        ;
+        html += "</table>\n";
+        html += "</body></html>";
+
+        return html.toString();
+    }
+
+    private String getTableForHtml(ArrayList<BidDetail> bidDetailList, String oilStorage, Double[] sum) {
+        String html = "";
+        Double sumV = sum[0];
+        Double sumM = sum[1];
+        for (BidDetail bidDetail : bidDetailList) {
+            String oil = bidDetail.getOilType().getOilTypeName();
+            Double v = bidDetail.getVolumeIn();
+            sumV += v;
+            String p = bidDetail.getPlIn();
+            Double m = bidDetail.getMassIn();
+            sumM += m;
+            String t = bidDetail.getTempIn();
+            html += "<tr>" +
+                    "       <td align=\"center\">" + oil + "</td>" +
+                    "       <td align=\"center\">&nbsp;</td>" +
+                    "       <td align=\"center\">" + oilStorage + "</td>" +
+                    "       <td align=\"center\">" + v + "</td>" +
+                    "       <td align=\"center\">" + p + "</td>" +
+                    "       <td align=\"center\">" + m + "</td>" +
+                    "       <td align=\"center\"></td>" +
+                    "       <td align=\"center\">" + t + "</td>" +
+                    "       <td align=\"center\"></td>" +
+                    "       <td align=\"center\"></td>" +
+                    "</tr>\n";
+        }
+        sum[0] = sumV;
+        sum[1] = sumM;
+        return html;
+    }
+
     private class SetRowThread implements Runnable {
         private Bid bid;
         Map row;
@@ -510,6 +791,7 @@ public class Bid {
             if (bid == null || row == null) return;
             bid.setId_bid((Integer) row.get("id_bids"));
             bid.setCreateUser(siteUserMvc.findSiteUser((Integer) row.get("bid_create_user_id")));
+            bid.setUserBidIn(siteUserMvc.findSiteUser((Integer) row.get("bid_user_in_id")));
             bid.setName((String) row.get("bid_number"));
             bid.setOilStorageIn(oilStorageMvc.getOilStorage((Integer) row.get("bid_storage_in_id")));
             bid.setDriver(driverMvc.getDriver((Integer) row.get("bid_driver_id")));

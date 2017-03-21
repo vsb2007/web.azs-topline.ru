@@ -16,9 +16,9 @@ public class BidDetail {
     private String plOut;
     private String tempIn;
     private String tempOut;
-    private String volumeIn;
+    private double volumeIn;
     private String volumeOut;
-    private String massIn;
+    private Double massIn;
     private String massOut;
     private String dateIn;
     private String dateOut;
@@ -112,11 +112,11 @@ public class BidDetail {
         this.tempOut = tempOut;
     }
 
-    public String getVolumeIn() {
+    public double getVolumeIn() {
         return volumeIn;
     }
 
-    public void setVolumeIn(String volumeIn) {
+    public void setVolumeIn(double volumeIn) {
         this.volumeIn = volumeIn;
     }
 
@@ -128,11 +128,11 @@ public class BidDetail {
         this.volumeOut = volumeOut;
     }
 
-    public String getMassIn() {
+    public Double getMassIn() {
         return massIn;
     }
 
-    public void setMassIn(String massIn) {
+    public void setMassIn(Double massIn) {
         this.massIn = massIn;
     }
 
@@ -195,9 +195,9 @@ public class BidDetail {
         String pOutTmp = null;
         String tInTmp = null;
         String tOutTmp = null;
-        String volumeInTmp = null;
+        double volumeInTmp = 0;
         String volumeOutTmp = null;
-        String massInTmp = null;
+        Double massInTmp = null;
         String massOutTmp = null;
         String dateInTmp = null;
         String dateOutTmp = null;
@@ -239,15 +239,15 @@ public class BidDetail {
                     } else tOutTmp = null;
                 } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_volume_in")) {
                     if (pair.getValue() != null) {
-                        volumeInTmp = pair.getValue().toString();
-                    } else volumeInTmp = null;
+                        volumeInTmp = (Double)pair.getValue();
+                    } else volumeInTmp = 0;
                 } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_volume_out")) {
                     if (pair.getValue() != null) {
                         volumeOutTmp = pair.getValue().toString();
                     } else volumeOutTmp = null;
                 } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_mass_in")) {
                     if (pair.getValue() != null) {
-                        massInTmp = pair.getValue().toString();
+                        massInTmp = (Double) pair.getValue();
                     } else massInTmp = null;
                 } else if (pair.getKey().equals("bid_" + oilSection.getId_section() + "_mass_out")) {
                     if (pair.getValue() != null) {
