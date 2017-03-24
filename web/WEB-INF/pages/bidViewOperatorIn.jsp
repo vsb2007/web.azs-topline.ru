@@ -47,11 +47,13 @@
             <input type="text" class="text-input border-green-500" placeholder="Прицеп" required
                    name="trailer" value="${bid.getTrailer().getTrailer_number()}" readonly> <br>
             <br>
+            <%--
             <c:if test="${bid.getIsTransfer()==0}">
                 Документы поступления:<br>
                 <%@ include file="bidViewOperatorDocumentIn.jsp" %>
             </c:if>
-            <br>
+
+            <br>--%>
             Доставка:<br>
             Секции на машине:<br>
             <c:forEach items="${bidDetailsCar}" var="bidDetails">

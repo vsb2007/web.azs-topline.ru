@@ -516,11 +516,15 @@ public class Bid {
         String day = dateFreeze.split("-")[2];
         String newDate = day + "." + month + "." + year;
         String car = this.getCar().getCar_name();
+        if (car.equals("Сторонний транспорт 280")){
+            car = "______________";
+        }
         String trailer = null;
         if (this.getTrailer() != null)
             trailer = this.getTrailer().getTrailer_number();
         else trailer = "______________";
         String driver = this.getDriver().getDriverFio();
+        if (driver.equals("Чужой")) driver="_______________";
         String header = "Товарно-транспортная накладная № " + this.getId_bid() + " от " + newDate + " г.";
 
 
@@ -592,7 +596,7 @@ public class Bid {
                 }
             }
         }
-        Double sumV = ((double)Math.round(sum[0] * 1000)) / 1000;
+        Double sumV = ((double) Math.round(sum[0] * 1000)) / 1000;
         Double sumM = ((double) Math.round(sum[1] * 1000)) / 1000;
 
         html += "<tr>"
@@ -796,7 +800,12 @@ public class Bid {
             bid.setOilStorageIn(oilStorageMvc.getOilStorage((Integer) row.get("bid_storage_in_id")));
             bid.setDriver(driverMvc.getDriver((Integer) row.get("bid_driver_id")));
             bid.setCar(carMvc.getCar((Integer) row.get("bid_car_id")));
-            bid.setTrailer(trailerMvc.getTrailer((Integer) row.get("bid_trailer_id")));
+            Object trailerIdObject = row.get("bid_trailer_id");
+            if (trailerIdObject != null)
+                bid.setTrailer(trailerMvc.getTrailer((Integer) row.get("bid_trailer_id")));
+            else {
+                bid.setTrailer(null);
+            }
             Object dateFreeze = null;
             dateFreeze = row.get("bid_date_freeze");
             if (dateFreeze != null)
