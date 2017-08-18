@@ -428,7 +428,11 @@ public class SaleOil {
             } else if (siteUser.getPost().getIdPost() == 4) { // наблюдатель
                 sql = "select * from salebid where sale_is_close = 0";
             } else if (siteUser.getPost().getIdPost() == 5) { // продавец
-                sql = "select * from salebid where sale_is_close = 0 and sale_create_user_id = " + siteUser.getId();
+                if (siteUser.isUserHasRole(principal, "ROLE_SALE_VIEW_ALL")) {
+                    sql = "select * from salebid where sale_is_close = 0";
+                } else {
+                    sql = "select * from salebid where sale_is_close = 0 and sale_create_user_id = " + siteUser.getId();
+                }
             }
         }
         saleOilList = getSaleListFromDbSelect(sql, null);

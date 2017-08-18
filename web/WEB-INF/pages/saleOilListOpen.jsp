@@ -44,19 +44,21 @@
                         <c:if test="${!sale.isDone()}">
                             <c:set var="actionUrl" value="saleOilRed"/>
                         </c:if>
-                        <form action="${actionUrl}" method="post">
-                            <input value="${sale.getId()}" name="saleIdButton" id="saleIdButton${sale.getId()}"
-                                   type="hidden">
-                            <button class="button raised color-white bg-blue-500" type="submit"
-                                    style="width: 10em;">
+                        <c:if test="${sale.getUserCreate().getId() == siteUser.getId()}">
+                            <form action="${actionUrl}" method="post">
+                                <input value="${sale.getId()}" name="saleIdButton" id="saleIdButton${sale.getId()}"
+                                       type="hidden">
+                                <button class="button raised color-white bg-blue-500" type="submit"
+                                        style="width: 10em;">
                             <span class="item-text">Редактировать
 			                    <span class="secondary-text">Закрыть</span>
 		                    </span>
-                            </button>
-                                <%--<span class="item-text" style="font-size: small"> Машина: ${bid.getCar().getCar_name()}<br>
-                                   Прицеп: ${bid.getTrailer().getTrailer_number()}</span> --%>
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        </form>
+                                </button>
+                                    <%--<span class="item-text" style="font-size: small"> Машина: ${bid.getCar().getCar_name()}<br>
+                                       Прицеп: ${bid.getTrailer().getTrailer_number()}</span> --%>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </c:if>
                     </sec:authorize>
                 </li>
             </c:forEach>

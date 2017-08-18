@@ -12,8 +12,10 @@
     <div class="section">
         <c:if test="${!sale.isClose()}">
             <sec:authorize access="hasRole('ROLE_SALE_UPDATE')">
-                <c:if test="${!sale.isDone()}">
-                    <form action="saleUpdate" method="post" id="saleUpdateForm">
+                <c:if test="${sale.getUserCreate().getId() == siteUser.getId()}">
+                    <c:if test="${!sale.isDone()}">
+                        <form action="saleUpdate" method="post" id="saleUpdateForm">
+                    </c:if>
                 </c:if>
             </sec:authorize>
             <div class="grid-list">
@@ -121,7 +123,8 @@
                 </div>
                 <div class="tile">
                     <input type="text" class="text-input border-green-500"
-                           value="${sale.getDesiredDate()}" placeholder="Дата доставки" id="desiredDate" name="desiredDate" required readonly>
+                           value="${sale.getDesiredDate()}" placeholder="Дата доставки" id="desiredDate"
+                           name="desiredDate" required readonly>
                     <div>
                         <span class="secondary-text">Дата доставки</span>
                     </div>
@@ -129,7 +132,7 @@
                 </div>
                 <br>
                 <div class="tile">
-                      <textarea class="text-area border-green-500"  placeholder="Коментарии к заявке"
+                      <textarea class="text-area border-green-500" placeholder="Коментарии к заявке"
                                 id="comments" name="comments">${sale.getComments()}</textarea>
                     <div>
                         <span class="secondary-text">Коментарии</span>
@@ -137,17 +140,19 @@
                 </div>
             </div>
             <br>
-            <c:if test="${!sale.isDone() && !sale.isBlock()}">
-                <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">
-                    Отметить как выполненую
-                </button>
-                <button class="button raised bg-blue-500 color-white" type="button" onclick="checkAddBidForm()">
-                    Проверить данные
-                </button>
-                <sec:authorize access="hasRole('ROLE_SALE_UPDATE')">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
-                    </form >
-                </sec:authorize>
+            <c:if test="${sale.getUserCreate().getId() == siteUser.getId()}">
+                <c:if test="${!sale.isDone() && !sale.isBlock()}">
+                    <button class="button raised bg-blue-500 color-white" disabled="disabled" id="addBidButton">
+                        Отметить как выполненую
+                    </button>
+                    <button class="button raised bg-blue-500 color-white" type="button" onclick="checkAddBidForm()">
+                        Проверить данные
+                    </button>
+                    <sec:authorize access="hasRole('ROLE_SALE_UPDATE')">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="token"/>
+                        </form >
+                    </sec:authorize>
+                </c:if>
             </c:if>
         </c:if>
     </div>
@@ -165,6 +170,7 @@
             var sum = colLiters * priceLiters + priceShipping;
             document.getElementById("sum").value = (priceShipping * 1 + colLiters * priceLiters).toFixed(2);
         }
+
         function checkAddBidForm() {
             document.getElementById("addBidButton").removeAttribute("disabled");
         }

@@ -80,6 +80,8 @@ public class MvcSaleController {
         model.setViewName("saleOilListOpen");
         String response = request.getParameter("message");
         ArrayList<SaleOil> saleOilList = saleOilMvc.getSaleOilList(principal);
+        SiteUser siteUser = siteUserMvc.findSiteUser(principal);
+        model.addObject("siteUser", siteUser);
         model.addObject("message", response);
         model.addObject("saleOilList", saleOilList);
         return model;
